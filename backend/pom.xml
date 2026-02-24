@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <!--É o cabeçalho padrão de todo arquivo XML do Maven
+Maven é o gerenciador de dependências do Java (tipo o npm do Node.js)-->
+
+
+
+<parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.0</version>
+        <relativePath/>
+    </parent>
+
+
+    <!--To dizendo que o projeto é "filho" do Spring Boot
+Spring Boot vai gerenciar as versões das bibliotecas automaticamente-->
+
+ <groupId>com.transpiratininga1</groupId>
+    <artifactId>controle-celular</artifactId>
+    <version>1.0.0</version>
+    <name>Controle de Celulares</name>
+    <description>Sistema de controle de entrega de celulares</description>
+
+
+
+    <properties>
+        <java.version>17</java.version>
+    </properties>
+
+    <!--to dizendo q vou usar java 17-->
+
+
+    <dependencies>
+        <!--Spring booot web (para cirar Api Rest)-->
+    
+    <dependency>
+         <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>   <!--vai permitir eu criar enpoints HTTP-->
+
+
+    <!-- Spring Data JPA (para trabalhar com banco de dados) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+    <!--JPA = Java Persistence API. Permite salvar objetos Java no banco sem escrever SQL manualmente.-->
+
+
+    <!-- Driver SQL Server -->
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <scope>runtime</scope>
+        </dependency> <!--permiti o java conversa com sql serve-->
+
+
+          <!-- Validação de dados -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+        <!--permite validar os dados-->
+
+
+    <!-- DevTools (reinicia automaticamente quando você salva um arquivo) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+
+<!-- Lombok (reduz código boilerplate) -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+    <!-- JWT para autenticação -->
+    <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-api</artifactId>
+        <version>0.11.5</version>
+    </dependency>
+    <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-impl</artifactId>
+        <version>0.11.5</version>
+        <scope>runtime</scope>
+    </dependency>
+    <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-jackson</artifactId>
+        <version>0.11.5</version>
+        <scope>runtime</scope>
+    </dependency>
+
+    </dependencies> 
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build> <!--vai permitir eu rodar o projeto spring boot-->
+
+
+    </project>
