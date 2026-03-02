@@ -184,30 +184,48 @@ toast.success('✅ Colaborador atualizado com sucesso!');      } else {
             </div>
           </div>
 
-          <div className="row">
-            <div className="col-md-4 mb-3">
-              <label className="form-label">Departamento</label>
-              <input
-                type="text"
-                name="departamento"
-                className="form-control"
-                value={formData.departamento}
-                onChange={handleChange}
-                placeholder="Ex: TI, RH, Vendas"
-              />
-            </div>
+<div className="row">
+  <div className="col-md-4 mb-3">
+    <label className="form-label">Departamento</label>
+  <select
+    name="departamento"
+    className="form-select"
+    value={formData.departamento}
+    onChange={handleChange}
+  >
+    <option value="">Selecione...</option>
+    <option value="Administrativo">🏢 Administrativo</option>
+    <option value="Financeiro">💰 Financeiro</option>
+    <option value="Comercial">📊 Comercial</option>
+    <option value="Operacional">⚙️ Operacional</option>
+    <option value="TI">💻 TI</option>
+    <option value="RH">👥 RH</option>
+    <option value="Marketing">📢 Marketing</option>
+    <option value="Logística">🚚 Logística</option>
+    <option value="Outro">📋 Outro</option>
+  </select>
+</div>
 
-            <div className="col-md-4 mb-3">
-              <label className="form-label">Cargo</label>
-              <input
-                type="text"
-                name="cargo"
-                className="form-control"
-                value={formData.cargo}
-                onChange={handleChange}
-                placeholder="Ex: Analista, Gerente"
-              />
-            </div>
+<div className="col-md-4 mb-3">
+  <label className="form-label">Cargo</label>
+  <select
+    name="cargo"
+    className="form-select"
+    value={formData.cargo}
+    onChange={handleChange}
+  >
+    <option value="">Selecione...</option>
+    <option value="Diretor">👔 Diretor</option>
+    <option value="Gerente">👨‍💼 Gerente</option>
+    <option value="Coordenador">📋 Coordenador</option>
+    <option value="Supervisor">👁️ Supervisor</option>
+    <option value="Analista">💼 Analista</option>
+    <option value="Assistente">📝 Assistente</option>
+    <option value="Auxiliar">🔧 Auxiliar</option>
+    <option value="Estagiário">🎓 Estagiário</option>
+    <option value="Outro">📌 Outro</option>
+  </select>
+</div>
 
             <div className="col-md-4 mb-3">
               <label className="form-label">Status *</label>
@@ -223,6 +241,7 @@ toast.success('✅ Colaborador atualizado com sucesso!');      } else {
               </select>
             </div>
           </div>
+        
 
           <div className="row">
             <div className="col-md-4 mb-3">

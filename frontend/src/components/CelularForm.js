@@ -101,18 +101,28 @@ toast.success('✅ Celular cadastrado com sucesso!');             }
               />
             </div>
 
-            <div className="col-md-6 mb-3">
-              <label className="form-label">Modelo *</label>
-              <input
-                type="text"
-                name="modelo"
-                className="form-control"
-                value={formData.modelo}
-                onChange={handleChange}
-                placeholder="Ex: Samsung Galaxy S23"
-                required
-              />
-            </div>
+          <div className="col-md-6 mb-3">
+  <label className="form-label">Modelo *</label>
+  <select
+    name="modelo"
+    className="form-select"
+    value={formData.modelo}
+    onChange={handleChange}
+    required
+  >
+    <option value="">Selecione o modelo...</option>
+    <option value="Samsung Galaxy S23">📱 Samsung Galaxy S23</option>
+    <option value="Samsung Galaxy S22">📱 Samsung Galaxy S22</option>
+    <option value="Samsung Galaxy A54">📱 Samsung Galaxy A54</option>
+    <option value="iPhone 15">📱 iPhone 15</option>
+    <option value="iPhone 14">📱 iPhone 14</option>
+    <option value="iPhone 13">📱 iPhone 13</option>
+    <option value="Motorola Edge 40">📱 Motorola Edge 40</option>
+    <option value="Motorola Moto G54">📱 Motorola Moto G54</option>
+    <option value="Xiaomi Redmi Note 13">📱 Xiaomi Redmi Note 13</option>
+    <option value="Outro">📱 Outro</option>
+  </select>
+</div>
           </div>
 
           <div className="row">
@@ -131,18 +141,23 @@ toast.success('✅ Celular cadastrado com sucesso!');             }
                 <option value="devolvido">↩️ Devolvido</option>
               </select>
             </div>
-
-            <div className="col-md-4 mb-3">
-              <label className="form-label">Operadora</label>
-              <input
-                type="text"
-                name="fornecedor"
-                className="form-control"
-                value={formData.fornecedor}
-                onChange={handleChange}
-                placeholder="Ex: Vivo, Claro, Tim"
-              />
-            </div>
+<div className="col-md-4 mb-3">
+  <label className="form-label">Operadora</label>
+  <select
+    name="fornecedor"
+    className="form-select"
+    value={formData.fornecedor}
+    onChange={handleChange}
+  >
+    <option value="">Selecione...</option>
+    <option value="Vivo">📱 Vivo</option>
+    <option value="Claro">📱 Claro</option>
+    <option value="Tim">📱 Tim</option>
+    <option value="Oi">📱 Oi</option>
+    <option value="Algar">📱 Algar</option>
+    <option value="Outro">📱 Outro</option>
+  </select>
+</div>
 
             <div className="col-md-4 mb-3">
               <label className="form-label">Vida Útil (meses)</label>
