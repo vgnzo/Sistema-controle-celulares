@@ -52,6 +52,11 @@ Spring Boot vai gerenciar as versões das bibliotecas automaticamente-->
         </dependency>
     <!--JPA = Java Persistence API. Permite salvar objetos Java no banco sem escrever SQL manualmente.-->
 
+        <!-- Spring Security -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-security</artifactId>
+</dependency>
 
     <!-- Driver SQL Server -->
  
