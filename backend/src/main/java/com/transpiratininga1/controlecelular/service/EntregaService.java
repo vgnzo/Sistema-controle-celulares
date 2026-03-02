@@ -22,8 +22,14 @@ public class EntregaService{
 
     //listar todas
     public List<Entrega> listarTodas(){
-        return entregaRepository.findAll();
-    }
+    return entregaRepository.findByAtivoTrue();
+}
+
+
+// Adicione após o listarTodas():
+public List<Entrega> listarHistorico(){
+    return entregaRepository.findAll(); // retorna TODAS, ativas e deletadas
+}
 
     //buscar por id 
     public Optional<Entrega> buscarPorId(String imei, String registro){
@@ -112,21 +118,24 @@ public Entrega atualizar(String imei, String registro, Entrega entregaAtualizada
 }
 
     //deletar
-    public void deletar(String imei, String registro){
-        EntregaId id = new EntregaId(imei, registro);
+   public void deletar(String imei, String registro){
+    EntregaId id = new EntregaId(imei, registro);
 
-        // antes de deletar, devolver para estoque se estiver ativo
-        entregaRepository.findById(id).ifPresent(entrega -> {
-            if (entrega.getStatus().equalsIgnoreCase("ativo")) {
-                Celular celular = celularRepository.findById(imei).orElse(null);
-                if (celular != null) {
-                    celular.setStatus("em estoque");
-                    celularRepository.save(celular);
-                }
-            }
-        });
+    Entrega entrega = entregaRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Entrega não encontrada"));
 
-        entregaRepository.deleteById(id);
+    // devolve celular ao estoque se estava ativo (mantém lógica original)
+    if (entrega.getStatus().equalsIgnoreCase("ativo")) {
+        Celular celular = celularRepository.findById(imei).orElse(null);
+        if (celular != null) {
+            celular.setStatus("em estoque");
+            celularRepository.save(celular);
+        }
+    }
+
+    // soft delete: não apaga, só desativa
+    entrega.setAtivo(false);
+    entregaRepository.save(entrega);
     }
 
 }

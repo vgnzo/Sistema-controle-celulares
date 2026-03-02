@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import java.time.LocalDate;
-
 @Entity
 @Table(name = "Entrega")
 @Data
@@ -38,6 +37,7 @@ public class Entrega {
     @Column(name = "status", nullable = false, length = 20)
     private String status;
 
-
-    
+    //Lombok cuida do getter/setter automaticamente
+    @Column(nullable = false)
+    private Boolean ativo = true;
 }

@@ -27,6 +27,13 @@ public class EntregaController {
         return ResponseEntity.ok(entregas);
     }
 
+ // vai mostra o historico completo
+    @GetMapping("/historico")
+public ResponseEntity<List<Entrega>> listarHistorico() {
+    List<Entrega> historico = entregaService.listarHistorico();
+    return ResponseEntity.ok(historico);
+}
+
 
 
     //GEt - Buscar por id composto

@@ -22,4 +22,7 @@ public interface EntregaRepository extends JpaRepository<Entrega, EntregaId>{
 
     boolean existsById_ImeiAndStatus(String imei, String status);
 
+
+         List<Entrega> findByAtivoTrue();   // lista normal (só ativas)
+    List<Entrega> findByAtivoFalse();  // histórico de deletadas
 }
