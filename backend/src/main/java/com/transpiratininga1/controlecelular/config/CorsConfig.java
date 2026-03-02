@@ -14,10 +14,13 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000")
+                        .allowedOrigins(
+                            "http://localhost:3000",
+                            "https://sistema-controle-celulares.vercel.app"
+                        )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
-                        .allowCredentials(false); // 🔥 MUDAMOS AQUI
+                        .allowCredentials(false);
             }
         };
     }
