@@ -15,12 +15,12 @@ public class CorsConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins(
-                            "http://localhost:3000", // pra dev local
-                            "https://sistema-controle-celula-git-3453df-vinigcgaldino-4283s-projects.vercel.app"
+                            "http://localhost:3000", // frontend local
+                            "https://sistema-controle-celulares.vercel.app" // frontend produção
                         )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
-                        .allowCredentials(false);
+                        .allowCredentials(true); // importante se usar cookies ou JWT
             }
         };
     }
