@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController  //é um controlador REST (API)
 @RequestMapping("/api/celulares") //todas as rotas começam com /api/celulares
-@CrossOrigin(origins = "*") //permite acesso de qqrl origem (front)
+
 public class CelularController {
 
     @Autowired

@@ -13,14 +13,13 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
+                registry.addMapping("/**") // cobre todos os endpoints
                         .allowedOrigins(
-                            "http://localhost:3000", // frontend local
-                            "https://sistema-controle-celulares.vercel.app" // frontend produção
+                            "https://sistema-controle-celulares.vercel.app"
                         )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
-                        .allowCredentials(true); // importante se usar cookies ou JWT
+                        .allowCredentials(false);
             }
         };
     }
