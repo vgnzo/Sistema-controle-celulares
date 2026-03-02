@@ -54,11 +54,12 @@ Spring Boot vai gerenciar as versões das bibliotecas automaticamente-->
 
 
     <!-- Driver SQL Server -->
-        <dependency>
-            <groupId>com.microsoft.sqlserver</groupId>
-            <artifactId>mssql-jdbc</artifactId>
-            <scope>runtime</scope>
-        </dependency> <!--permiti o java conversa com sql serve-->
+ 
+<dependency>
+    <groupId>org.postgresql</groupId>
+    <artifactId>postgresql</artifactId>
+    <scope>runtime</scope>
+</dependency><!--permiti o java conversa com sql serve-->
 
 
           <!-- Validação de dados -->
@@ -104,6 +105,8 @@ Spring Boot vai gerenciar as versões das bibliotecas automaticamente-->
     </dependency>
 
     </dependencies> 
+
+    
 
     <build>
         <plugins>

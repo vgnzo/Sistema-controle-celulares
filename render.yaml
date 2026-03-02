@@ -1,0 +1,12 @@
+services:
+  # Backend Spring Boot
+  - type: web
+    name: controle-celular-backend
+    runtime: java
+    buildCommand: cd backend && mvn clean install
+    startCommand: cd backend && java -jar target/controle-celular-1.0.0.jar
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: DATABASE_URL
+        value: postgresql://controlecelular_user:ZMR761zrrq9bAbyrDUTV3rKDIOHrifTZ@dpg-d6idee9aae7s73ceeik0-a/controlecelular
