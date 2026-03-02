@@ -149,11 +149,11 @@ setErro('');
             </div>
 
            {/* Rodapé */}
-<div className="text-center mt-3">
-  <small className="text-white">
+      <div div className="text-center mt-3">
+    <small className="text-white">
     Desenvolvido por <strong>Vinicius Galdino</strong> 💻
-  </small>
-</div>
+    </small>
+      </div>
           </div>
         </div>
       </div>
