@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const API_URL = 'https://sistema-controle-celulares.onrender.com/api';const api = axios.create({
+// URL definitiva do backend no Render
+const API_URL = 'https://sistema-controle-celulares.onrender.com/api';
+
+const api = axios.create({
     baseURL: API_URL, 
     headers: {
         'Content-Type': 'application/json'
