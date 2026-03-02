@@ -15,9 +15,6 @@ public class CorsConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins(
-                            "http://localhost:3000",
-                            "https://sistema-controle-celulares.vercel.app",
-                            "https://sistema-controle-celula-git-3453df-vinigcgaldino-4283s-projects.vercel.app",
                             "https://sistema-controle-celulares-wg05m65mo.vercel.app"
                         )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
