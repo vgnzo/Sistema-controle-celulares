@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { entregaService, celularService, colaboradorService } from '../services/api';
 
 function EntregaForm({ onSucesso, entregaEdicao, onCancelar }){
@@ -15,36 +15,39 @@ const [formData, setFormData] = useState({
   const [colaboradores, setColaboradores] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    carregarDados();
-  }, []);
 
-  const carregarDados = async () => {
-    try {
-        const [celularesRes, colaboradoresRes] = await Promise.all([
-            celularService.listarTodos(), 
-            colaboradorService.listarTodos()
-        ]);
 
-        setCelulares(celularesRes.data)
-        setColaboradores(colaboradoresRes.data);
+ const carregarDados = useCallback(async () => {
+  try {
+    const [celularesRes, colaboradoresRes] = await Promise.all([
+      celularService.listarTodos(),
+      colaboradorService.listarTodos()
+    ]);
 
-        if (entregaEdicao) {
-            setFormData({
-            imei: entregaEdicao.id.imei,
-             registro: entregaEdicao.id.registro,
-          dataEntrega: entregaEdicao.dataEntrega,
-          dataPrevistaDevolucao: entregaEdicao.dataPrevistaDevolucao,
-          status: entregaEdicao.status
-        });
-      }
-    } catch (error) {
-      console.error('Erro ao carregar dados:', error);
-      alert('Erro ao carregar celulares e colaboradores');
-    } finally {
-      setLoading(false);
+    setCelulares(celularesRes.data);
+    setColaboradores(colaboradoresRes.data);
+
+    if (entregaEdicao) {
+      setFormData({
+        imei: entregaEdicao.id.imei,
+        registro: entregaEdicao.id.registro,
+        dataEntrega: entregaEdicao.dataEntrega,
+        dataPrevistaDevolucao: entregaEdicao.dataPrevistaDevolucao,
+        status: entregaEdicao.status
+      });
     }
-  };
+  } catch (error) {
+    console.error('Erro ao carregar dados:', error);
+    alert('Erro ao carregar celulares e colaboradores');
+  } finally {
+    setLoading(false);
+  }
+}, [entregaEdicao]);
+
+
+useEffect(() => {
+  carregarDados();
+}, [carregarDados]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
