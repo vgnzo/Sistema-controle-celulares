@@ -148,11 +148,15 @@ setErro('');
               </div>
             </div>
 
-           {/* Rodapé */}
-      <div div className="text-center mt-3">
-    <small className="text-white">
-    Desenvolvido por <strong>Vinicius Galdino</strong> 💻
-    </small>
+        {/* Rodapé */}
+<div className="text-center mt-3">
+      <small className="text-white">
+      © 2026 Sistema de Controle de Celulares
+       </small>
+        <br />
+        <small className="text-white">
+      Desenvolvido por <strong>Vinicius Galdino</strong>
+   </small>
       </div>
           </div>
         </div>
