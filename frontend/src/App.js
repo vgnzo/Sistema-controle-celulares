@@ -3,6 +3,8 @@ import Login from './pages/Login';
 import Celulares from './pages/Celulares';
 import Colaboradores from './pages/Colaboradores';
 import Entregas from './pages/Entregas';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const [paginaAtual, setPaginaAtual] = useState('celulares');
@@ -105,6 +107,17 @@ function App() {
       
       <div className="container mt-4">
         {renderizarPagina()}
+
+
+
+        <ToastContainer
+      position="top-right"
+      autoClose={3000}
+      hideProgressBar={false}
+      closeOnClick
+      pauseOnHover
+      draggable
+    />
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { entregaService, celularService, colaboradorService } from '../services/api';
+import { toast } from 'react-toastify';
 
 function EntregaForm({ onSucesso, entregaEdicao, onCancelar }){
 const [formData, setFormData] = useState({
@@ -79,10 +80,10 @@ useEffect(() => {
     try {
       if (entregaEdicao) {
         await entregaService.atualizar(formData.imei, formData.registro, dadosParaEnviar);
-        alert('Entrega atualizada com sucesso!');
+       toast.success('✅ Entrega atualizada com sucesso!');
       } else {
         await entregaService.cadastrar(dadosParaEnviar);
-        alert('Entrega cadastrada com sucesso!');
+        toast.success('✅ Entrega cadastrada com sucesso!');
       }
 
       setFormData({
@@ -95,7 +96,7 @@ useEffect(() => {
 
       onSucesso();
     } catch (error) {
-      alert('Erro ao salvar entrega: ' + (error.response?.data?.message || error.message));
+    toast.error('❌ Erro ao salvar: ' + (error.response?.data?.message || error.message));
     }
   };
 

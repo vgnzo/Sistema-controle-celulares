@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import api from '../services/api';
+import { toast } from 'react-toastify';
+
+
 function Login({ onLogin }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -23,7 +26,8 @@ function Login({ onLogin }) {
 
       onLogin();
     } catch (error) {
-      setErro('Usuário ou senha inválidos');
+      toast.error('❌ Usuário ou senha inválidos');
+setErro('');
     } finally {
       setLoading(false);
     }

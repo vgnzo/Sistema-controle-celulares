@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { toast } from 'react-toastify';
 import { colaboradorService } from '../services/api';
 
 function ColaboradorForm({ onSucesso, colaboradorEdicao, onCancelar }) {
@@ -84,10 +85,10 @@ const dadosParaEnviar = {
     try {
       if (colaboradorEdicao) {
         await colaboradorService.atualizar(dadosParaEnviar.registro, dadosParaEnviar);
-        alert('Colaborador atualizado com sucesso!');
-      } else {
+toast.success('✅ Colaborador atualizado com sucesso!');      } else {
         await colaboradorService.cadastrar(dadosParaEnviar);
-        alert('Colaborador cadastrado com sucesso!');
+    toast.success('✅ Colaborador cadastrado com sucesso!');
+
       }
 
       setFormData({
@@ -104,7 +105,7 @@ const dadosParaEnviar = {
 
       onSucesso();
     } catch (error) {
-      alert('Erro ao salvar colaborador: ' + (error.response?.data?.message || error.message));
+     toast.error('❌ Erro ao salvar: ' + (error.response?.data?.message || error.message));
     }
   };
 

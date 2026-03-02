@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {celularService} from '../services/api';
+import { toast } from 'react-toastify';
 
 function CelularForm({ onSucesso, celularEdicao, onCancelar }){
     const [formData, setFormData] = useState(celularEdicao || {
@@ -56,10 +57,10 @@ function CelularForm({ onSucesso, celularEdicao, onCancelar }){
         
             if (celularEdicao){
                 await celularService.atualizar(dadosParaEnviar.imei, dadosParaEnviar);
-                alert('Celular atualizado com sucesso!');
+              toast.success('✅ Celular atualizado com sucesso!');
            } else {
     await celularService.cadastrar(dadosParaEnviar);
-    alert('Celular cadastrado com sucesso!');
+toast.success('✅ Celular cadastrado com sucesso!');
     }
 
             //limpa formulario
@@ -74,8 +75,7 @@ function CelularForm({ onSucesso, celularEdicao, onCancelar }){
 
             onSucesso(); //Vai recarregar a lista
         } catch (error){
-            alert ('Erro ao salvar celular:' + (error.response?.data.message || error.message));
-             }
+toast.success('✅ Celular cadastrado com sucesso!');             }
     };
 
 
