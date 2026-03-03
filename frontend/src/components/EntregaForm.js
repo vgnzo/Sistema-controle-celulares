@@ -74,7 +74,8 @@ useEffect(() => {
       },
       dataEntrega: formData.dataEntrega,
       dataPrevistaDevolucao: formData.dataPrevistaDevolucao,
-      status: formData.status
+      status: formData.status,
+      ativo: true
     };
 
     try {
