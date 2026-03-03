@@ -46,10 +46,11 @@ function App() {
         return <Colaboradores />;
       case 'entregas':
         return <Entregas />;
+             case 'historico':
+  return <Historico />;
       default:
         return <Celulares />;
-        case 'historico':
-  return <Historico />;
+   
     }
   };
 
@@ -91,18 +92,19 @@ function App() {
                 onClick={() => setPaginaAtual('entregas')}
               >
                 📦 Entregas
-              </button>
+              </button> 
             </li>
+             <li className="nav-item">
+                <button 
+                  className={`nav-link btn btn-link ${paginaAtual === 'historico' ? 'active text-white' : 'text-secondary'}`}
+                  onClick={() => setPaginaAtual('historico')}
+                >
+                  🕐 Histórico
+                </button>
+              </li>
           </ul>
 
-          <li className="nav-item">
-  <button 
-    className={`nav-link btn btn-link ${paginaAtual === 'historico' ? 'active text-white' : 'text-secondary'}`}
-    onClick={() => setPaginaAtual('historico')}
-  >
-    🕐 Histórico
-  </button>
-</li>
+      
 
           <div className="d-flex align-items-center">
             <span className="text-white me-3">
