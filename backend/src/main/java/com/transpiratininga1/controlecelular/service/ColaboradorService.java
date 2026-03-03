@@ -91,11 +91,11 @@ public class ColaboradorService {
     }
     
     // Deletar
-  public void deletar(String registro) {
+public void deletar(String registro) throws ColaboradorComEntregasException {
     try {
         colaboradorRepository.deleteById(registro);
     } catch (Exception e) {
-        throw new RuntimeException("Não é possível excluir o colaborador pois possui entregas vinculadas");
+        throw new ColaboradorComEntregasException("Não é possível excluir o colaborador pois possui entregas vinculadas");
     }
 }
 }

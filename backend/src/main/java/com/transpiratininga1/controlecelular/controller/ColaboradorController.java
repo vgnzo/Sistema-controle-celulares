@@ -1,5 +1,6 @@
 package com.transpiratininga1.controlecelular.controller;
 
+import com.transpiratininga1.controlecelular.exception.ColaboradorComEntregasException;
 import com.transpiratininga1.controlecelular.model.Colaborador;
 import com.transpiratininga1.controlecelular.service.ColaboradorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,7 +109,7 @@ public ResponseEntity<Colaborador> atualizar(
 
     //DELETE - deletar
 @DeleteMapping("/{registro}")
-public ResponseEntity<Void> deletar(@PathVariable String registro) {
+public ResponseEntity<Void> deletar(@PathVariable String registro) throws ColaboradorComEntregasException {
     colaboradorService.deletar(registro);
     return ResponseEntity.noContent().build();
 }
