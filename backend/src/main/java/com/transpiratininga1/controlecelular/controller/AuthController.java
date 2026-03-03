@@ -20,6 +20,8 @@ public class AuthController {
     @Autowired
     private UsuarioService usuarioService;
 
+
+
    @PostMapping("/login")
 public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
     return usuarioService.validarLogin(loginRequest.getUsername(), loginRequest.getPassword())

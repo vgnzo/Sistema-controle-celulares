@@ -16,17 +16,20 @@ public class SecurityConfig {
     public SecurityConfig(CorsConfigurationSource corsConfigurationSource) {
         this.corsConfigurationSource = corsConfigurationSource;
     }
-@Bean
-public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http
-        .cors(cors -> cors.configurationSource(corsConfigurationSource))
-        .csrf(csrf -> csrf.disable())
-        .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/auth/**").permitAll()  // ✅ libera login
-            .requestMatchers("/api/usuarios/register").permitAll() // ✅ libera cadastro
-            .anyRequest().permitAll()
-        );
 
-    return http.build();
-}
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .cors(cors -> cors.configurationSource(corsConfigurationSource))
+            .csrf(csrf -> csrf.disable())
+            .httpBasic(basic -> basic.disable())  // ✅ NOVO
+            .formLogin(form -> form.disable())    // ✅ NOVO
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/usuarios/register").permitAll()
+                .anyRequest().permitAll()
+            );
+
+        return http.build();
+    }
 }
