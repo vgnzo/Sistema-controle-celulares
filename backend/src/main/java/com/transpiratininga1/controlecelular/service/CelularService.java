@@ -1,5 +1,6 @@
 package com.transpiratininga1.controlecelular.service;
 
+import com.transpiratininga1.controlecelular.repository.EntregaRepository;
 import com.transpiratininga1.controlecelular.model.Celular;
 import com.transpiratininga1.controlecelular.repository.CelularRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +13,16 @@ import java.util.List;
 import java.util.Optional;
 
 
+
+
 @Service 
 public class CelularService{
 
     @Autowired
     private CelularRepository celularRepository;
 
+        @Autowired
+private EntregaRepository entregaRepository;
 
     //listar todos os celulares
 
@@ -50,21 +55,27 @@ public class CelularService{
 
     //atualizar celular
 
-    public Celular atualizar(String imei, Celular celularAtualizado){
-        //busca celular existente
-        Celular celularExistente = celularRepository.findById(imei)
+   public Celular atualizar(String imei, Celular celularAtualizado){
+    Celular celularExistente = celularRepository.findById(imei)
         .orElseThrow(() -> new IllegalArgumentException("Celular não encontrado com IMEI:" + imei));
 
-
-        //atualiza os campos 
-        celularExistente.setModelo(celularAtualizado.getModelo());
-        celularExistente.setStatus(celularAtualizado.getStatus());
-        celularExistente.setFornecedor(celularAtualizado.getFornecedor());
-        celularExistente.setDataAquisicao(celularAtualizado.getDataAquisicao());
-        celularExistente.setVidaUtil(celularAtualizado.getVidaUtil());
-
-         return celularRepository.save(celularExistente);
+    // ✅ NOVO: impede baixar celular com entrega ativa
+    if (celularAtualizado.getStatus().equalsIgnoreCase("baixado")) {
+        boolean temEntregaAtiva = entregaRepository
+            .existsById_ImeiAndStatus(imei, "ativo");
+        if (temEntregaAtiva) {
+            throw new RuntimeException("Não é possível baixar um celular com entrega ativa. Devolva o celular primeiro!");
+        }
     }
+
+    celularExistente.setModelo(celularAtualizado.getModelo());
+    celularExistente.setStatus(celularAtualizado.getStatus());
+    celularExistente.setFornecedor(celularAtualizado.getFornecedor());
+    celularExistente.setDataAquisicao(celularAtualizado.getDataAquisicao());
+    celularExistente.setVidaUtil(celularAtualizado.getVidaUtil());
+
+    return celularRepository.save(celularExistente);
+}
 
 
   //metodo de deletar o celular
