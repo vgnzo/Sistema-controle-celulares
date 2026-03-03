@@ -67,3 +67,5 @@ public Optional<Usuario> validarLogin(String username, String senha) {
     
     return usuario.filter(u -> u.getSenha().equals(senha));
 }
+
+}
