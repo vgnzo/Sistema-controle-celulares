@@ -23,6 +23,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(erro);
     }
 
+    @ExceptionHandler(ColaboradorComEntregasException.class)
+public ResponseEntity<Map<String, Object>> handleColaboradorComEntregas(ColaboradorComEntregasException ex) {
+    Map<String, Object> erro = new HashMap<>();
+    erro.put("timestamp", LocalDateTime.now());
+    erro.put("status", 409);
+    erro.put("erro", "Conflito");
+    erro.put("mensagem", ex.getMessage());
+    
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(erro);
+}
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Map<String, Object>> handleRuntimeException(RuntimeException ex) {
         Map<String, Object> erro = new HashMap<>();

@@ -1,5 +1,5 @@
 package com.transpiratininga1.controlecelular.service;
-
+import com.transpiratininga1.controlecelular.exception.ColaboradorComEntregasException;
 
 import com.transpiratininga1.controlecelular.model.Colaborador;
 import com.transpiratininga1.controlecelular.repository.ColaboradorRepository;
