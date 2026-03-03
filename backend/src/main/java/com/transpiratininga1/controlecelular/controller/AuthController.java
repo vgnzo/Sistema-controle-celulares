@@ -2,13 +2,11 @@ package com.transpiratininga1.controlecelular.controller;
 
 import com.transpiratininga1.controlecelular.dto.LoginRequest;
 import com.transpiratininga1.controlecelular.dto.LoginResponse;
-import com.transpiratininga1.controlecelular.model.Usuario;
 import com.transpiratininga1.controlecelular.service.UsuarioService;
 import com.transpiratininga1.controlecelular.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
