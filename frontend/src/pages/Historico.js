@@ -44,10 +44,10 @@ function Historico() {
   };
 
   // ✅ badge Situação Entrega
-  const getBadgeSituacao = (entrega) => {
+const getBadgeSituacao = (entrega) => {
     if (entrega.ativo) return <span className="badge bg-success">Ativa</span>;
-    return <span className="badge bg-secondary">Deletada</span>;
-  };
+    return <span className="badge bg-secondary">Realizada</span>; // ✅ era "Deletada"
+};
 
   // ✅ badge Status Entrega
   const getBadgeStatusEntrega = (status) => {
@@ -78,11 +78,11 @@ function Historico() {
 
             <div className="col-md-3">
               <label className="form-label">Situação</label>
-              <select className="form-select" value={filtroStatus} onChange={e => setFiltroStatus(e.target.value)}>
-                <option value="todos">Todas</option>
-                <option value="ativas">Apenas ativas</option>
-                <option value="deletadas">Apenas deletadas</option>
-              </select>
+            <select className="form-select" value={filtroStatus} onChange={e => setFiltroStatus(e.target.value)}>
+    <option value="todos">Todas</option>
+    <option value="ativas">Apenas ativas</option>
+    <option value="deletadas">Apenas realizadas</option> // ✅ era "Apenas deletadas"
+</select>
             </div>
 
             <div className="col-md-3">
