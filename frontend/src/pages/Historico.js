@@ -131,36 +131,36 @@ const getBadgeSituacao = (entrega) => {
             </div>
           ) : (
             <table className="table table-hover mb-0">
-              <thead className="table-dark">
-                <tr>
-                  <th>IMEI</th>
-                  <th>Colaborador</th>
-                  <th>Departamento</th>
-                  <th>Status Colaborador</th>
-                  <th>Status Celular</th>
-                  <th>Data de Entrega</th>
-                  <th>Prev. Devolução</th>
-                  <th>Status da Entrega</th> 
-                  <th>Situação da Devolução</th>
-                </tr>
-              </thead>
+          <thead className="table-dark">
+  <tr>
+    <th className="text-center">IMEI</th>
+    <th className="text-center">Colaborador</th>
+    <th className="text-center">Departamento</th>
+    <th className="text-center">Status Colaborador</th>
+    <th className="text-center">Status Celular</th>
+    <th className="text-center">Data Entrega</th>
+    <th className="text-center">Prev. Devolução</th>
+    <th className="text-center">Status Entrega</th>
+    <th className="text-center">Situação Devolução</th>
+  </tr>
+</thead>
               <tbody>
                 {historicoFiltrado.map((entrega, index) => (
-                  <tr key={index} className={`align-middle ${!entrega.ativo ? 'table-secondary' : ''}`}>
-                    <td><code>{entrega.id.imei}</code></td>
-                    <td>{entrega.colaborador?.nome || '-'}</td>
-                    <td>{entrega.colaborador?.departamento || '-'}</td>
-                    <td>
-                      <span className={`badge ${entrega.colaborador?.status === 'ativo' ? 'bg-success' : 'bg-secondary'}`}>
-                        {entrega.colaborador?.status || '-'}
-                      </span>
-                    </td>
-                    <td>{getBadgeStatusCelular(entrega.celular?.status)}</td> 
-                    <td>{formatarData(entrega.dataEntrega)}</td>
-                    <td>{formatarData(entrega.dataPrevistaDevolucao)}</td>
-                    <td>{getBadgeStatusEntrega(entrega.status)}</td>           
-                             <td>{getBadgeSituacao(entrega)}</td> 
-                  </tr>
+                <tr key={index} className={`align-middle ${!entrega.ativo ? 'table-secondary' : ''}`}>
+  <td className="text-center"><code>{entrega.id.imei}</code></td>
+  <td className="text-center">{entrega.colaborador?.nome || '-'}</td>
+  <td className="text-center">{entrega.colaborador?.departamento || '-'}</td>
+  <td className="text-center">
+    <span className={`badge ${entrega.colaborador?.status === 'ativo' ? 'bg-success' : 'bg-secondary'}`}>
+      {entrega.colaborador?.status || '-'}
+    </span>
+  </td>
+  <td className="text-center">{getBadgeStatusCelular(entrega.celular?.status)}</td>
+  <td className="text-center">{formatarData(entrega.dataEntrega)}</td>
+  <td className="text-center">{formatarData(entrega.dataPrevistaDevolucao)}</td>
+  <td className="text-center">{getBadgeStatusEntrega(entrega.status)}</td>
+  <td className="text-center">{getBadgeSituacao(entrega)}</td>
+</tr>
                 ))}
               </tbody>
             </table>
