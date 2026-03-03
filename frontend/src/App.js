@@ -3,6 +3,8 @@ import Login from './pages/Login';
 import Celulares from './pages/Celulares';
 import Colaboradores from './pages/Colaboradores';
 import Entregas from './pages/Entregas';
+// Adicione o import no topo:
+import Historico from './pages/Historico';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -46,6 +48,8 @@ function App() {
         return <Entregas />;
       default:
         return <Celulares />;
+        case 'historico':
+  return <Historico />;
     }
   };
 
@@ -90,6 +94,15 @@ function App() {
               </button>
             </li>
           </ul>
+
+          <li className="nav-item">
+  <button 
+    className={`nav-link btn btn-link ${paginaAtual === 'historico' ? 'active text-white' : 'text-secondary'}`}
+    onClick={() => setPaginaAtual('historico')}
+  >
+    🕐 Histórico
+  </button>
+</li>
 
           <div className="d-flex align-items-center">
             <span className="text-white me-3">

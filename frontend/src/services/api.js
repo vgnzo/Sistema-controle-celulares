@@ -41,7 +41,8 @@ export const entregaService = {
   buscarPorColaborador: (registro) => api.get(`/entregas/colaborador/${registro}`),
   cadastrar: (entrega) => api.post('/entregas', entrega),
   atualizar: (imei, registro, entrega) => api.put(`/entregas/${imei}/${registro}`, entrega),
-  deletar: (imei, registro) => api.delete(`/entregas/${imei}/${registro}`)
+  deletar: (imei, registro) => api.delete(`/entregas/${imei}/${registro}`),
+   listarHistorico: () => api.get('/entregas/historico')
 };
 
 export default api;
