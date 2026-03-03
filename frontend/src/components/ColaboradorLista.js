@@ -44,7 +44,24 @@ function ColaboradorLista({ onEditar }) {
             alert('Erro ao desativar colaborador');
         }
     }
+
+    
 };
+
+    const handleReativar = async (colaborador) => {
+        if (window.confirm(`Reativar ${colaborador.nome}?`)) {
+            try {
+                await colaboradorService.atualizar(colaborador.registro, {
+                    ...colaborador,
+                    status: 'ativo'
+                });
+                carregarColaboradores();
+            } catch (error) {
+                alert('Erro ao reativar colaborador');
+            }
+        }
+      };
+
 
     if (loading) return <div className="text-center">Carregando...</div>;
     if (erro) return <div className="alert alert-danger">{erro}</div>
@@ -91,21 +108,32 @@ function ColaboradorLista({ onEditar }) {
                         {colaborador.status}
                       </span>
                     </td>
-                        <td className="text-center text-nowrap">
-                <button 
-                  onClick={() => onEditar(colaborador)}
-                  className="btn btn-sm btn-warning me-2"
-                >
-                  ✏️ Editar
-                </button>
-                <button
-                  onClick={() => handleDesativar(colaborador)}
-                  className={`btn btn-sm ${colaborador.status === 'ativo' ? 'btn-danger' : 'btn-secondary'}`}
-                  disabled={colaborador.status === 'inativo'}
-                >
-                  🚫 Desativar
-                </button>
-              </td>
+                  <td className="text-center text-nowrap">
+  <button 
+    onClick={() => onEditar(colaborador)}
+    className="btn btn-sm btn-warning me-2"
+  >
+    ✏️ Editar
+  </button>
+  <button
+    onClick={() => handleDesativar(colaborador)}
+    className="btn btn-sm btn-danger me-2"
+    disabled={colaborador.status === 'inativo'}
+                      
+    
+ >
+  
+    🚫 Desativar
+  </button>
+  <button
+    onClick={() => handleReativar(colaborador)}
+    className="btn btn-sm btn-success"
+    disabled={colaborador.status === 'ativo'}
+  >
+    
+    ✅ Reativar
+  </button>
+</td>
                 
           </tr>
                 ))
