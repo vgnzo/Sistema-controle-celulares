@@ -26,11 +26,9 @@ function Historico() {
   }, []);
 
   const historicoFiltrado = historico.filter(entrega => {
-    // filtro ativo/deletado
     if (filtroStatus === 'ativas' && !entrega.ativo) return false;
     if (filtroStatus === 'deletadas' && entrega.ativo) return false;
 
-    // filtro de busca
     if (busca) {
       const termo = busca.toLowerCase();
       if (tipoBusca === 'imei') return entrega.id.imei.includes(termo);
@@ -45,9 +43,28 @@ function Historico() {
     return new Date(data).toLocaleDateString('pt-BR');
   };
 
-  const getBadge = (entrega) => {
+  // ✅ badge Situação Entrega
+  const getBadgeSituacao = (entrega) => {
     if (entrega.ativo) return <span className="badge bg-success">Ativa</span>;
     return <span className="badge bg-secondary">Deletada</span>;
+  };
+
+  // ✅ badge Status Entrega
+  const getBadgeStatusEntrega = (status) => {
+    const cor = status === 'ativo' ? 'bg-success' :
+                status === 'devolvido' ? 'bg-secondary' :
+                'bg-danger';
+    return <span className={`badge ${cor}`}>{status}</span>;
+  };
+
+  // ✅ badge Status Celular
+  const getBadgeStatusCelular = (status) => {
+    const cor = status === 'em estoque' ? 'bg-success' :
+                status === 'entregue' ? 'bg-primary' :
+                status === 'manutencao' ? 'bg-warning text-dark' :
+                status === 'baixado' ? 'bg-danger' :
+                'bg-secondary';
+    return <span className={`badge ${cor}`}>{status || '-'}</span>;
   };
 
   return (
@@ -120,28 +137,30 @@ function Historico() {
                   <th>Colaborador</th>
                   <th>Departamento</th>
                   <th>Status Colaborador</th>
+                  <th>Status Celular</th>
                   <th>Data Entrega</th>
                   <th>Prev. Devolução</th>
-                  <th>Status</th>
-                  <th>Situação</th>
+                  <th>Status Entrega</th> 
+                  <th>Situação Entrega</th>
                 </tr>
               </thead>
               <tbody>
                 {historicoFiltrado.map((entrega, index) => (
-                <tr key={index} className={`align-middle ${!entrega.ativo ? 'table-secondary' : ''}`}>
-  <td><code>{entrega.id.imei}</code></td>
-  <td>{entrega.colaborador?.nome || '-'}</td>
-  <td>{entrega.colaborador?.departamento || '-'}</td>
-  <td>  {/* ✅ <td> faltava aqui! */}
-    <span className={`badge ${entrega.colaborador?.status === 'ativo' ? 'bg-success' : 'bg-secondary'}`}>
-      {entrega.colaborador?.status || '-'}
-    </span>
-  </td>
-  <td>{formatarData(entrega.dataEntrega)}</td>
-  <td>{formatarData(entrega.dataPrevistaDevolucao)}</td>
-  <td><span className="badge bg-info text-dark">{entrega.status}</span></td>
-  <td>{getBadge(entrega)}</td>
-</tr>
+                  <tr key={index} className={`align-middle ${!entrega.ativo ? 'table-secondary' : ''}`}>
+                    <td><code>{entrega.id.imei}</code></td>
+                    <td>{entrega.colaborador?.nome || '-'}</td>
+                    <td>{entrega.colaborador?.departamento || '-'}</td>
+                    <td>
+                      <span className={`badge ${entrega.colaborador?.status === 'ativo' ? 'bg-success' : 'bg-secondary'}`}>
+                        {entrega.colaborador?.status || '-'}
+                      </span>
+                    </td>
+                    <td>{getBadgeStatusCelular(entrega.celular?.status)}</td> 
+                    <td>{formatarData(entrega.dataEntrega)}</td>
+                    <td>{formatarData(entrega.dataPrevistaDevolucao)}</td>
+                    <td>{getBadgeStatusEntrega(entrega.status)}</td>           
+                             <td>{getBadgeSituacao(entrega)}</td> 
+                  </tr>
                 ))}
               </tbody>
             </table>
