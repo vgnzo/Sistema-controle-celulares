@@ -91,6 +91,17 @@ public class ColaboradorService {
                 if (temEntregaAtiva || temEntregaAtrasada) {
                     throw new RuntimeException("Não é possível inativar colaborador com entrega ativa ou atrasada. Devolva o celular primeiro!");
                 }
+                 List<com.transpiratininga1.controlecelular.model.Entrega> entregasDevolvidas = 
+        entregaRepository.findById_Registro(registro)
+            .stream()
+            .filter(e -> e.getStatus().equalsIgnoreCase("devolvido") && e.getAtivo())
+            .collect(java.util.stream.Collectors.toList());
+
+    entregasDevolvidas.forEach(e -> {
+        e.setAtivo(false);
+        entregaRepository.save(e);
+    });
+
             }
 
 
