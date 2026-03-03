@@ -119,6 +119,7 @@ function Historico() {
                   <th>IMEI</th>
                   <th>Colaborador</th>
                   <th>Departamento</th>
+                  <th>Status Colaborador</th>
                   <th>Data Entrega</th>
                   <th>Prev. Devolução</th>
                   <th>Status</th>
@@ -131,6 +132,9 @@ function Historico() {
                     <td><code>{entrega.id.imei}</code></td>
                     <td>{entrega.colaborador?.nome || '-'}</td>
                     <td>{entrega.colaborador?.departamento || '-'}</td>
+                      <span className={`badge ${entrega.colaborador?.status === 'ativo' ? 'bg-success' : 'bg-secondary'}`}>
+    {entrega.colaborador?.status || '-'}
+                    </span>
                     <td>{formatarData(entrega.dataEntrega)}</td>
                     <td>{formatarData(entrega.dataPrevistaDevolucao)}</td>
                     <td><span className="badge bg-info text-dark">{entrega.status}</span></td>
