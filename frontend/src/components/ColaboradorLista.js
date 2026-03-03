@@ -28,16 +28,23 @@ function ColaboradorLista({ onEditar }) {
         }
     };
 
-    const handleDeletar = async (registro) => {
-        if(window.confirm('Tem certeza que deseja deletar este colaborador?')){
-            try{
-                await colaboradorService.deletar(registro);
-                carregarColaboradores();
-            }catch (error) {
-                alert('Erro ao deletar colaborador');
-            }
+    const handleDesativar = async (colaborador) => {
+    if (colaborador.status === 'inativo') {
+        alert('Colaborador já está inativo!');
+        return;
+    }
+    if (window.confirm(`Tem certeza que deseja desativar ${colaborador.nome}?`)) {
+        try {
+            await colaboradorService.atualizar(colaborador.registro, {
+                ...colaborador,
+                status: 'inativo'
+            });
+            carregarColaboradores();
+        } catch (error) {
+            alert('Erro ao desativar colaborador');
         }
-    };
+    }
+};
 
     if (loading) return <div className="text-center">Carregando...</div>;
     if (erro) return <div className="alert alert-danger">{erro}</div>
@@ -84,20 +91,22 @@ function ColaboradorLista({ onEditar }) {
                         {colaborador.status}
                       </span>
                     </td>
-                    <td className="text-center">
-                      <button 
-                        onClick={() => onEditar(colaborador)}
-                        className="btn btn-sm btn-warning me-2"
-                      >
-                        ✏️ Editar
-                      </button>
-                          <button 
-                   onClick={() => handleDeletar(colaborador.registro)}
-                    className="btn btn-sm btn-danger"
-                      >
-                      🗑️ Deletar
-                  </button>
-                </td>
+               <td className="text-center">
+            <button 
+              onClick={() => onEditar(colaborador)}
+              className="btn btn-sm btn-warning me-2"
+            >
+              ✏️ Editar
+            </button>
+            <button
+              onClick={() => handleDesativar(colaborador)}
+              className={`btn btn-sm ${colaborador.status === 'ativo' ? 'btn-danger' : 'btn-secondary'}`}
+              disabled={colaborador.status === 'inativo'}
+            >
+              🚫 Desativar
+            </button>
+            </td>
+                
           </tr>
                 ))
               )}
