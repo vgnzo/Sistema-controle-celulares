@@ -1,8 +1,8 @@
 package com.transpiratininga1.controlecelular.service;
 import com.transpiratininga1.controlecelular.exception.ColaboradorComEntregasException;
-
 import com.transpiratininga1.controlecelular.model.Colaborador;
 import com.transpiratininga1.controlecelular.repository.ColaboradorRepository;
+import com.transpiratininga1.controlecelular.repository.EntregaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -14,6 +14,10 @@ public class ColaboradorService {
     @Autowired
     private ColaboradorRepository colaboradorRepository;
     
+     @Autowired
+    private EntregaRepository entregaRepository;
+
+
     // Listar todos
     public List<Colaborador> listarTodos() {
         return colaboradorRepository.findAll();
@@ -76,6 +80,21 @@ public class ColaboradorService {
                     throw new IllegalArgumentException("Status inválido. Use: ativo ou inativo");
                 }
                 
+
+            // ✅ ADICIONE AQUI:
+            if (colaboradorAtualizado.getStatus().equalsIgnoreCase("inativo")) {
+                boolean temEntregaAtiva = entregaRepository
+                    .existsById_RegistroAndStatusAndAtivoTrue(registro, "ativo");
+                boolean temEntregaAtrasada = entregaRepository
+                    .existsById_RegistroAndStatusAndAtivoTrue(registro, "atrasado");
+
+                if (temEntregaAtiva || temEntregaAtrasada) {
+                    throw new RuntimeException("Não é possível inativar colaborador com entrega ativa ou atrasada. Devolva o celular primeiro!");
+                }
+            }
+
+
+
                 colaborador.setNome(colaboradorAtualizado.getNome());
                 colaborador.setCpf(colaboradorAtualizado.getCpf());
                 colaborador.setEmail(colaboradorAtualizado.getEmail());
