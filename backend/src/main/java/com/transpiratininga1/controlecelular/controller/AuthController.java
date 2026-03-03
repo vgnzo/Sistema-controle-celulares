@@ -20,18 +20,16 @@ public class AuthController {
     @Autowired
     private UsuarioService usuarioService;
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        // ✅ ATUALIZADO: busca do banco em vez de fixo
-        return usuarioService.validarLogin(loginRequest.getUsername(), loginRequest.getPassword())
-            .map(usuario -> {
-                // ✅ passa o tipo para o token
-                String token = jwtUtil.generateToken(usuario.getUsername(), usuario.getTipo());
-                LoginResponse response = new LoginResponse(token, usuario.getUsername(), usuario.getTipo());
-                return ResponseEntity.ok(response);
-            })
-            .orElse(ResponseEntity.status(401).body(null));
-    }
+   @PostMapping("/login")
+public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    return usuarioService.validarLogin(loginRequest.getUsername(), loginRequest.getPassword())
+        .map(usuario -> {
+            String token = jwtUtil.generateToken(usuario.getUsername(), usuario.getTipo());
+            LoginResponse response = new LoginResponse(token, usuario.getUsername(), usuario.getTipo());
+            return ResponseEntity.<Object>ok(response);
+        })
+        .orElse(ResponseEntity.status(401).body("Usuário ou senha inválidos"));
+}
 
     @GetMapping("/validate")
     public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String token) {

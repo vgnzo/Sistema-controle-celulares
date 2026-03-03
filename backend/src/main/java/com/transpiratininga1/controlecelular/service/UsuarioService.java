@@ -54,9 +54,16 @@ public class UsuarioService {
         usuarioRepository.deleteById(id);
     }
 
-    // Validar login
-    public Optional<Usuario> validarLogin(String username, String senha) {
-        return usuarioRepository.findByUsername(username)
-            .filter(u -> u.getSenha().equals(senha));
+ // Validar login
+public Optional<Usuario> validarLogin(String username, String senha) {
+    Optional<Usuario> usuario = usuarioRepository.findByUsername(username);
+    
+    // log temporário para debugar
+    System.out.println("Usuário encontrado: " + usuario.isPresent());
+    if (usuario.isPresent()) {
+        System.out.println("Senha no banco: [" + usuario.get().getSenha() + "]");
+        System.out.println("Senha recebida: [" + senha + "]");
     }
+    
+    return usuario.filter(u -> u.getSenha().equals(senha));
 }
