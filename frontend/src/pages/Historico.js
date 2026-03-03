@@ -138,10 +138,10 @@ const getBadgeSituacao = (entrega) => {
                   <th>Departamento</th>
                   <th>Status Colaborador</th>
                   <th>Status Celular</th>
-                  <th>Data Entrega</th>
+                  <th>Data de Entrega</th>
                   <th>Prev. Devolução</th>
-                  <th>Status Entrega</th> 
-                  <th>Situação Entrega</th>
+                  <th>Status da Entrega</th> 
+                  <th>Situação da Devolução</th>
                 </tr>
               </thead>
               <tbody>
