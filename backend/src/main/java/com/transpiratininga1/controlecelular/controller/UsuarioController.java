@@ -28,7 +28,7 @@ public class UsuarioController {
         try {
             Usuario novoUsuario = usuarioService.cadastrar(usuario);
             // não retorna a senha
-            novoUsuario.setPassword(null);
+            novoUsuario.setSenha(null);
             return ResponseEntity.status(HttpStatus.CREATED).body(novoUsuario);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

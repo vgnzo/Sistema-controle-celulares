@@ -20,7 +20,7 @@ public class Usuario {
     private String username;
 
     @Column(nullable = false)
-    private String password;
+    private String senha;
 
     @Column(nullable = false, length = 10)
     private String tipo = "USER"; // ADMIN ou USER

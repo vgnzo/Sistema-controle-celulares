@@ -36,8 +36,8 @@ public class UsuarioService {
         }
 
         // 🔐 Criptografa a senha corretamente
-        usuario.setPassword(
-            passwordEncoder.encode(usuario.getPassword())
+        usuario.setSenha(
+            passwordEncoder.encode(usuario.getSenha())
         );
 
         usuario.setTipo("USER");
@@ -74,7 +74,7 @@ public class UsuarioService {
         Optional<Usuario> usuario = usuarioRepository.findByUsername(username);
 
         if (usuario.isPresent()) {
-            if (passwordEncoder.matches(password, usuario.get().getPassword())) {
+            if (passwordEncoder.matches(password, usuario.get().getSenha())) {
                 return usuario;
             }
         }
