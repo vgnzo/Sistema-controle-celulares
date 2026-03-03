@@ -107,10 +107,13 @@ public ResponseEntity<Colaborador> atualizar(
 }
 
     //DELETE - deletar
-    @DeleteMapping("/{registro}")
-    public ResponseEntity<Void> deletar(@PathVariable String registro){
+  @DeleteMapping("/{registro}")
+public ResponseEntity<Void> deletar(@PathVariable String registro) {
+    try {
         colaboradorService.deletar(registro);
         return ResponseEntity.noContent().build();
+    } catch (RuntimeException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).build(); // 409
     }
-
+}
 }

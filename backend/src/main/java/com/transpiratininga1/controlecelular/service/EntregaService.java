@@ -26,7 +26,7 @@ public class EntregaService{
 }
 
 
-// Adicione após o listarTodas():
+
 public List<Entrega> listarHistorico(){
     return entregaRepository.findAll(); // retorna TODAS, ativas e deletadas
 }
