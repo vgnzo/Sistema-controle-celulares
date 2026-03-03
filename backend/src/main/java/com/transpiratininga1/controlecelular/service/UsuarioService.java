@@ -3,7 +3,9 @@ package com.transpiratininga1.controlecelular.service;
 import com.transpiratininga1.controlecelular.model.Usuario;
 import com.transpiratininga1.controlecelular.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -12,6 +14,9 @@ public class UsuarioService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     // Listar todos
     public List<Usuario> listarTodos() {
@@ -25,18 +30,25 @@ public class UsuarioService {
 
     // Cadastrar novo usuário
     public Usuario cadastrar(Usuario usuario) {
+
         if (usuarioRepository.existsByUsername(usuario.getUsername())) {
             throw new IllegalArgumentException("Username já cadastrado");
         }
+
+        // 🔐 Criptografa a senha
+        usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
+
         // todo novo usuário entra como USER
         usuario.setTipo("USER");
+
         return usuarioRepository.save(usuario);
     }
 
-    // Promover para ADMIN (só admin pode chamar isso)
+    // Promover para ADMIN
     public Usuario promoverParaAdmin(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
         usuario.setTipo("ADMIN");
         return usuarioRepository.save(usuario);
     }
@@ -45,6 +57,7 @@ public class UsuarioService {
     public Usuario rebaixarParaUser(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
         usuario.setTipo("USER");
         return usuarioRepository.save(usuario);
     }
@@ -54,18 +67,17 @@ public class UsuarioService {
         usuarioRepository.deleteById(id);
     }
 
- // Validar login
-public Optional<Usuario> validarLogin(String username, String senha) {
-    Optional<Usuario> usuario = usuarioRepository.findByUsername(username);
-    
-    // log temporário para debugar
-    System.out.println("Usuário encontrado: " + usuario.isPresent());
-    if (usuario.isPresent()) {
-        System.out.println("Senha no banco: [" + usuario.get().getSenha() + "]");
-        System.out.println("Senha recebida: [" + senha + "]");
-    }
-    
-    return usuario.filter(u -> u.getSenha().equals(senha));
-}
+    // 🔐 Validar login corretamente
+    public Optional<Usuario> validarLogin(String username, String senha) {
 
+        Optional<Usuario> usuario = usuarioRepository.findByUsername(username);
+
+        if (usuario.isPresent()) {
+            if (passwordEncoder.matches(senha, usuario.get().getSenha())) {
+                return usuario;
+            }
+        }
+
+        return Optional.empty();
+    }
 }
