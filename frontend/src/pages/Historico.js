@@ -81,7 +81,7 @@ const getBadgeSituacao = (entrega) => {
             <select className="form-select" value={filtroStatus} onChange={e => setFiltroStatus(e.target.value)}>
     <option value="todos">Todas</option>
     <option value="ativas">Apenas ativas</option>
-    <option value="deletadas">Apenas realizadas</option> // ✅ era "Apenas deletadas"
+    <option value="deletadas">Apenas realizadas</option> 
 </select>
             </div>
 
