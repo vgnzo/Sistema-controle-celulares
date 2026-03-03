@@ -11,6 +11,16 @@ const api = axios.create({
 });
 
 
+// ✅ ADICIONE ESTE INTERCEPTOR:
+api.interceptors.request.use((config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+});
+
+
 //celular 
 export const celularService = {
     listarTodos: () => api.get('/celulares'),
