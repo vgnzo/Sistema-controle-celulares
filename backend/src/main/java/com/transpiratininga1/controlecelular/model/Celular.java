@@ -60,11 +60,11 @@ private void validarStatus() {
     if (status != null) {
         status = status.toLowerCase().trim();
 
-        if (!status.matches("em estoque|entregue|manutencao|devolvido")) {
-            throw new IllegalArgumentException(
-                "Status inválido. Use: em estoque, entregue, manutencao ou devolvido"
-            );
-        }
+      if (!status.matches("em estoque|entregue|manutencao|devolvido|baixado")) {
+    throw new IllegalArgumentException(
+        "Status inválido. Use: em estoque, entregue, manutencao, devolvido ou baixado"
+    );
+}
     }
 }
 }
