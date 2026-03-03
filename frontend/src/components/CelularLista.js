@@ -30,19 +30,20 @@ function CelularLista( {onEditar}) {
     };
 
  // ✅ NOVO: troca status com um clique
-    const handleMudarStatus = async (celular, novoStatus) => {
-        if (window.confirm(`Alterar status de "${celular.modelo}" para "${novoStatus}"?`)) {
-            try {
-                await celularService.atualizar(celular.imei, {
-                    ...celular,
-                    status: novoStatus
-                });
-                carregarCelulares();
-            } catch (error) {
-                alert('Erro ao atualizar status');
-            }
+   const handleMudarStatus = async (celular, novoStatus) => {
+    if (window.confirm(`Alterar status de "${celular.modelo}" para "${novoStatus}"?`)) {
+        try {
+            await celularService.atualizar(celular.imei, {
+                ...celular,
+                status: novoStatus
+            });
+            carregarCelulares();
+        } catch (error) {
+            // ✅ mostra mensagem do backend
+            alert(error.response?.data?.mensagem || 'Erro ao atualizar status');
         }
-    };
+    }
+};
 
     if (loading) return <div>Carregando...</div>;
     if (erro) return <div style={{color: 'red'}}>{erro}</div>;

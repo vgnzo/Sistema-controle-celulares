@@ -28,7 +28,7 @@ function ColaboradorLista({ onEditar }) {
         }
     };
 
-    const handleDesativar = async (colaborador) => {
+   const handleDesativar = async (colaborador) => {
     if (colaborador.status === 'inativo') {
         alert('Colaborador já está inativo!');
         return;
@@ -41,11 +41,10 @@ function ColaboradorLista({ onEditar }) {
             });
             carregarColaboradores();
         } catch (error) {
-            alert('Erro ao desativar colaborador');
+            // ✅ mostra mensagem do backend
+            alert(error.response?.data?.mensagem || 'Erro ao desativar colaborador');
         }
     }
-
-    
 };
 
     const handleReativar = async (colaborador) => {
