@@ -91,21 +91,21 @@ function ColaboradorLista({ onEditar }) {
                         {colaborador.status}
                       </span>
                     </td>
-               <td className="text-center">
-            <button 
-              onClick={() => onEditar(colaborador)}
-              className="btn btn-sm btn-warning me-2"
-            >
-              ✏️ Editar
-            </button>
-            <button
-              onClick={() => handleDesativar(colaborador)}
-              className={`btn btn-sm ${colaborador.status === 'ativo' ? 'btn-danger' : 'btn-secondary'}`}
-              disabled={colaborador.status === 'inativo'}
-            >
-              🚫 Desativar
-            </button>
-            </td>
+                        <td className="text-center text-nowrap">
+                <button 
+                  onClick={() => onEditar(colaborador)}
+                  className="btn btn-sm btn-warning me-2"
+                >
+                  ✏️ Editar
+                </button>
+                <button
+                  onClick={() => handleDesativar(colaborador)}
+                  className={`btn btn-sm ${colaborador.status === 'ativo' ? 'btn-danger' : 'btn-secondary'}`}
+                  disabled={colaborador.status === 'inativo'}
+                >
+                  🚫 Desativar
+                </button>
+              </td>
                 
           </tr>
                 ))
