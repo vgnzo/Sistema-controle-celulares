@@ -82,7 +82,7 @@ function CelularLista( {onEditar}) {
                                             <span className={`badge ${
                                                 celular.status === 'em estoque' ? 'bg-success' :
                                                 celular.status === 'entregue' ? 'bg-primary' :
-                                                celular.status === 'manutenção' ? 'bg-warning text-dark' :
+                                                celular.status === 'manutencao' ? 'bg-warning text-dark' :
                                                 celular.status === 'baixado' ? 'bg-danger' :
                                                 'bg-secondary'
                                             }`}>
@@ -107,7 +107,7 @@ function CelularLista( {onEditar}) {
                                                 📦 Estoque
                                             </button>
                                             <button
-                                                onClick={() => handleMudarStatus(celular, 'manutenção')}
+                                                onClick={() => handleMudarStatus(celular, 'manutencao')}
                                                 className="btn btn-sm btn-warning me-2"
                                                 disabled={celular.status === 'manutenção'}
                                             >
