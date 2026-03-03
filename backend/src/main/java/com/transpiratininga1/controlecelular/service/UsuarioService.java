@@ -35,10 +35,11 @@ public class UsuarioService {
             throw new IllegalArgumentException("Username já cadastrado");
         }
 
-        // 🔐 Criptografa a senha
-        usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
+        // 🔐 Criptografa a senha corretamente
+        usuario.setPassword(
+            passwordEncoder.encode(usuario.getPassword())
+        );
 
-        // todo novo usuário entra como USER
         usuario.setTipo("USER");
 
         return usuarioRepository.save(usuario);
@@ -47,7 +48,7 @@ public class UsuarioService {
     // Promover para ADMIN
     public Usuario promoverParaAdmin(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
         usuario.setTipo("ADMIN");
         return usuarioRepository.save(usuario);
@@ -56,7 +57,7 @@ public class UsuarioService {
     // Rebaixar para USER
     public Usuario rebaixarParaUser(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
         usuario.setTipo("USER");
         return usuarioRepository.save(usuario);
@@ -68,12 +69,12 @@ public class UsuarioService {
     }
 
     // 🔐 Validar login corretamente
-    public Optional<Usuario> validarLogin(String username, String senha) {
+    public Optional<Usuario> validarLogin(String username, String password) {
 
         Optional<Usuario> usuario = usuarioRepository.findByUsername(username);
 
         if (usuario.isPresent()) {
-            if (passwordEncoder.matches(senha, usuario.get().getSenha())) {
+            if (passwordEncoder.matches(password, usuario.get().getPassword())) {
                 return usuario;
             }
         }
