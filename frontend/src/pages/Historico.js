@@ -128,18 +128,20 @@ function Historico() {
               </thead>
               <tbody>
                 {historicoFiltrado.map((entrega, index) => (
-                  <tr key={index} className={!entrega.ativo ? 'table-secondary' : ''}>
-                    <td><code>{entrega.id.imei}</code></td>
-                    <td>{entrega.colaborador?.nome || '-'}</td>
-                    <td>{entrega.colaborador?.departamento || '-'}</td>
-                      <span className={`badge ${entrega.colaborador?.status === 'ativo' ? 'bg-success' : 'bg-secondary'}`}>
-    {entrega.colaborador?.status || '-'}
-                    </span>
-                    <td>{formatarData(entrega.dataEntrega)}</td>
-                    <td>{formatarData(entrega.dataPrevistaDevolucao)}</td>
-                    <td><span className="badge bg-info text-dark">{entrega.status}</span></td>
-                    <td>{getBadge(entrega)}</td>
-                  </tr>
+                <tr key={index} className={`align-middle ${!entrega.ativo ? 'table-secondary' : ''}`}>
+  <td><code>{entrega.id.imei}</code></td>
+  <td>{entrega.colaborador?.nome || '-'}</td>
+  <td>{entrega.colaborador?.departamento || '-'}</td>
+  <td>  {/* ✅ <td> faltava aqui! */}
+    <span className={`badge ${entrega.colaborador?.status === 'ativo' ? 'bg-success' : 'bg-secondary'}`}>
+      {entrega.colaborador?.status || '-'}
+    </span>
+  </td>
+  <td>{formatarData(entrega.dataEntrega)}</td>
+  <td>{formatarData(entrega.dataPrevistaDevolucao)}</td>
+  <td><span className="badge bg-info text-dark">{entrega.status}</span></td>
+  <td>{getBadge(entrega)}</td>
+</tr>
                 ))}
               </tbody>
             </table>
