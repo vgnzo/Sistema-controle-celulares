@@ -1,8 +1,6 @@
 package com.transpiratininga1.controlecelular.controller;
 
-import com.transpiratininga1.controlecelular.dto.loginrequest;
-import com.transpiratininga1.controlecelular.dto.LoginResponse;
-import com.transpiratininga1.controlecelular.model.Usuario;
+import com.transpiratininga1.controlecelular.dto.LoginRequest;import com.transpiratininga1.controlecelular.dto.LoginResponse;
 import com.transpiratininga1.controlecelular.service.UsuarioService;
 import com.transpiratininga1.controlecelular.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +24,7 @@ public class AuthController {
     private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody loginrequest loginRequest) {
+   public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         System.out.println("=== LOGIN REQUEST ===");
         System.out.println("Username: " + loginRequest.getUsername());
         System.out.println("Password null? " + (loginRequest.getPassword() == null));
