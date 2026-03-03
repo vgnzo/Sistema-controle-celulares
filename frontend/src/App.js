@@ -64,7 +64,7 @@ function App() {
       <nav className="navbar navbar-dark bg-dark navbar-expand-lg">
         <div className="container-fluid">
           <span className="navbar-brand mb-0 h1">
-            📱 Sistema de Controle de Celulares
+            🏢 Sistema de Controle de Celulares
           </span>
           
           <ul className="navbar-nav d-flex flex-row gap-3">
