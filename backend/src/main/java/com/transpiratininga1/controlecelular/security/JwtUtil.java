@@ -13,12 +13,13 @@ import java.util.Date;
 public class JwtUtil {
 
     private final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private final long EXPIRATION_TIME = 86400000; // 24 horas em milissegundos
+    private final long EXPIRATION_TIME = 86400000; // 24 horas
 
-    // Gerar token
-    public String generateToken(String username) {
+    // ✅ ATUALIZADO: gera token com username e tipo
+    public String generateToken(String username, String tipo) {
         return Jwts.builder()
                 .setSubject(username)
+                .claim("tipo", tipo) // ✅ adiciona o tipo no token
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SECRET_KEY)
@@ -28,6 +29,10 @@ public class JwtUtil {
     // Extrair username do token
     public String extractUsername(String token) {
         return extractAllClaims(token).getSubject();
+    }
+
+    public String extractTipo(String token) {
+        return (String) extractAllClaims(token).get("tipo");
     }
 
     // Validar token

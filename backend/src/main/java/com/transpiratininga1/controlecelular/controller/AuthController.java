@@ -2,6 +2,8 @@ package com.transpiratininga1.controlecelular.controller;
 
 import com.transpiratininga1.controlecelular.dto.LoginRequest;
 import com.transpiratininga1.controlecelular.dto.LoginResponse;
+import com.transpiratininga1.controlecelular.model.Usuario;
+import com.transpiratininga1.controlecelular.service.UsuarioService;
 import com.transpiratininga1.controlecelular.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,39 +17,31 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private UsuarioService usuarioService;
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        // Usuário e senha fixos (hardcoded)
-        String USERNAME = "admin";
-        String PASSWORD = "admin123";
-
-        // Validar credenciais
-       // Múltiplos usuários
-if ((loginRequest.getUsername().equals("admin") && loginRequest.getPassword().equals("admin123")) ||
-    (loginRequest.getUsername().equals("Vini") && loginRequest.getPassword().equals("vini123")) ||
-    (loginRequest.getUsername().equals("Ivo") && loginRequest.getPassword().equals("ivo123"))) {
-            
-            // Gerar token
-            String token = jwtUtil.generateToken(loginRequest.getUsername());
-            
-            // Retornar resposta com token
-            LoginResponse response = new LoginResponse(token, loginRequest.getUsername(), "admin");
-            return ResponseEntity.ok(response);
-        }
-
-        // Credenciais inválidas
-        return ResponseEntity.status(401).body("Usuário ou senha inválidos");
+        // ✅ ATUALIZADO: busca do banco em vez de fixo
+        return usuarioService.validarLogin(loginRequest.getUsername(), loginRequest.getPassword())
+            .map(usuario -> {
+                // ✅ passa o tipo para o token
+                String token = jwtUtil.generateToken(usuario.getUsername(), usuario.getTipo());
+                LoginResponse response = new LoginResponse(token, usuario.getUsername(), usuario.getTipo());
+                return ResponseEntity.ok(response);
+            })
+            .orElse(ResponseEntity.status(401).body(null));
     }
 
     @GetMapping("/validate")
     public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String token) {
         try {
-            // Remove "Bearer " do início
             String jwtToken = token.replace("Bearer ", "");
             String username = jwtUtil.extractUsername(jwtToken);
-            
+
             if (jwtUtil.validateToken(jwtToken, username)) {
-                return ResponseEntity.ok("Token válido");
+                String tipo = jwtUtil.extractTipo(jwtToken);
+                return ResponseEntity.ok(new LoginResponse(jwtToken, username, tipo));
             }
             return ResponseEntity.status(401).body("Token inválido");
         } catch (Exception e) {
