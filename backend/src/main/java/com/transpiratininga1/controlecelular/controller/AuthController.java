@@ -21,6 +21,8 @@ public class AuthController {
     @Autowired
     private UsuarioService usuarioService;
 
+    @Autowired
+private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
 
 @PostMapping("/login")
@@ -46,6 +48,14 @@ public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
             return ResponseEntity.status(401).body("Token inválido");
         } catch (Exception e) {
             return ResponseEntity.status(401).body("Token inválido");
+        
+            
         }
+    
     }
+    // ⚠️ TEMPORÁRIO - remover depois
+@GetMapping("/hash/{senha}")
+public String gerarHash(@PathVariable String senha) {
+    return passwordEncoder.encode(senha);
+}
 }
