@@ -40,8 +40,7 @@ public class SecurityConfig {
                 // 👑 Apenas ADMIN pode mexer em usuários
                 .requestMatchers("/api/usuarios/**").hasAuthority("ADMIN")
 
-                .anyRequest().authenticated()
-            )
+    .anyRequest().permitAll()             )
 
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
