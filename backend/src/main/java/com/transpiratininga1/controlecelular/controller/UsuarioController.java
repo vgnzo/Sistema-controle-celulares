@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -16,18 +18,22 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    // GET - listar todos (só admin)
     @GetMapping
     public ResponseEntity<List<Usuario>> listarTodos() {
         return ResponseEntity.ok(usuarioService.listarTodos());
     }
 
-    // POST - cadastrar novo usuário (público)
     @PostMapping("/register")
-    public ResponseEntity<?> cadastrar(@RequestBody Usuario usuario) {
+    public ResponseEntity<?> cadastrar(@RequestBody Map<String, String> body) {
         try {
-            Usuario novoUsuario = usuarioService.cadastrar(usuario);
-            // não retorna a senha
+            String username = body.get("username");
+            String senha = body.get("senha");
+
+            if (username == null || senha == null) {
+                return ResponseEntity.badRequest().body("username e senha são obrigatórios");
+            }
+
+            Usuario novoUsuario = usuarioService.cadastrar(username, senha);
             novoUsuario.setSenha(null);
             return ResponseEntity.status(HttpStatus.CREATED).body(novoUsuario);
         } catch (IllegalArgumentException e) {
@@ -35,7 +41,6 @@ public class UsuarioController {
         }
     }
 
-    // PUT - promover para ADMIN
     @PutMapping("/{id}/promover")
     public ResponseEntity<?> promover(@PathVariable Long id) {
         try {
@@ -45,7 +50,6 @@ public class UsuarioController {
         }
     }
 
-    // PUT - rebaixar para USER
     @PutMapping("/{id}/rebaixar")
     public ResponseEntity<?> rebaixar(@PathVariable Long id) {
         try {
@@ -55,7 +59,6 @@ public class UsuarioController {
         }
     }
 
-    // DELETE - deletar usuário
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         usuarioService.deletar(id);

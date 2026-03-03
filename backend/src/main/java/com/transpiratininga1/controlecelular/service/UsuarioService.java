@@ -26,14 +26,14 @@ public class UsuarioService {
         return usuarioRepository.findByUsername(username);
     }
 
-    public Usuario cadastrar(Usuario usuario) {
-        if (usuarioRepository.existsByUsername(usuario.getUsername())) {
+    public Usuario cadastrar(String username, String senha) {
+        if (usuarioRepository.existsByUsername(username)) {
             throw new IllegalArgumentException("Username já cadastrado");
         }
-
-        usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
+        Usuario usuario = new Usuario();
+        usuario.setUsername(username);
+        usuario.setSenha(passwordEncoder.encode(senha));
         usuario.setTipo("USER");
-
         return usuarioRepository.save(usuario);
     }
 
@@ -55,44 +55,17 @@ public class UsuarioService {
         usuarioRepository.deleteById(id);
     }
 
-    // 🔐 Validar login com debug detalhado
     public Optional<Usuario> validarLogin(String username, String password) {
-
         System.out.println("=== DEBUG LOGIN ===");
-        System.out.println("Username recebido: [" + username + "]");
-        System.out.println("Senha recebida length: " + (password != null ? password.length() : "null"));
+        System.out.println("Username: " + username);
 
         Optional<Usuario> usuario = usuarioRepository.findByUsername(username);
-
-        System.out.println("Usuário encontrado no banco: " + usuario.isPresent());
+        System.out.println("Encontrado: " + usuario.isPresent());
 
         if (usuario.isPresent()) {
-            String hashNoBanco = usuario.get().getSenha();
-            System.out.println("Hash no banco length: " + (hashNoBanco != null ? hashNoBanco.length() : "null"));
-            System.out.println("Hash começa com $2: " + (hashNoBanco != null && hashNoBanco.startsWith("$2")));
-            System.out.println("Hash (primeiros 20): " + (hashNoBanco != null ? hashNoBanco.substring(0, Math.min(20, hashNoBanco.length())) : "null"));
-
-            // ✅ DIAGNÓSTICO: verifica se o hash parece válido
-            if (hashNoBanco == null || hashNoBanco.length() < 59) {
-                System.out.println("❌ ERRO: Hash inválido no banco! Comprimento: " + (hashNoBanco != null ? hashNoBanco.length() : 0));
-                return Optional.empty();
-            }
-
-            if (!hashNoBanco.startsWith("$2a$") && !hashNoBanco.startsWith("$2b$") && !hashNoBanco.startsWith("$2y$")) {
-                System.out.println("❌ ERRO: Senha no banco NÃO é BCrypt! Pode estar em texto puro.");
-                System.out.println("👉 SOLUÇÃO: Recadastre o usuário via /api/usuarios/register ou use /api/auth/hash/{senha} para gerar o hash e atualizar no banco.");
-                return Optional.empty();
-            }
-
-            boolean match = passwordEncoder.matches(password, hashNoBanco);
-            System.out.println("passwordEncoder.matches() resultado: " + match);
-
-            if (match) {
-                System.out.println("✅ Login bem-sucedido para: " + username);
-                return usuario;
-            } else {
-                System.out.println("❌ Senha não confere para: " + username);
-            }
+            boolean match = passwordEncoder.matches(password, usuario.get().getSenha());
+            System.out.println("Senha confere: " + match);
+            if (match) return usuario;
         }
 
         return Optional.empty();

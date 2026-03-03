@@ -1,12 +1,15 @@
 package com.transpiratininga1.controlecelular.controller;
 
-import com.transpiratininga1.controlecelular.dto.LoginRequest;
+import com.transpiratininga1.controlecelular.dto.loginrequest;
 import com.transpiratininga1.controlecelular.dto.LoginResponse;
+import com.transpiratininga1.controlecelular.model.Usuario;
 import com.transpiratininga1.controlecelular.service.UsuarioService;
 import com.transpiratininga1.controlecelular.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -20,25 +23,27 @@ public class AuthController {
     private UsuarioService usuarioService;
 
     @Autowired
-private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody loginrequest loginRequest) {
+        System.out.println("=== LOGIN REQUEST ===");
+        System.out.println("Username: " + loginRequest.getUsername());
+        System.out.println("Password null? " + (loginRequest.getPassword() == null));
 
-@PostMapping("/login")
-public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-    return usuarioService.validarLogin(loginRequest.getUsername(), loginRequest.getPassword())
-        .map(usuario -> {
-            String token = jwtUtil.generateToken(usuario.getUsername(), usuario.getTipo());
-            return ResponseEntity.<Object>ok(new LoginResponse(token, usuario.getUsername(), usuario.getTipo()));
-        })
-        .orElse(ResponseEntity.status(401).body("Usuário ou senha inválidos"));
-}
+        return usuarioService.validarLogin(loginRequest.getUsername(), loginRequest.getPassword())
+                .map(usuario -> {
+                    String token = jwtUtil.generateToken(usuario.getUsername(), usuario.getTipo());
+                    return ResponseEntity.<Object>ok(new LoginResponse(token, usuario.getUsername(), usuario.getTipo()));
+                })
+                .orElse(ResponseEntity.status(401).body("Usuário ou senha inválidos"));
+    }
 
     @GetMapping("/validate")
     public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String token) {
         try {
             String jwtToken = token.replace("Bearer ", "");
             String username = jwtUtil.extractUsername(jwtToken);
-
             if (jwtUtil.validateToken(jwtToken, username)) {
                 String tipo = jwtUtil.extractTipo(jwtToken);
                 return ResponseEntity.ok(new LoginResponse(jwtToken, username, tipo));
@@ -46,14 +51,12 @@ public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
             return ResponseEntity.status(401).body("Token inválido");
         } catch (Exception e) {
             return ResponseEntity.status(401).body("Token inválido");
-        
-            
         }
-    
     }
+
     // ⚠️ TEMPORÁRIO - remover depois
-@GetMapping("/hash/{senha}")
-public String gerarHash(@PathVariable String senha) {
-    return passwordEncoder.encode(senha);
-}
+    @GetMapping("/hash/{senha}")
+    public String gerarHash(@PathVariable String senha) {
+        return passwordEncoder.encode(senha);
+    }
 }
