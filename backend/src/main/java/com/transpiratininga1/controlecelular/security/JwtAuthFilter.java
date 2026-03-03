@@ -37,26 +37,32 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         String token = authHeader.substring(7);
-        String username = jwtUtil.extractUsername(token);
-        String tipo = jwtUtil.extractTipo(token);
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        try {
+            String username = jwtUtil.extractUsername(token);
+            String tipo = jwtUtil.extractTipo(token);
 
-            SimpleGrantedAuthority authority =
-                    new SimpleGrantedAuthority("ROLE_" + tipo);
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            UsernamePasswordAuthenticationToken authToken =
-                    new UsernamePasswordAuthenticationToken(
-                            username,
-                            null,
-                            Collections.singletonList(authority)
-                    );
+                // ✅ CORRIGIDO: sem prefixo "ROLE_" para bater com hasAuthority("ADMIN")
+                SimpleGrantedAuthority authority = new SimpleGrantedAuthority(tipo);
 
-            authToken.setDetails(
-                    new WebAuthenticationDetailsSource().buildDetails(request)
-            );
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(
+                                username,
+                                null,
+                                Collections.singletonList(authority)
+                        );
 
-            SecurityContextHolder.getContext().setAuthentication(authToken);
+                authToken.setDetails(
+                        new WebAuthenticationDetailsSource().buildDetails(request)
+                );
+
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
+        } catch (Exception e) {
+            // Token inválido/expirado — deixa passar sem autenticação
+            // O SecurityConfig vai rejeitar se a rota precisar de auth
         }
 
         filterChain.doFilter(request, response);

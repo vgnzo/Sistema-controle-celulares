@@ -4,25 +4,36 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 
 @Component
 public class JwtUtil {
 
-    private final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    // ✅ CORRIGIDO: chave fixa via variável de ambiente (não regenera a cada restart)
+    // No Render, adicione a env var: JWT_SECRET=sua_chave_secreta_longa_aqui_minimo_32_chars
+    @Value("${jwt.secret:minha-chave-secreta-padrao-super-longa-aqui-2024}")
+    private String secretString;
+
     private final long EXPIRATION_TIME = 86400000; // 24 horas
 
-    // ✅ ATUALIZADO: gera token com username e tipo
+    private Key getSecretKey() {
+        byte[] keyBytes = Base64.getEncoder().encode(secretString.getBytes());
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    // Gera token com username e tipo
     public String generateToken(String username, String tipo) {
         return Jwts.builder()
                 .setSubject(username)
-                .claim("tipo", tipo) // ✅ adiciona o tipo no token
+                .claim("tipo", tipo)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(SECRET_KEY)
+                .signWith(getSecretKey())
                 .compact();
     }
 
@@ -41,15 +52,13 @@ public class JwtUtil {
         return (extractedUsername.equals(username) && !isTokenExpired(token));
     }
 
-    // Verificar se token expirou
     private boolean isTokenExpired(String token) {
         return extractAllClaims(token).getExpiration().before(new Date());
     }
 
-    // Extrair todas as claims
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(SECRET_KEY)
+                .setSigningKey(getSecretKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
