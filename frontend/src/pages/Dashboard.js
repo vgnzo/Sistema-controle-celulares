@@ -39,7 +39,6 @@ function Dashboard() {
   const emEstoque = celulares.filter(c => c.status === 'em estoque').length;
   const entregues = celulares.filter(c => c.status === 'entregue').length;
   const emManutencao = celulares.filter(c => c.status === 'manutencao').length;
-  const baixados = celulares.filter(c => c.status === 'baixado').length;
 
   const totalColaboradores = colaboradores.length;
   const colaboradoresAtivos = colaboradores.filter(c => c.status === 'ativo').length;
