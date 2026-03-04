@@ -117,17 +117,6 @@ function App() {
               </li>
             )}
 
-            {tipo === 'ADMIN' && (
-              <li className="nav-item">
-                <button
-                  className={`nav-link btn btn-link ${paginaAtual === 'usuarios' ? 'active text-white' : 'text-secondary'}`}
-                  onClick={() => setPaginaAtual('usuarios')}
-                >
-                  👑 Usuários
-                </button>
-              </li>
-            )}
-
             <li className="nav-item">
               <button
                 className={`nav-link btn btn-link ${paginaAtual === 'entregas' ? 'active text-white' : 'text-secondary'}`}
@@ -145,6 +134,17 @@ function App() {
                 🕐 Histórico
               </button>
             </li>
+
+              {tipo === 'ADMIN' && (
+              <li className="nav-item">
+                <button
+                  className={`nav-link btn btn-link ${paginaAtual === 'usuarios' ? 'active text-white' : 'text-secondary'}`}
+                  onClick={() => setPaginaAtual('usuarios')}
+                >
+                  👑 Usuários
+                </button>
+              </li>
+            )}
 
           </ul>
 
