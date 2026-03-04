@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 
 @Entity 
-@Table (name = "Colaborador")
+@Table(name = "Colaborador")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,11 +17,11 @@ public class Colaborador {
     @Column(name = "registro", length = 20)
     private String registro;
 
-    @NotBlank(message = "registro")
+    @NotBlank(message = "Nome é obrigatório")
     @Column(name = "nome", nullable = false, length = 100)
     private String nome;
 
-       @NotBlank(message = "CPF é obrigatório")
+    @NotBlank(message = "CPF é obrigatório")
     @Pattern(regexp = "\\d{11}", message = "CPF deve ter 11 dígitos")
     @Column(name = "cpf", nullable = false, unique = true, length = 11)
     private String cpf;
@@ -30,25 +30,20 @@ public class Colaborador {
     @Column(name = "email", length = 100)
     private String email;
     
-    
-    @NotBlank(message = "Departamento é obrigatório")
-    @Column(name = "departamento", nullable = false, length = 50)
+    @Column(name = "departamento", length = 50)
     private String departamento;
     
-    @NotBlank(message = "Cargo é obrigatório")
-    @Column(name = "cargo", nullable = false, length = 50)
+    @Column(name = "cargo", length = 50)
     private String cargo;
 
     @Column(name = "data_admissao")
     private LocalDate dataAdmissao;
 
-    @NotBlank (message = "Status Obrigatório")
+    @NotBlank(message = "Status obrigatório")
     @Pattern(regexp = "ativo|inativo", message = "Status deve ser: ativo ou inativo")
     @Column(name = "status", nullable = false, length = 20)
     private String status;
 
     @Column(name = "telefone_contato", length = 20)
     private String telefoneContato;
-
-
 }
