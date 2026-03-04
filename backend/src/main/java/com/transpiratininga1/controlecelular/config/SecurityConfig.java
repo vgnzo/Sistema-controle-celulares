@@ -35,12 +35,33 @@ public class SecurityConfig {
             .formLogin(form -> form.disable())
 
             .authorizeHttpRequests(auth -> auth
-                // ✅ Libera preflight OPTIONS para qualquer rota
+                // Libera preflight OPTIONS
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                // Auth público
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/usuarios/register").permitAll()
+
+                // Só ADMIN pode escrever em entregas
+                .requestMatchers(HttpMethod.POST, "/api/entregas/**").hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/entregas/**").hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/entregas/**").hasAuthority("ADMIN")
+
+                // Só ADMIN pode escrever em celulares
+                .requestMatchers(HttpMethod.POST, "/api/celulares/**").hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/celulares/**").hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/celulares/**").hasAuthority("ADMIN")
+
+                // Só ADMIN pode escrever em colaboradores
+                .requestMatchers(HttpMethod.POST, "/api/colaboradores/**").hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/colaboradores/**").hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/colaboradores/**").hasAuthority("ADMIN")
+
+                // Só ADMIN pode gerenciar usuários
                 .requestMatchers("/api/usuarios/**").hasAuthority("ADMIN")
-                .anyRequest().permitAll()
+
+                // GET livre para todos autenticados
+                .anyRequest().authenticated()
             )
 
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
