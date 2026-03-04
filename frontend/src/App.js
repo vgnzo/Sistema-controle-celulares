@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
 import Celulares from './pages/Celulares';
 import Colaboradores from './pages/Colaboradores';
 import Entregas from './pages/Entregas';
 import Historico from './pages/Historico';
-import GerenciarUsuarios from './pages/GerenciarUsuarios'; // 👑 NOVO
+import GerenciarUsuarios from './pages/GerenciarUsuarios';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
 
-  const [paginaAtual, setPaginaAtual] = useState('celulares');
+  const [paginaAtual, setPaginaAtual] = useState('dashboard');
   const [logado, setLogado] = useState(false);
   const [username, setUsername] = useState('');
   const [tipo, setTipo] = useState('');
 
-  // 🔄 Verifica login ao carregar
   useEffect(() => {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('username');
@@ -31,7 +31,6 @@ function App() {
   const handleLogin = () => {
     const user = localStorage.getItem('username');
     const tipoStorage = localStorage.getItem('tipo');
-
     setLogado(true);
     setUsername(user);
     setTipo(tipoStorage);
@@ -42,13 +41,14 @@ function App() {
     localStorage.removeItem('username');
     localStorage.removeItem('tipo');
     setLogado(false);
-    setPaginaAtual('celulares');
+    setPaginaAtual('dashboard');
   };
 
-  // 🔀 Controle de páginas
   const renderizarPagina = () => {
-
     switch (paginaAtual) {
+
+      case 'dashboard':
+        return <Dashboard />;
 
       case 'celulares':
         return <Celulares tipo={tipo} />;
@@ -68,7 +68,7 @@ function App() {
         return <Historico />;
 
       default:
-        return <Celulares tipo={tipo} />;
+        return <Dashboard />;
     }
   };
 
@@ -88,7 +88,15 @@ function App() {
 
           <ul className="navbar-nav d-flex flex-row gap-3">
 
-            {/* 📱 Celulares */}
+            <li className="nav-item">
+              <button
+                className={`nav-link btn btn-link ${paginaAtual === 'dashboard' ? 'active text-white' : 'text-secondary'}`}
+                onClick={() => setPaginaAtual('dashboard')}
+              >
+                📊 Dashboard
+              </button>
+            </li>
+
             <li className="nav-item">
               <button
                 className={`nav-link btn btn-link ${paginaAtual === 'celulares' ? 'active text-white' : 'text-secondary'}`}
@@ -98,7 +106,6 @@ function App() {
               </button>
             </li>
 
-            {/* 👥 Colaboradores - só ADMIN */}
             {tipo === 'ADMIN' && (
               <li className="nav-item">
                 <button
@@ -110,7 +117,6 @@ function App() {
               </li>
             )}
 
-            {/* 👑 Gerenciar Usuários - só ADMIN */}
             {tipo === 'ADMIN' && (
               <li className="nav-item">
                 <button
@@ -122,7 +128,6 @@ function App() {
               </li>
             )}
 
-            {/* 📦 Entregas */}
             <li className="nav-item">
               <button
                 className={`nav-link btn btn-link ${paginaAtual === 'entregas' ? 'active text-white' : 'text-secondary'}`}
@@ -132,7 +137,6 @@ function App() {
               </button>
             </li>
 
-            {/* 🕐 Histórico */}
             <li className="nav-item">
               <button
                 className={`nav-link btn btn-link ${paginaAtual === 'historico' ? 'active text-white' : 'text-secondary'}`}
@@ -144,12 +148,10 @@ function App() {
 
           </ul>
 
-          {/* 👤 Usuário logado */}
           <div className="d-flex align-items-center">
             <span className="text-white me-3">
               👤 {username} ({tipo})
             </span>
-
             <button
               className="btn btn-outline-light btn-sm"
               onClick={handleLogout}
