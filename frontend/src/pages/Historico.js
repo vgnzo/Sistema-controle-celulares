@@ -8,6 +8,8 @@ function Historico() {
   const [filtroStatus, setFiltroStatus] = useState('todos');
   const [busca, setBusca] = useState('');
   const [tipoBusca, setTipoBusca] = useState('todos');
+  const [paginaAtual, setPaginaAtual] = useState(1);
+  const itensPorPagina = 10;
 
   const carregarHistorico = async () => {
     try {
@@ -38,6 +40,19 @@ function Historico() {
     return true;
   });
 
+  const totalPaginas = Math.ceil(historicoFiltrado.length / itensPorPagina);
+  const inicio = (paginaAtual - 1) * itensPorPagina;
+  const itensPagina = historicoFiltrado.slice(inicio, inicio + itensPorPagina);
+
+  const mudarPagina = (pagina) => {
+    if (pagina < 1 || pagina > totalPaginas) return;
+    setPaginaAtual(pagina);
+  };
+
+  useEffect(() => {
+    setPaginaAtual(1);
+  }, [filtroStatus, busca, tipoBusca]);
+
   const formatarData = (data) => {
     if (!data) return '-';
     return new Date(data).toLocaleDateString('pt-BR');
@@ -64,7 +79,6 @@ function Historico() {
     return <span className={`badge ${cor}`}>{status || '-'}</span>;
   };
 
-  // Exportar CSV
   const exportarCSV = () => {
     if (historicoFiltrado.length === 0) {
       toast.warning('Nenhum dado para exportar!');
@@ -72,15 +86,8 @@ function Historico() {
     }
 
     const cabecalho = [
-      'IMEI',
-      'Colaborador',
-      'Departamento',
-      'Status Colaborador',
-      'Status Celular',
-      'Data Entrega',
-      'Prev. Devolução',
-      'Status Entrega',
-      'Situação'
+      'IMEI', 'Colaborador', 'Departamento', 'Status Colaborador',
+      'Status Celular', 'Data Entrega', 'Prev. Devolução', 'Status Entrega', 'Situação'
     ];
 
     const linhas = historicoFiltrado.map(entrega => [
@@ -114,11 +121,9 @@ function Historico() {
     <div>
       <h2 className="mb-4">🕐 Histórico de Entregas</h2>
 
-      {/* Filtros */}
       <div className="card mb-4">
         <div className="card-body">
           <div className="row g-3 align-items-end">
-
             <div className="col-md-3">
               <label className="form-label">Situação</label>
               <select className="form-select" value={filtroStatus} onChange={e => setFiltroStatus(e.target.value)}>
@@ -127,7 +132,6 @@ function Historico() {
                 <option value="deletadas">Apenas realizadas</option>
               </select>
             </div>
-
             <div className="col-md-3">
               <label className="form-label">Buscar por</label>
               <select className="form-select" value={tipoBusca} onChange={e => { setTipoBusca(e.target.value); setBusca(''); }}>
@@ -136,7 +140,6 @@ function Historico() {
                 <option value="colaborador">Colaborador</option>
               </select>
             </div>
-
             {tipoBusca !== 'todos' && (
               <div className="col-md-4">
                 <label className="form-label">{tipoBusca === 'imei' ? 'IMEI' : 'Nome do Colaborador'}</label>
@@ -149,12 +152,10 @@ function Historico() {
                 />
               </div>
             )}
-
           </div>
         </div>
       </div>
 
-      {/* Tabela */}
       <div className="card">
         <div className="card-header d-flex justify-content-between align-items-center">
           <span>Total: {historicoFiltrado.length} registros</span>
@@ -193,7 +194,7 @@ function Historico() {
                 </tr>
               </thead>
               <tbody>
-                {historicoFiltrado.map((entrega, index) => (
+                {itensPagina.map((entrega, index) => (
                   <tr key={index} className={`align-middle ${!entrega.ativo ? 'table-secondary' : ''}`}>
                     <td className="text-center"><code>{entrega.id.imei}</code></td>
                     <td className="text-center">{entrega.colaborador?.nome || '-'}</td>
@@ -214,6 +215,25 @@ function Historico() {
             </table>
           )}
         </div>
+
+        {totalPaginas > 1 && (
+          <div className="card-footer d-flex justify-content-between align-items-center">
+            <small className="text-muted">Página {paginaAtual} de {totalPaginas}</small>
+            <ul className="pagination pagination-sm mb-0">
+              <li className={`page-item ${paginaAtual === 1 ? 'disabled' : ''}`}>
+                <button className="page-link" onClick={() => mudarPagina(paginaAtual - 1)}>Anterior</button>
+              </li>
+              {Array.from({ length: totalPaginas }, (_, i) => i + 1).map(pagina => (
+                <li key={pagina} className={`page-item ${paginaAtual === pagina ? 'active' : ''}`}>
+                  <button className="page-link" onClick={() => mudarPagina(pagina)}>{pagina}</button>
+                </li>
+              ))}
+              <li className={`page-item ${paginaAtual === totalPaginas ? 'disabled' : ''}`}>
+                <button className="page-link" onClick={() => mudarPagina(paginaAtual + 1)}>Próximo</button>
+              </li>
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -6,9 +6,15 @@ function Dashboard() {
   const [colaboradores, setColaboradores] = useState([]);
   const [entregas, setEntregas] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [agora, setAgora] = useState(new Date());
+
+  const username = localStorage.getItem('username');
+  const tipo = localStorage.getItem('tipo');
 
   useEffect(() => {
     carregarDados();
+    const intervalo = setInterval(() => setAgora(new Date()), 1000);
+    return () => clearInterval(intervalo);
   }, []);
 
   const carregarDados = async () => {
@@ -26,6 +32,13 @@ function Dashboard() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const getSaudacao = () => {
+    const hora = agora.getHours();
+    if (hora < 12) return 'Bom dia';
+    if (hora < 18) return 'Boa tarde';
+    return 'Boa noite';
   };
 
   if (loading) return (
@@ -51,7 +64,30 @@ function Dashboard() {
 
   return (
     <div>
-      <h2 className="mb-4">📊 Dashboard</h2>
+
+      {/* Saudação e data/hora */}
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 className="mb-0">📊 Dashboard</h2>
+          <p className="text-muted mb-0">
+            {getSaudacao()}, <strong>{username}</strong>! 👋
+            {tipo === 'ADMIN' && <span className="badge bg-danger ms-2">ADMIN</span>}
+          </p>
+        </div>
+        <div className="text-end">
+          <p className="mb-0 fw-bold">
+            {agora.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' })}
+          </p>
+          <p className="text-muted mb-0">{agora.toLocaleTimeString('pt-BR')}</p>
+        </div>
+      </div>
+
+      {/* Alerta entregas atrasadas */}
+      {entregasAtrasadas > 0 && (
+        <div className="alert alert-danger">
+          ⚠️ Você tem <strong>{entregasAtrasadas}</strong> entrega(s) em atraso! Verifique a aba de Entregas.
+        </div>
+      )}
 
       {/* Cards celulares */}
       <h5 className="text-muted mb-3">📱 Celulares</h5>
@@ -156,12 +192,6 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* Alerta entregas atrasadas */}
-      {entregasAtrasadas > 0 && (
-        <div className="alert alert-danger mt-2">
-          ⚠️ Você tem <strong>{entregasAtrasadas}</strong> entrega(s) em atraso! Verifique a aba de Entregas.
-        </div>
-      )}
     </div>
   );
 }
