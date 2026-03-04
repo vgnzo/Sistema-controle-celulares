@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { entregaService } from '../services/api';
 
-function EntregaLista({ onEditar }){
+function EntregaLista({ onEditar, tipo }){
     const [entregas, setEntregas] = useState([]);
     const [loading, setLoading] = useState(true);
     const [erro, setErro] = useState(null);
@@ -23,7 +23,6 @@ function EntregaLista({ onEditar }){
         }
     };
 
-    // muda status com um clique
     const handleMudarStatus = async (entrega, novoStatus) => {
         if (window.confirm(`Alterar status para "${novoStatus}"?`)) {
             try {
@@ -46,33 +45,33 @@ function EntregaLista({ onEditar }){
             <div className="card-header">
                 <h5 className="mb-0">📦 Lista de Entregas</h5>
             </div>
-            <div className="card-body">
-                <div className="table-responsive">
-                    <table className="table table-striped table-hover">
-                        <thead className="table-dark">
-                            <tr>
-                                <th>IMEI</th>
-                                <th>Modelo</th>
-                                <th>Colaborador</th>
-                                <th>Data Entrega</th>
-                                <th>Previsão Devolução</th>
-                                <th>Status</th>
-                                <th className="text-center">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {entregas.length === 0 ? (
-                                <tr>
-                                    <td colSpan="7" className="text-center text-muted">
-                                        Nenhuma entrega cadastrada
-                                    </td>
-                                </tr>
+          <div className="card-body">
+            <div className="table-responsive">
+                <table className="table table-striped table-hover">
+                   <thead className="table-dark">
+                          <tr>
+                             <th>IMEI</th>
+                              <th>Modelo</th>
+                               <th>Colaborador</th>
+                               <th>Data Entrega</th>
+                              <th>Previsão Devolução</th>
+                               <th>Status</th>
+                               {tipo === 'ADMIN' && <th className="text-center">Ações</th>}
+                           </tr>
+                       </thead>
+                       <tbody>
+                           {entregas.length === 0 ? (
+                         <tr>
+                               <td colSpan={tipo === 'ADMIN' ? 7 : 6} className="text-center text-muted">
+                                Nenhuma entrega cadastrada
+                             </td>
+                         </tr>
                             ) : (
                                 entregas.map((entrega) => (
-                                    <tr key={`${entrega.id.imei}-${entrega.id.registro}`}>
-                                        <td>{entrega.celular?.imei || entrega.id.imei}</td>
-                                        <td>{entrega.celular?.modelo || '-'}</td>
-                                        <td>{entrega.colaborador?.nome || '-'}</td>
+                                   <tr key={`${entrega.id.imei}-${entrega.id.registro}`}>
+                                     <td>{entrega.celular?.imei || entrega.id.imei}</td>
+                                       <td>{entrega.celular?.modelo || '-'}</td>
+                                  <td>{entrega.colaborador?.nome || '-'}</td>
                                         <td>{new Date(entrega.dataEntrega).toLocaleDateString('pt-BR')}</td>
                                         <td>{new Date(entrega.dataPrevistaDevolucao).toLocaleDateString('pt-BR')}</td>
                                         <td>
@@ -80,45 +79,47 @@ function EntregaLista({ onEditar }){
                                                 entrega.status === 'ativo' ? 'bg-success' :
                                                 entrega.status === 'devolvido' ? 'bg-secondary' :
                                                 'bg-danger'
-                                            }`}>
-                                                {entrega.status}
-                                            </span>
-                                        </td>
-                                        <td className="text-center text-nowrap">
+                                           }`}>
+                                            {entrega.status}
+                                         </span>
+                                       </td>
+                                       {tipo === 'ADMIN' && (
+                                         <td className="text-center text-nowrap">
+                                           <button
+                                       onClick={() => onEditar(entrega)}
+                                                    className="btn btn-sm btn-warning me-1"
+                                                >
+                                                    ✏️ Editar
+                                                </button>
+                                                <button
+                                                    onClick={() => handleMudarStatus(entrega, 'ativo')}
+                                                    className="btn btn-sm btn-success me-1"
+                                                    disabled={entrega.status === 'ativo'}
+                                                >
+                                                    ✅ Ativo
+                                               </button>
                                             <button
-                                                onClick={() => onEditar(entrega)}
-                                                className="btn btn-sm btn-warning me-1"
-                                            >
-                                                ✏️ Editar
-                                            </button>
-                                            <button
-                                                onClick={() => handleMudarStatus(entrega, 'ativo')}
-                                                className="btn btn-sm btn-success me-1"
-                                                disabled={entrega.status === 'ativo'}
-                                            >
-                                                ✅ Ativo
-                                            </button>
-                                            <button
-                                                onClick={() => handleMudarStatus(entrega, 'devolvido')}
-                                                className="btn btn-sm btn-secondary me-1"
-                                                disabled={entrega.status === 'devolvido'}
-                                            >
+                                            onClick={() => handleMudarStatus(entrega, 'devolvido')}
+                                             className="btn btn-sm btn-secondary me-1"
+                                                 disabled={entrega.status === 'devolvido'}
+                                               >
                                                 ↩️ Devolvido
-                                            </button>
-                                            <button
-                                                onClick={() => handleMudarStatus(entrega, 'atrasado')}
-                                                className="btn btn-sm btn-danger"
-                                                disabled={entrega.status === 'atrasado'}
-                                            >
-                                                ⚠️ Atrasado
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))
+                                              </button>
+                                         <button
+                                             onClick={() => handleMudarStatus(entrega, 'atrasado')}
+                                             className="btn btn-sm btn-danger"
+                                             disabled={entrega.status === 'atrasado'}
+                                             >
+                                               ⚠️ Atrasado
+                                               </button>
+                                     </td>
+                                        )}
+                               </tr>
+                             ))
                             )}
-                        </tbody>
+                    </tbody>
                     </table>
-                </div>
+        </div>
             </div>
         </div>
     );
