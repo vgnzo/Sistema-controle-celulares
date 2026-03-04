@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import api from '../services/api';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Login({ onLogin }) {
   const [tela, setTela] = useState('login'); // 'login' ou 'cadastro'
@@ -234,6 +235,8 @@ function Login({ onLogin }) {
           </div>
         </div>
       </div>
+
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 }
