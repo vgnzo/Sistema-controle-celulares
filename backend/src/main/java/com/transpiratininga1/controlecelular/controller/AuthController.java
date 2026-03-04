@@ -52,9 +52,5 @@ public class AuthController {
         }
     }
 
-    // ⚠️ TEMPORÁRIO - remover depois
-    @GetMapping("/hash/{senha}")
-    public String gerarHash(@PathVariable String senha) {
-        return passwordEncoder.encode(senha);
-    }
+   
 }
