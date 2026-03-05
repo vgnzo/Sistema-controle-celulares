@@ -22,9 +22,10 @@ function Login({ onLogin }) {
     setLoading(true);
     try {
       const response = await api.post('/auth/login', { username, password });
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('username', response.data.username);
-      localStorage.setItem('tipo', response.data.tipo);
+    localStorage.setItem('accessToken', response.data.accessToken);
+localStorage.setItem('refreshToken', response.data.refreshToken);
+localStorage.setItem('username', response.data.username);
+localStorage.setItem('tipo', response.data.tipo);
       onLogin();
     } catch (error) {
       toast.error('❌ Usuário ou senha inválidos');
