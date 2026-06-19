@@ -37,6 +37,7 @@ public class Celular {
      @Column(name = "fornecedor", length = 100)
     private String fornecedor;
 
+   
 
     @Column(name = "data_aquisicao", nullable = false)
     @NotNull(message = "Data de aquisição é obrigatória")

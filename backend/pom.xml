@@ -60,6 +60,8 @@ Spring Boot vai gerenciar as versões das bibliotecas automaticamente-->
 
     <!-- Driver SQL Server -->
  
+<!-- Driver SQL Server -->
+<!-- Driver PostgreSQL -->
 <dependency>
     <groupId>org.postgresql</groupId>
     <artifactId>postgresql</artifactId>

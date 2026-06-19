@@ -57,6 +57,16 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/api/colaboradores/**").hasAuthority("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/colaboradores/**").hasAuthority("ADMIN")
 
+                // Só ADMIN pode escrever em chips
+.requestMatchers(HttpMethod.POST, "/api/chips/**").hasAuthority("ADMIN")
+.requestMatchers(HttpMethod.PUT, "/api/chips/**").hasAuthority("ADMIN")
+.requestMatchers(HttpMethod.DELETE, "/api/chips/**").hasAuthority("ADMIN")
+
+// Só ADMIN pode escrever em vínculos de chip
+.requestMatchers(HttpMethod.POST, "/api/vinculos-chip/**").hasAuthority("ADMIN")
+.requestMatchers(HttpMethod.PUT, "/api/vinculos-chip/**").hasAuthority("ADMIN")
+.requestMatchers(HttpMethod.DELETE, "/api/vinculos-chip/**").hasAuthority("ADMIN")
+
                 // Só ADMIN pode gerenciar usuários
                 .requestMatchers("/api/usuarios/**").hasAuthority("ADMIN")
 
