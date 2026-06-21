@@ -38,12 +38,13 @@ function App() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('username');
-    localStorage.removeItem('tipo');
-    setLogado(false);
-    setPaginaAtual('dashboard');
-  };
+  localStorage.removeItem('accessToken');
+  localStorage.removeItem('refreshToken');
+  localStorage.removeItem('username');
+  localStorage.removeItem('tipo');
+  setLogado(false);
+  setPaginaAtual('dashboard');
+};
 
   const renderizarPagina = () => {
     switch (paginaAtual) {
