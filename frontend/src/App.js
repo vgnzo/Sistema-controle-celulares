@@ -18,16 +18,16 @@ function App() {
   const [tipo, setTipo] = useState('');
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('username');
-    const tipoStorage = localStorage.getItem('tipo');
+  const token = localStorage.getItem('accessToken');
+  const user = localStorage.getItem('username');
+  const tipoStorage = localStorage.getItem('tipo');
 
-    if (token && user) {
-      setLogado(true);
-      setUsername(user);
-      setTipo(tipoStorage);
-    }
-  }, []);
+  if (token && user) {
+    setLogado(true);
+    setUsername(user);
+    setTipo(tipoStorage);
+  }
+}, []);
 
   const handleLogin = () => {
     const user = localStorage.getItem('username');
