@@ -40,4 +40,7 @@ public class Entrega {
     //Lombok cuida do getter/setter automaticamente
     @Column(nullable = false)
     private Boolean ativo = true;
+
+    @Column(name = "acessorios", length = 255)
+    private String acessorios;
 }

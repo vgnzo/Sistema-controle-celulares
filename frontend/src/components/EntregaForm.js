@@ -2,6 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { entregaService, celularService, colaboradorService, chipService, vinculoChipService } from '../services/api';
 import { toast } from 'react-toastify';
 
+// Acessórios comuns (os outros o usuário digita no campo "Outro")
+const ACESSORIOS_COMUNS = ['Carregador', 'Capinha', 'Película', 'Fone de ouvido', 'Cabo USB'];
+
 function EntregaForm({ onSucesso, entregaEdicao, onCancelar }){
 const [formData, setFormData] = useState({
     imei: '',
@@ -20,6 +23,10 @@ const [formData, setFormData] = useState({
   // 🔗 Chip que vai junto com o celular entregue
   const [chipSelecionado, setChipSelecionado] = useState('');
   const [chipOriginal, setChipOriginal] = useState(''); // chip que já está no celular
+
+  // 📦 Acessórios que vão junto na entrega
+  const [acessoriosSelecionados, setAcessoriosSelecionados] = useState([]); // os comuns marcados
+  const [outroAcessorio, setOutroAcessorio] = useState('');                  // os digitados
 
 
  const carregarDados = useCallback(async () => {
@@ -42,6 +49,13 @@ const [formData, setFormData] = useState({
         dataPrevistaDevolucao: entregaEdicao.dataPrevistaDevolucao,
         status: entregaEdicao.status
       });
+
+      // separa os acessórios salvos entre "comuns" (checkbox) e "outros" (texto)
+      if (entregaEdicao.acessorios) {
+        const lista = entregaEdicao.acessorios.split(',').map(s => s.trim()).filter(Boolean);
+        setAcessoriosSelecionados(lista.filter(a => ACESSORIOS_COMUNS.includes(a)));
+        setOutroAcessorio(lista.filter(a => !ACESSORIOS_COMUNS.includes(a)).join(', '));
+      }
     }
   } catch (error) {
     console.error('Erro ao carregar dados:', error);
@@ -84,8 +98,20 @@ useEffect(() => {
     });
   };
 
+  // marca/desmarca um acessório comum
+  const toggleAcessorio = (item) => {
+    setAcessoriosSelecionados(prev =>
+      prev.includes(item) ? prev.filter(a => a !== item) : [...prev, item]
+    );
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // monta a string de acessórios: comuns marcados + o que foi digitado em "Outro"
+    const todosAcessorios = [...acessoriosSelecionados];
+    if (outroAcessorio.trim()) todosAcessorios.push(outroAcessorio.trim());
+    const acessoriosStr = todosAcessorios.join(', ');
 
     const dadosParaEnviar = {
       id: {
@@ -101,6 +127,7 @@ useEffect(() => {
       dataEntrega: formData.dataEntrega,
       dataPrevistaDevolucao: formData.dataPrevistaDevolucao,
       status: formData.status,
+      acessorios: acessoriosStr,
       ativo: true
     };
 
@@ -144,6 +171,8 @@ useEffect(() => {
     });
     setChipSelecionado('');
     setChipOriginal('');
+    setAcessoriosSelecionados([]);
+    setOutroAcessorio('');
 
     onSucesso();
   };
@@ -223,6 +252,35 @@ useEffect(() => {
                 ))}
               </select>
               <small className="text-muted">Chip que vai dentro do celular entregue</small>
+            </div>
+          </div>
+
+          {/* 📦 Acessórios que vão junto na entrega */}
+          <div className="row">
+            <div className="col-12 mb-3">
+              <label className="form-label">📦 Acessórios entregues</label>
+              <div className="d-flex flex-wrap gap-3 mb-2">
+                {ACESSORIOS_COMUNS.map((item) => (
+                  <div className="form-check" key={item}>
+                    <input
+                      type="checkbox"
+                      className="form-check-input"
+                      id={`ac-${item}`}
+                      checked={acessoriosSelecionados.includes(item)}
+                      onChange={() => toggleAcessorio(item)}
+                    />
+                    <label className="form-check-label" htmlFor={`ac-${item}`}>{item}</label>
+                  </div>
+                ))}
+              </div>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Outro acessório (se for mais de um, separe por vírgula)"
+                value={outroAcessorio}
+                onChange={(e) => setOutroAcessorio(e.target.value)}
+              />
+              <small className="text-muted">Marque os acessórios que vão junto com o celular</small>
             </div>
           </div>
 
