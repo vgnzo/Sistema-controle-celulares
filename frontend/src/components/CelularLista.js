@@ -10,8 +10,9 @@ function CelularLista({ onEditar }) {
     // 🔥 Detecta se é ADMIN baseado na prop onEditar
     const isAdmin = !!onEditar;
 
-    useEffect(() => {
+   useEffect(() => {
         carregarCelulares();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const carregarCelulares = async () => {

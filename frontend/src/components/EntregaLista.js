@@ -6,8 +6,9 @@ function EntregaLista({ onEditar, tipo }){
     const [loading, setLoading] = useState(true);
     const [erro, setErro] = useState(null);
 
-    useEffect(() => {
+   useEffect(() => {
         carregarEntregas();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const carregarEntregas = async () => {
