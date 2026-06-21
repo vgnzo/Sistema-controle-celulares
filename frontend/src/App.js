@@ -8,6 +8,7 @@ import Historico from './pages/Historico';
 import GerenciarUsuarios from './pages/GerenciarUsuarios';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Chips from './pages/Chips';
 
 function App() {
 
@@ -52,6 +53,10 @@ function App() {
 
       case 'celulares':
         return <Celulares tipo={tipo} />;
+
+        case 'chips':
+        return <Chips tipo={tipo} />;
+
 
       case 'colaboradores':
         if (tipo !== 'ADMIN') return <h3>Acesso negado</h3>;
@@ -105,6 +110,17 @@ function App() {
                 📱 Celulares
               </button>
             </li>
+            
+            <li className="nav-item">
+              <button
+                className={`nav-link btn btn-link ${paginaAtual === 'chips' ? 'active text-white' : 'text-secondary'}`}
+                onClick={() => setPaginaAtual('chips')}
+              >
+                📶 Chips
+              </button>
+            </li>
+
+        
 
             {tipo === 'ADMIN' && (
               <li className="nav-item">

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { celularService } from '../services/api';
+import { celularService, vinculoChipService } from '../services/api';
 
 function CelularLista({ onEditar }) {
     const [celulares, setCelulares] = useState([]);
+    const [chipsPorCelular, setChipsPorCelular] = useState({}); // { imei: chip | null }
     const [loading, setloading] = useState(true);
     const [erro, setErro] = useState(null);
 
@@ -19,12 +20,27 @@ function CelularLista({ onEditar }) {
             const response = await celularService.listarTodos();
             setCelulares(response.data);
             setErro(null);
+            carregarChipsDosCelulares(response.data); // busca o chip de cada um
         } catch (error) {
             setErro('Erro ao carregar celulares');
             console.error(error);
         } finally {
             setloading(false);
         }
+    };
+
+    // 🔗 Busca o chip atual de cada celular pra mostrar na coluna
+    const carregarChipsDosCelulares = async (lista) => {
+        const mapa = {};
+        await Promise.all(lista.map(async (cel) => {
+            try {
+                const r = await vinculoChipService.chipAtualDoCelular(cel.imei);
+                mapa[cel.imei] = (r.data && typeof r.data === 'object' && r.data.chip) ? r.data.chip : null;
+            } catch {
+                mapa[cel.imei] = null;
+            }
+        }));
+        setChipsPorCelular(mapa);
     };
 
     // 🔒 Só ADMIN pode mudar status
@@ -63,6 +79,7 @@ function CelularLista({ onEditar }) {
                                 <th>Modelo</th>
                                 <th>Status</th>
                                 <th>Operadora</th>
+                                <th>🔗 Chip</th>
                                 <th>Data Aquisição</th>
                                 <th>Vida Útil</th>
 
@@ -76,7 +93,7 @@ function CelularLista({ onEditar }) {
                         <tbody>
                             {celulares.length === 0 ? (
                                 <tr>
-                                    <td colSpan={isAdmin ? "7" : "6"} className="text-center text-muted">
+                                    <td colSpan={isAdmin ? "8" : "7"} className="text-center text-muted">
                                         Nenhum celular cadastrado
                                     </td>
                                 </tr>
@@ -99,13 +116,25 @@ function CelularLista({ onEditar }) {
                                         </td>
 
                                         <td>{celular.fornecedor || '-'}</td>
+
+                                        {/* 🔗 Chip vinculado a este celular */}
+                                        <td>
+                                            {chipsPorCelular[celular.imei] ? (
+                                                <span className="badge bg-primary">
+                                                    {chipsPorCelular[celular.imei].iccid}
+                                                </span>
+                                            ) : (
+                                                <span className="text-muted">— sem chip</span>
+                                            )}
+                                        </td>
+
                                         <td>{new Date(celular.dataAquisicao).toLocaleDateString('pt-BR')}</td>
                                         <td>{celular.vidaUtil} meses</td>
 
                                         {/* 🔥 AÇÕES APENAS PARA ADMIN */}
                                         {isAdmin && (
                                             <td className="text-center text-nowrap">
-                                                
+
                                                 {/* ✏️ Editar */}
                                                 <button
                                                     onClick={() => onEditar(celular)}

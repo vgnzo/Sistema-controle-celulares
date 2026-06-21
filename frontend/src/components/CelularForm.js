@@ -14,7 +14,7 @@ function CelularForm({ onSucesso, celularEdicao, onCancelar }){
 
    const handleChange = (e) => {
   const { name, value } = e.target;
-  
+
   if (name === 'imei') {
     setFormData({
       ...formData,
@@ -31,10 +31,10 @@ function CelularForm({ onSucesso, celularEdicao, onCancelar }){
     const formatarIMEI = (valor) => {
   // Remove tudo que não é número
   const numeros = valor.replace(/\D/g, '');
-  
+
   // Limita a 15 dígitos
   const limitado = numeros.slice(0, 15);
-  
+
   // Aplica a máscara: 999999-999999-999
   if (limitado.length <= 6) {
     return limitado;
@@ -48,20 +48,21 @@ function CelularForm({ onSucesso, celularEdicao, onCancelar }){
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-          const dadosParaEnviar = {
-  ...formData,
-  imei: formData.imei.replace(/\D/g, '')
-};
+        const dadosParaEnviar = {
+            ...formData,
+            imei: formData.imei.replace(/\D/g, ''),
+            // vidaUtil vazio vira null (evita erro de conversão pra número no backend)
+            vidaUtil: formData.vidaUtil === '' ? null : Number(formData.vidaUtil)
+        };
 
-          try {
-        
+        try {
             if (celularEdicao){
                 await celularService.atualizar(dadosParaEnviar.imei, dadosParaEnviar);
-              toast.success('✅ Celular atualizado com sucesso!');
-           } else {
-    await celularService.cadastrar(dadosParaEnviar);
-toast.success('✅ Celular cadastrado com sucesso!');
-    }
+                toast.success('✅ Celular atualizado com sucesso!');
+            } else {
+                await celularService.cadastrar(dadosParaEnviar);
+                toast.success('✅ Celular cadastrado com sucesso!');
+            }
 
             //limpa formulario
             setFormData({
@@ -69,13 +70,15 @@ toast.success('✅ Celular cadastrado com sucesso!');
                 modelo: '',
                 status: 'em estoque',
                 fornecedor: '',
-                dataAquisicao: '', 
+                dataAquisicao: '',
                 vidaUtil: ''
             });
 
             onSucesso(); //Vai recarregar a lista
         } catch (error){
-toast.success('✅ Celular cadastrado com sucesso!');             }
+            // mostra o erro real do backend
+            toast.error(error.response?.data?.mensagem || error.response?.data || '❌ Erro ao salvar celular');
+        }
     };
 
 
@@ -102,27 +105,30 @@ toast.success('✅ Celular cadastrado com sucesso!');             }
             </div>
 
           <div className="col-md-6 mb-3">
-  <label className="form-label">Modelo *</label>
-  <select
-    name="modelo"
-    className="form-select"
-    value={formData.modelo}
-    onChange={handleChange}
-    required
-  >
-    <option value="">Selecione o modelo...</option>
-    <option value="Samsung Galaxy S23">📱 Samsung Galaxy S23</option>
-    <option value="Samsung Galaxy S22">📱 Samsung Galaxy S22</option>
-    <option value="Samsung Galaxy A54">📱 Samsung Galaxy A54</option>
-    <option value="iPhone 15">📱 iPhone 15</option>
-    <option value="iPhone 14">📱 iPhone 14</option>
-    <option value="iPhone 13">📱 iPhone 13</option>
-    <option value="Motorola Edge 40">📱 Motorola Edge 40</option>
-    <option value="Motorola Moto G54">📱 Motorola Moto G54</option>
-    <option value="Xiaomi Redmi Note 13">📱 Xiaomi Redmi Note 13</option>
-    <option value="Outro">📱 Outro</option>
-  </select>
-</div>
+            <label className="form-label">Modelo *</label>
+            {/* Campo de texto livre, com sugestões de modelos comuns */}
+            <input
+              type="text"
+              name="modelo"
+              className="form-control"
+              list="modelos-sugeridos"
+              value={formData.modelo}
+              onChange={handleChange}
+              placeholder="Digite ou escolha o modelo"
+              required
+            />
+            <datalist id="modelos-sugeridos">
+              <option value="Samsung Galaxy S23" />
+              <option value="Samsung Galaxy S22" />
+              <option value="Samsung Galaxy A54" />
+              <option value="iPhone 15" />
+              <option value="iPhone 14" />
+              <option value="iPhone 13" />
+              <option value="Motorola Edge 40" />
+              <option value="Motorola Moto G54" />
+              <option value="Xiaomi Redmi Note 13" />
+            </datalist>
+          </div>
           </div>
 
           <div className="row">
@@ -190,7 +196,7 @@ toast.success('✅ Celular cadastrado com sucesso!');             }
             <button type="submit" className="btn btn-primary">
               {celularEdicao ? '💾 Atualizar' : '✅ Cadastrar'}
             </button>
-            
+
             {celularEdicao && (
               <button type="button" onClick={onCancelar} className="btn btn-secondary">
                 ❌ Cancelar

@@ -123,4 +123,22 @@ export const entregaService = {
     listarHistorico: () => api.get('/entregas/historico')
 };
 
+// ✅ Chip
+export const chipService = {
+    listarTodos: () => api.get('/chips'),
+    buscarPorIccid: (iccid) => api.get(`/chips/${iccid}`),
+    cadastrar: (chip) => api.post('/chips', chip),
+    atualizar: (iccid, chip) => api.put(`/chips/${iccid}`, chip),
+    deletar: (iccid) => api.delete(`/chips/${iccid}`)
+};
+
+// ✅ Vínculo Chip ↔ Celular
+export const vinculoChipService = {
+    chipAtualDoCelular: (imei) => api.get(`/vinculos-chip/celular/${imei}/atual`),
+    historicoPorCelular: (imei) => api.get(`/vinculos-chip/celular/${imei}`),
+    historicoPorChip: (iccid) => api.get(`/vinculos-chip/chip/${iccid}`),
+    vincular: (iccid, imei) => api.post('/vinculos-chip', { iccid, imei }),
+    desvincular: (imei) => api.delete(`/vinculos-chip/celular/${imei}`)
+};
+
 export default api;

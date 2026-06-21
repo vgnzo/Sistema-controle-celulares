@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { celularService, colaboradorService, entregaService } from '../services/api';
+import { celularService, colaboradorService, entregaService, chipService } from '../services/api';
 
 function Dashboard() {
   const [celulares, setCelulares] = useState([]);
   const [colaboradores, setColaboradores] = useState([]);
   const [entregas, setEntregas] = useState([]);
+  const [chips, setChips] = useState([]);
   const [loading, setLoading] = useState(true);
   const [agora, setAgora] = useState(new Date());
 
@@ -19,14 +20,16 @@ function Dashboard() {
 
   const carregarDados = async () => {
     try {
-      const [resCelulares, resColaboradores, resEntregas] = await Promise.all([
+      const [resCelulares, resColaboradores, resEntregas, resChips] = await Promise.all([
         celularService.listarTodos(),
         colaboradorService.listarTodos(),
-        entregaService.listarTodas()
+        entregaService.listarTodas(),
+        chipService.listarTodos()
       ]);
       setCelulares(resCelulares.data);
       setColaboradores(resColaboradores.data);
       setEntregas(resEntregas.data);
+      setChips(resChips.data);
     } catch (error) {
       console.error('Erro ao carregar dashboard', error);
     } finally {
@@ -62,6 +65,11 @@ function Dashboard() {
   const entregasAtrasadas = entregas.filter(e => e.status === 'atrasado').length;
   const entregasDevolvidas = entregas.filter(e => e.status === 'devolvido').length;
 
+  const totalChips = chips.length;
+  const chipsDisponiveis = chips.filter(c => c.status === 'disponivel').length;
+  const chipsEmUso = chips.filter(c => c.status === 'em uso').length;
+  const chipsComProblema = chips.filter(c => c.status === 'com problema').length;
+
   return (
     <div>
 
@@ -82,10 +90,17 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* Alerta entregas atrasadas */}
-      {entregasAtrasadas > 0 && (
+      {/* Alerta entregas atrasadas (só admin) */}
+     {tipo === 'ADMIN' && entregasAtrasadas > 0 && (
         <div className="alert alert-danger">
           ⚠️ Você tem <strong>{entregasAtrasadas}</strong> entrega(s) em atraso! Verifique a aba de Entregas.
+        </div>
+      )}
+
+    {/* Alerta chips com problema (só admin) */}
+    {tipo === 'ADMIN' && chipsComProblema > 0 && (
+        <div className="alert alert-warning">
+          ⚠️ Você tem <strong>{chipsComProblema}</strong> chip(s) com problema! Verifique a aba de Chips.
         </div>
       )}
 
@@ -121,6 +136,43 @@ function Dashboard() {
             <div className="card-body">
               <h2 className="fw-bold text-warning">{emManutencao}</h2>
               <p className="text-muted mb-0">Manutenção</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Cards chips */}
+      <h5 className="text-muted mb-3">📶 Chips</h5>
+      <div className="row g-3 mb-4">
+        <div className="col-6 col-md-3">
+          <div className="card text-center border-0 shadow-sm">
+            <div className="card-body">
+              <h2 className="fw-bold text-primary">{totalChips}</h2>
+              <p className="text-muted mb-0">Total</p>
+            </div>
+          </div>
+        </div>
+        <div className="col-6 col-md-3">
+          <div className="card text-center border-0 shadow-sm">
+            <div className="card-body">
+              <h2 className="fw-bold text-success">{chipsDisponiveis}</h2>
+              <p className="text-muted mb-0">Disponíveis</p>
+            </div>
+          </div>
+        </div>
+        <div className="col-6 col-md-3">
+          <div className="card text-center border-0 shadow-sm">
+            <div className="card-body">
+              <h2 className="fw-bold text-info">{chipsEmUso}</h2>
+              <p className="text-muted mb-0">Em Uso</p>
+            </div>
+          </div>
+        </div>
+        <div className="col-6 col-md-3">
+          <div className="card text-center border-0 shadow-sm">
+            <div className="card-body">
+              <h2 className="fw-bold text-warning">{chipsComProblema}</h2>
+              <p className="text-muted mb-0">Com Problema</p>
             </div>
           </div>
         </div>

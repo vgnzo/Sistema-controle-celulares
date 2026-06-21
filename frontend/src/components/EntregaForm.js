@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { entregaService, celularService, colaboradorService } from '../services/api';
+import { entregaService, celularService, colaboradorService, chipService, vinculoChipService } from '../services/api';
 import { toast } from 'react-toastify';
 
 function EntregaForm({ onSucesso, entregaEdicao, onCancelar }){
@@ -14,19 +14,25 @@ const [formData, setFormData] = useState({
 
   const [celulares, setCelulares] = useState([]);
   const [colaboradores, setColaboradores] = useState([]);
+  const [chips, setChips] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // 🔗 Chip que vai junto com o celular entregue
+  const [chipSelecionado, setChipSelecionado] = useState('');
+  const [chipOriginal, setChipOriginal] = useState(''); // chip que já está no celular
 
 
  const carregarDados = useCallback(async () => {
   try {
-    const [celularesRes, colaboradoresRes] = await Promise.all([
+    const [celularesRes, colaboradoresRes, chipsRes] = await Promise.all([
       celularService.listarTodos(),
-      colaboradorService.listarTodos()
+      colaboradorService.listarTodos(),
+      chipService.listarTodos()
     ]);
 
     setCelulares(celularesRes.data);
     setColaboradores(colaboradoresRes.data);
+    setChips(chipsRes.data);
 
     if (entregaEdicao) {
       setFormData({
@@ -49,6 +55,26 @@ const [formData, setFormData] = useState({
 useEffect(() => {
   carregarDados();
 }, [carregarDados]);
+
+// Quando escolhe (ou já vem) um celular, busca o chip atual dele
+useEffect(() => {
+  if (!formData.imei) {
+    setChipSelecionado('');
+    setChipOriginal('');
+    return;
+  }
+  vinculoChipService.chipAtualDoCelular(formData.imei)
+    .then(r => {
+      if (r.data && typeof r.data === 'object' && r.data.chip) {
+        setChipSelecionado(r.data.chip.iccid);
+        setChipOriginal(r.data.chip.iccid);
+      } else {
+        setChipSelecionado('');
+        setChipOriginal('');
+      }
+    })
+    .catch(() => { setChipSelecionado(''); setChipOriginal(''); });
+}, [formData.imei]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -78,28 +104,52 @@ useEffect(() => {
       ativo: true
     };
 
+    // 1) Salva a entrega PRIMEIRO. Se falhar, para aqui.
     try {
       if (entregaEdicao) {
         await entregaService.atualizar(formData.imei, formData.registro, dadosParaEnviar);
-       toast.success('✅ Entrega atualizada com sucesso!');
       } else {
         await entregaService.cadastrar(dadosParaEnviar);
-        toast.success('✅ Entrega cadastrada com sucesso!');
       }
-
-      setFormData({
-        imei: '',
-        registro: '',
-        dataEntrega: '',
-        dataPrevistaDevolucao: '',
-        status: 'ativo'
-      });
-
-      onSucesso();
     } catch (error) {
-    toast.error('❌ Erro ao salvar: ' + (error.response?.data?.message || error.message));
+      toast.error('❌ Erro ao salvar entrega: ' + (error.response?.data?.mensagem || error.response?.data?.message || error.message));
+      return;
     }
+
+    // 2) Trata o chip SEPARADAMENTE (vincula ao celular da entrega)
+    if (chipSelecionado !== chipOriginal) {
+      try {
+        if (chipOriginal) {
+          await vinculoChipService.desvincular(formData.imei);
+        }
+        if (chipSelecionado) {
+          await vinculoChipService.vincular(chipSelecionado, formData.imei);
+        }
+      } catch (error) {
+        toast.warn('⚠️ Entrega salva, mas o chip não pôde ser vinculado: ' +
+          (error.response?.data?.mensagem || error.response?.data || 'erro no vínculo'));
+        onSucesso();
+        return;
+      }
+    }
+
+    toast.success(entregaEdicao ? '✅ Entrega atualizada com sucesso!' : '✅ Entrega cadastrada com sucesso!');
+
+    setFormData({
+      imei: '',
+      registro: '',
+      dataEntrega: '',
+      dataPrevistaDevolucao: '',
+      status: 'ativo'
+    });
+    setChipSelecionado('');
+    setChipOriginal('');
+
+    onSucesso();
   };
+
+  // chips disponíveis + o que já está no celular (pra aparecer selecionado)
+  const chipsParaMostrar = chips.filter(c => c.status === 'disponivel' || c.iccid === chipOriginal);
 
   if (loading) return <div className="text-center">Carregando...</div>;
 
@@ -156,6 +206,26 @@ useEffect(() => {
             </div>
           </div>
 
+          {/* 🔗 Chip que vai junto com o celular entregue */}
+          <div className="row">
+            <div className="col-md-6 mb-3">
+              <label className="form-label">🔗 Chip (opcional)</label>
+              <select
+                className="form-select"
+                value={chipSelecionado}
+                onChange={(e) => setChipSelecionado(e.target.value)}
+              >
+                <option value="">Sem chip</option>
+                {chipsParaMostrar.map((chip) => (
+                  <option key={chip.iccid} value={chip.iccid}>
+                    {chip.iccid} {chip.operadora ? `(${chip.operadora})` : ''}
+                  </option>
+                ))}
+              </select>
+              <small className="text-muted">Chip que vai dentro do celular entregue</small>
+            </div>
+          </div>
+
           <div className="row">
             <div className="col-md-4 mb-3">
               <label className="form-label">Data de Entrega *</label>
@@ -201,7 +271,7 @@ useEffect(() => {
             <button type="submit" className="btn btn-primary">
               {entregaEdicao ? '💾 Atualizar' : '✅ Cadastrar'}
             </button>
-            
+
             {entregaEdicao && (
               <button type="button" onClick={onCancelar} className="btn btn-secondary">
                 ❌ Cancelar
