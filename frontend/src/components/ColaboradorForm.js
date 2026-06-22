@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { colaboradorService } from '../services/api';
 
+// Departamentos comuns (qualquer outro o usuário digita via "Outro")
+const DEPTS_COMUNS = ['Administrativo','Financeiro','Comercial','Operacional','TI','RH','Marketing','Logística'];
+
 function ColaboradorForm({ onSucesso, colaboradorEdicao, onCancelar }) {
   const [formData, setFormData] = useState(colaboradorEdicao || {
     registro: '',
@@ -10,15 +13,19 @@ function ColaboradorForm({ onSucesso, colaboradorEdicao, onCancelar }) {
     email: '',
     telefoneContato: '',
     departamento: '',
-    cargo: '',
     dataAdmissao: '',
     status: 'ativo'
   });
 
+  // controla se o campo "Outro" (caixa de texto) está ativo
+  const [deptOutro, setDeptOutro] = useState(
+    !!(colaboradorEdicao && colaboradorEdicao.departamento && !DEPTS_COMUNS.includes(colaboradorEdicao.departamento))
+  );
+
   const formatarCPF = (valor) => {
     const numeros = valor.replace(/\D/g, '');
     const limitado = numeros.slice(0, 11);
-    
+
     if (limitado.length <= 3) {
       return limitado;
     } else if (limitado.length <= 6) {
@@ -74,6 +81,18 @@ function ColaboradorForm({ onSucesso, colaboradorEdicao, onCancelar }) {
   }
 };
 
+  // handler do select de departamento (lida com "Outro")
+  const handleDepartamentoSelect = (e) => {
+    const value = e.target.value;
+    if (value === 'Outro') {
+      setDeptOutro(true);
+      setFormData({ ...formData, departamento: '' }); // limpa pra digitar
+    } else {
+      setDeptOutro(false);
+      setFormData({ ...formData, departamento: value });
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 const dadosParaEnviar = {
@@ -98,10 +117,10 @@ toast.success('✅ Colaborador atualizado com sucesso!');      } else {
         email: '',
         telefoneContato: '',
         departamento: '',
-        cargo: '',
         dataAdmissao: '',
         status: 'ativo'
       });
+      setDeptOutro(false);
 
       onSucesso();
     } catch (error) {
@@ -190,8 +209,8 @@ toast.success('✅ Colaborador atualizado com sucesso!');      } else {
   <select
     name="departamento"
     className="form-select"
-    value={formData.departamento}
-    onChange={handleChange}
+    value={deptOutro ? 'Outro' : formData.departamento}
+    onChange={handleDepartamentoSelect}
   >
     <option value="">Selecione...</option>
     <option value="Administrativo">🏢 Administrativo</option>
@@ -204,28 +223,21 @@ toast.success('✅ Colaborador atualizado com sucesso!');      } else {
     <option value="Logística">🚚 Logística</option>
     <option value="Outro">📋 Outro</option>
   </select>
+
+  {/* caixa de texto aparece só quando escolhe "Outro" */}
+  {deptOutro && (
+    <input
+      type="text"
+      name="departamento"
+      className="form-control mt-2"
+      value={formData.departamento}
+      onChange={handleChange}
+      placeholder="Digite o departamento"
+    />
+  )}
 </div>
 
-<div className="col-md-4 mb-3">
-  <label className="form-label">Cargo</label>
-  <select
-    name="cargo"
-    className="form-select"
-    value={formData.cargo}
-    onChange={handleChange}
-  >
-    <option value="">Selecione...</option>
-    <option value="Diretor">👔 Diretor</option>
-    <option value="Gerente">👨‍💼 Gerente</option>
-    <option value="Coordenador">📋 Coordenador</option>
-    <option value="Supervisor">👁️ Supervisor</option>
-    <option value="Analista">💼 Analista</option>
-    <option value="Assistente">📝 Assistente</option>
-    <option value="Auxiliar">🔧 Auxiliar</option>
-    <option value="Estagiário">🎓 Estagiário</option>
-    <option value="Outro">📌 Outro</option>
-  </select>
-</div>
+
 
             <div className="col-md-4 mb-3">
               <label className="form-label">Status *</label>
@@ -241,7 +253,7 @@ toast.success('✅ Colaborador atualizado com sucesso!');      } else {
               </select>
             </div>
           </div>
-        
+
 
           <div className="row">
             <div className="col-md-4 mb-3">
@@ -260,7 +272,7 @@ toast.success('✅ Colaborador atualizado com sucesso!');      } else {
             <button type="submit" className="btn btn-primary">
               {colaboradorEdicao ? '💾 Atualizar' : '✅ Cadastrar'}
             </button>
-            
+
             {colaboradorEdicao && (
               <button type="button" onClick={onCancelar} className="btn btn-secondary">
                 ❌ Cancelar

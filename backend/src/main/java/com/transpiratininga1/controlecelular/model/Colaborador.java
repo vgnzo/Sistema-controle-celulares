@@ -33,8 +33,7 @@ public class Colaborador {
     @Column(name = "departamento", length = 50)
     private String departamento;
     
-    @Column(name = "cargo", length = 50)
-    private String cargo;
+    
 
     @Column(name = "data_admissao")
     private LocalDate dataAdmissao;

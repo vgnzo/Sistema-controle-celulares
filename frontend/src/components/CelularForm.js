@@ -148,23 +148,16 @@ function CelularForm({ onSucesso, celularEdicao, onCancelar }){
               </select>
             </div>
 <div className="col-md-4 mb-3">
-  <label className="form-label">Operadora</label>
-  <select
+  <label className="form-label">Fornecedor</label>
+  <input
+    type="text"
     name="fornecedor"
-    className="form-select"
+    className="form-control"
     value={formData.fornecedor}
     onChange={handleChange}
-  >
-    <option value="">Selecione...</option>
-    <option value="Vivo">📱 Vivo</option>
-    <option value="Claro">📱 Claro</option>
-    <option value="Tim">📱 Tim</option>
-    <option value="Oi">📱 Oi</option>
-    <option value="Algar">📱 Algar</option>
-    <option value="Outro">📱 Outro</option>
-  </select>
+    placeholder="Ex: nome do fornecedor"
+  />
 </div>
-
             <div className="col-md-4 mb-3">
               <label className="form-label">Vida Útil (meses)</label>
               <input

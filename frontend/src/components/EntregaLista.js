@@ -54,8 +54,9 @@ function EntregaLista({ onEditar, tipo }){
                              <th>IMEI</th>
                               <th>Modelo</th>
                                <th>Colaborador</th>
+                               <th>Departamento</th>
                                <th>Data Entrega</th>
-                              <th>Previsão Devolução</th>
+                               <th className="text-center">Devolução</th>
                                <th>Status</th>
                                {tipo === 'ADMIN' && <th className="text-center">Ações</th>}
                            </tr>
@@ -63,7 +64,7 @@ function EntregaLista({ onEditar, tipo }){
                        <tbody>
                            {entregas.length === 0 ? (
                          <tr>
-                               <td colSpan={tipo === 'ADMIN' ? 7 : 6} className="text-center text-muted">
+                               <td colSpan={tipo === 'ADMIN' ? 8 : 7} className="text-center text-muted">
                                 Nenhuma entrega cadastrada
                              </td>
                          </tr>
@@ -73,8 +74,16 @@ function EntregaLista({ onEditar, tipo }){
                                      <td>{entrega.celular?.imei || entrega.id.imei}</td>
                                        <td>{entrega.celular?.modelo || '-'}</td>
                                   <td>{entrega.colaborador?.nome || '-'}</td>
+                                        <td>{entrega.departamento || '-'}</td>
                                         <td>{new Date(entrega.dataEntrega).toLocaleDateString('pt-BR')}</td>
-                                        <td>{new Date(entrega.dataPrevistaDevolucao).toLocaleDateString('pt-BR')}</td>
+
+                                        {/* ✓ quando devolvido, — quando ainda não */}
+                                        <td className="text-center">
+                                            {entrega.status === 'devolvido'
+                                                ? <span className="text-success fw-bold">✓ Devolvido</span>
+                                                : <span className="text-muted">—</span>}
+                                        </td>
+
                                         <td>
                                             <span className={`badge ${
                                                 entrega.status === 'ativo' ? 'bg-success' :

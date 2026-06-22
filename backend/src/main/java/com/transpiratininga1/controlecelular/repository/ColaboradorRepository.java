@@ -15,10 +15,7 @@ public interface ColaboradorRepository extends JpaRepository<Colaborador, String
     //buscar por departamento
     List<Colaborador> findByDepartamento(String departamento);
 
-    //buscar por cargo 
-    List<Colaborador> findByCargo(String cargo);
-
-    //buscar por status
+  //buscar por status
     List<Colaborador> findByStatus(String status);
 
     //buscar por nome 

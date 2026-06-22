@@ -79,7 +79,7 @@ function CelularLista({ onEditar }) {
                                 <th>IMEI</th>
                                 <th>Modelo</th>
                                 <th>Status</th>
-                                <th>Operadora</th>
+                                <th>Fornecedor</th>
                                 <th>🔗 Chip</th>
                                 <th>Data Aquisição</th>
                                 <th>Vida Útil</th>

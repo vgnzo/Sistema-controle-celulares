@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import java.time.LocalDate;
+
 @Entity
 @Table(name = "Entrega")
 @Data
@@ -28,19 +29,17 @@ public class Entrega {
     @Column(name = "data_entrega", nullable = false)
     private LocalDate dataEntrega;
 
-    @NotNull(message = "Data prevista de devolução é obrigatória")
-    @Column(name = "data_prevista_devolucao", nullable = false)
-    private LocalDate dataPrevistaDevolucao;
-
     @NotBlank(message = "Status é obrigatório")
     @Pattern(regexp = "ativo|devolvido|atrasado", message = "Status deve ser: ativo, devolvido ou atrasado")
     @Column(name = "status", nullable = false, length = 20)
     private String status;
 
-    //Lombok cuida do getter/setter automaticamente
     @Column(nullable = false)
     private Boolean ativo = true;
 
     @Column(name = "acessorios", length = 255)
     private String acessorios;
+
+    @Column(name = "departamento", length = 100)
+    private String departamento;
 }

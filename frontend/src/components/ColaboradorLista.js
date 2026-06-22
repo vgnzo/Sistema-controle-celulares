@@ -81,7 +81,6 @@ function ColaboradorLista({ onEditar }) {
                 <th>Nome</th>
                 <th>CPF</th>
                 <th>Departamento</th>
-                <th>Cargo</th>
                 <th>Status</th>
                 <th className="text-center">Ações</th>
               </tr>
@@ -100,7 +99,6 @@ function ColaboradorLista({ onEditar }) {
                 <td>{colaborador.nome}</td>
                 <td>{colaborador.cpf}</td>
                 <td>{colaborador.departamento || '-'}</td>
-                <td>{colaborador.cargo || '-'}</td>
                     <td>
                          <span className={`badge ${
                         colaborador.status === 'ativo' ? 'bg-success' : 'bg-secondary'

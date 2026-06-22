@@ -57,12 +57,7 @@ public class ColaboradorController {
         return ResponseEntity.ok(colaboradores);
 }
 
- // GET - Buscar por cargo
-    @GetMapping("/cargo/{cargo}")
-    public ResponseEntity<List<Colaborador>> buscarPorCargo(@PathVariable String cargo) {
-        List<Colaborador> colaboradores = colaboradorService.buscarPorCargo(cargo);
-        return ResponseEntity.ok(colaboradores);
-    }
+
     
     // GET - Buscar por status
     @GetMapping("/status/{status}")

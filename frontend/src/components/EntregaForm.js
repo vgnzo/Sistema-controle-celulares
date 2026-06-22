@@ -10,7 +10,7 @@ const [formData, setFormData] = useState({
     imei: '',
       registro: '',
     dataEntrega: '',
-    dataPrevistaDevolucao: '',
+    departamento: '',
     status: 'ativo'
   });
 
@@ -46,7 +46,7 @@ const [formData, setFormData] = useState({
         imei: entregaEdicao.id.imei,
         registro: entregaEdicao.id.registro,
         dataEntrega: entregaEdicao.dataEntrega,
-        dataPrevistaDevolucao: entregaEdicao.dataPrevistaDevolucao,
+        departamento: entregaEdicao.departamento || '',
         status: entregaEdicao.status
       });
 
@@ -125,7 +125,7 @@ useEffect(() => {
         registro: formData.registro
       },
       dataEntrega: formData.dataEntrega,
-      dataPrevistaDevolucao: formData.dataPrevistaDevolucao,
+      departamento: formData.departamento,
       status: formData.status,
       acessorios: acessoriosStr,
       ativo: true
@@ -166,7 +166,7 @@ useEffect(() => {
       imei: '',
       registro: '',
       dataEntrega: '',
-      dataPrevistaDevolucao: '',
+      departamento: '',
       status: 'ativo'
     });
     setChipSelecionado('');
@@ -298,14 +298,14 @@ useEffect(() => {
             </div>
 
             <div className="col-md-4 mb-3">
-              <label className="form-label">Previsão de Devolução *</label>
+              <label className="form-label">Departamento</label>
               <input
-                type="date"
-                name="dataPrevistaDevolucao"
+                type="text"
+                name="departamento"
                 className="form-control"
-                value={formData.dataPrevistaDevolucao}
+                value={formData.departamento}
                 onChange={handleChange}
-                required
+                placeholder="Ex: TI, RH, Financeiro..."
               />
             </div>
 

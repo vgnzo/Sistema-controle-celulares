@@ -39,10 +39,7 @@ public class ColaboradorService {
         return colaboradorRepository.findByDepartamento(departamento);
     }
     
-    // Buscar por cargo
-    public List<Colaborador> buscarPorCargo(String cargo) {
-        return colaboradorRepository.findByCargo(cargo);
-    }
+   
     
     // Buscar por status
     public List<Colaborador> buscarPorStatus(String status) {
@@ -111,7 +108,6 @@ public class ColaboradorService {
                 colaborador.setEmail(colaboradorAtualizado.getEmail());
                 colaborador.setTelefoneContato(colaboradorAtualizado.getTelefoneContato());
                 colaborador.setDepartamento(colaboradorAtualizado.getDepartamento());
-                colaborador.setCargo(colaboradorAtualizado.getCargo());
                 colaborador.setDataAdmissao(colaboradorAtualizado.getDataAdmissao());
                 colaborador.setStatus(colaboradorAtualizado.getStatus());
                 
