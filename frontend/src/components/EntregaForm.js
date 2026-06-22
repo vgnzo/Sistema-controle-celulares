@@ -5,6 +5,9 @@ import { toast } from 'react-toastify';
 // Acessórios comuns (os outros o usuário digita no campo "Outro")
 const ACESSORIOS_COMUNS = ['Carregador', 'Capinha', 'Película', 'Fone de ouvido', 'Cabo USB'];
 
+// Departamentos comuns (qualquer outro o usuário digita via "Outro")
+const DEPTS_COMUNS = ['Administrativo','Financeiro','Comercial','Operacional','TI','RH','Marketing','Logística'];
+
 function EntregaForm({ onSucesso, entregaEdicao, onCancelar }){
 const [formData, setFormData] = useState({
     imei: '',
@@ -28,6 +31,9 @@ const [formData, setFormData] = useState({
   const [acessoriosSelecionados, setAcessoriosSelecionados] = useState([]); // os comuns marcados
   const [outroAcessorio, setOutroAcessorio] = useState('');                  // os digitados
 
+  // 🏢 controla se o departamento "Outro" (caixa de texto) está ativo
+  const [deptOutro, setDeptOutro] = useState(false);
+
 
  const carregarDados = useCallback(async () => {
   try {
@@ -49,6 +55,11 @@ const [formData, setFormData] = useState({
         departamento: entregaEdicao.departamento || '',
         status: entregaEdicao.status
       });
+
+      // se o departamento salvo não for um dos comuns, abre no modo "Outro"
+      if (entregaEdicao.departamento && !DEPTS_COMUNS.includes(entregaEdicao.departamento)) {
+        setDeptOutro(true);
+      }
 
       // separa os acessórios salvos entre "comuns" (checkbox) e "outros" (texto)
       if (entregaEdicao.acessorios) {
@@ -96,6 +107,18 @@ useEffect(() => {
       ...formData,
       [name]: value
     });
+  };
+
+  // handler do select de departamento (lida com "Outro")
+  const handleDepartamentoSelect = (e) => {
+    const value = e.target.value;
+    if (value === 'Outro') {
+      setDeptOutro(true);
+      setFormData({ ...formData, departamento: '' });
+    } else {
+      setDeptOutro(false);
+      setFormData({ ...formData, departamento: value });
+    }
   };
 
   // marca/desmarca um acessório comum
@@ -173,6 +196,7 @@ useEffect(() => {
     setChipOriginal('');
     setAcessoriosSelecionados([]);
     setOutroAcessorio('');
+    setDeptOutro(false);
 
     onSucesso();
   };
@@ -297,16 +321,38 @@ useEffect(() => {
               />
             </div>
 
+            {/* 🏢 Departamento onde o aparelho está (select + Outro) */}
             <div className="col-md-4 mb-3">
               <label className="form-label">Departamento</label>
-              <input
-                type="text"
+              <select
                 name="departamento"
-                className="form-control"
-                value={formData.departamento}
-                onChange={handleChange}
-                placeholder="Ex: TI, RH, Financeiro..."
-              />
+                className="form-select"
+                value={deptOutro ? 'Outro' : formData.departamento}
+                onChange={handleDepartamentoSelect}
+              >
+                <option value="">Selecione...</option>
+                <option value="Administrativo">🏢 Administrativo</option>
+                <option value="Financeiro">💰 Financeiro</option>
+                <option value="Comercial">📊 Comercial</option>
+                <option value="Operacional">⚙️ Operacional</option>
+                <option value="TI">💻 TI</option>
+                <option value="RH">👥 RH</option>
+                <option value="Marketing">📢 Marketing</option>
+                <option value="Logística">🚚 Logística</option>
+                <option value="Outro">📋 Outro</option>
+              </select>
+
+              {/* caixa de texto aparece só quando escolhe "Outro" */}
+              {deptOutro && (
+                <input
+                  type="text"
+                  name="departamento"
+                  className="form-control mt-2"
+                  value={formData.departamento}
+                  onChange={handleChange}
+                  placeholder="Digite o departamento"
+                />
+              )}
             </div>
 
             <div className="col-md-4 mb-3">
