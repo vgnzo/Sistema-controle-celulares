@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { entregaService } from '../services/api';
 import { toast } from 'react-toastify';
+import * as XLSX from 'xlsx';
 
 function Historico() {
   const [historico, setHistorico] = useState([]);
@@ -70,51 +71,49 @@ function Historico() {
     return <span className={`badge ${cor}`}>{status}</span>;
   };
 
-  const getBadgeStatusCelular = (status) => {
-    const cor = status === 'em estoque' ? 'bg-success' :
-                status === 'entregue' ? 'bg-primary' :
-                status === 'manutencao' ? 'bg-warning text-dark' :
-                status === 'baixado' ? 'bg-danger' :
-                'bg-secondary';
-    return <span className={`badge ${cor}`}>{status || '-'}</span>;
-  };
-
-  const exportarCSV = () => {
+  const exportarExcel = () => {
     if (historicoFiltrado.length === 0) {
       toast.warning('Nenhum dado para exportar!');
       return;
     }
 
-    const cabecalho = [
-      'IMEI', 'Colaborador', 'Departamento', 'Status Colaborador',
-      'Status Celular', 'Data Entrega', 'Prev. Devolução', 'Status Entrega', 'Situação'
+    // monta os dados (as chaves viram o cabeçalho da planilha)
+    const dados = historicoFiltrado.map(entrega => ({
+      'IMEI': entrega.id.imei,
+      'Modelo': entrega.celular?.modelo || '-',
+      'Registro': entrega.id.registro,
+      'Colaborador': entrega.colaborador?.nome || '-',
+      'Departamento': entrega.departamento || '-',
+      'Acessórios': entrega.acessorios || '-',
+      'Data Entrega': formatarData(entrega.dataEntrega),
+      'Status Entrega': entrega.status,
+      'Situação': entrega.ativo ? 'Ativa' : 'Realizada'
+    }));
+
+    // cria a planilha a partir dos dados
+    const ws = XLSX.utils.json_to_sheet(dados);
+
+    // largura de cada coluna (deixa legível)
+    ws['!cols'] = [
+      { wch: 18 }, // IMEI
+      { wch: 18 }, // Modelo
+      { wch: 10 }, // Registro
+      { wch: 22 }, // Colaborador
+      { wch: 16 }, // Departamento
+      { wch: 30 }, // Acessórios
+      { wch: 14 }, // Data Entrega
+      { wch: 14 }, // Status Entrega
+      { wch: 12 }  // Situação
     ];
 
-    const linhas = historicoFiltrado.map(entrega => [
-      entrega.id.imei,
-      entrega.colaborador?.nome || '-',
-      entrega.colaborador?.departamento || '-',
-      entrega.colaborador?.status || '-',
-      entrega.celular?.status || '-',
-      formatarData(entrega.dataEntrega),
-      formatarData(entrega.dataPrevistaDevolucao),
-      entrega.status,
-      entrega.ativo ? 'Ativa' : 'Realizada'
-    ]);
+    // cria o "arquivo" (workbook) e adiciona a planilha
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Histórico');
 
-    const csvConteudo = [cabecalho, ...linhas]
-      .map(linha => linha.join(';'))
-      .join('\n');
+    const nomeArquivo = `historico-entregas-${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.xlsx`;
+    XLSX.writeFile(wb, nomeArquivo);
 
-    const blob = new Blob(['\uFEFF' + csvConteudo], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `historico-entregas-${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
-
-    toast.success('✅ CSV exportado com sucesso!');
+    toast.success('✅ Excel exportado com sucesso!');
   };
 
   return (
@@ -163,8 +162,8 @@ function Historico() {
             <button className="btn btn-sm btn-outline-primary" onClick={carregarHistorico}>
               🔄 Atualizar
             </button>
-            <button className="btn btn-sm btn-success" onClick={exportarCSV}>
-              📥 Exportar CSV
+            <button className="btn btn-sm btn-success" onClick={exportarExcel}>
+              📥 Exportar Excel
             </button>
           </div>
         </div>
@@ -183,30 +182,26 @@ function Historico() {
               <thead className="table-dark">
                 <tr>
                   <th className="text-center">IMEI</th>
+                  <th className="text-center">Modelo</th>
+                  <th className="text-center">Registro</th>
                   <th className="text-center">Colaborador</th>
                   <th className="text-center">Departamento</th>
-                  <th className="text-center">Status Colaborador</th>
-                  <th className="text-center">Status Celular</th>
+                  <th className="text-center">Acessórios</th>
                   <th className="text-center">Data Entrega</th>
-                  <th className="text-center">Prev. Devolução</th>
                   <th className="text-center">Status Entrega</th>
-                  <th className="text-center">Situação Devolução</th>
+                  <th className="text-center">Situação</th>
                 </tr>
               </thead>
               <tbody>
                 {itensPagina.map((entrega, index) => (
                   <tr key={index} className={`align-middle ${!entrega.ativo ? 'table-secondary' : ''}`}>
                     <td className="text-center"><code>{entrega.id.imei}</code></td>
+                    <td className="text-center">{entrega.celular?.modelo || '-'}</td>
+                    <td className="text-center">{entrega.id.registro}</td>
                     <td className="text-center">{entrega.colaborador?.nome || '-'}</td>
-                    <td className="text-center">{entrega.colaborador?.departamento || '-'}</td>
-                    <td className="text-center">
-                      <span className={`badge ${entrega.colaborador?.status === 'ativo' ? 'bg-success' : 'bg-secondary'}`}>
-                        {entrega.colaborador?.status || '-'}
-                      </span>
-                    </td>
-                    <td className="text-center">{getBadgeStatusCelular(entrega.celular?.status)}</td>
+                    <td className="text-center">{entrega.departamento || '-'}</td>
+                    <td className="text-center">{entrega.acessorios || '-'}</td>
                     <td className="text-center">{formatarData(entrega.dataEntrega)}</td>
-                    <td className="text-center">{formatarData(entrega.dataPrevistaDevolucao)}</td>
                     <td className="text-center">{getBadgeStatusEntrega(entrega.status)}</td>
                     <td className="text-center">{getBadgeSituacao(entrega)}</td>
                   </tr>
