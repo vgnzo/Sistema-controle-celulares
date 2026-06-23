@@ -11,6 +11,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import Chips from './pages/Chips';
 import Computadores from './pages/Computadores';
 import SelecaoModulo from './pages/SelecaoModulo';
+import EntregasComputador from './pages/EntregasComputador';
+
 
 function App() {
 
@@ -89,6 +91,9 @@ function App() {
 
       case 'entregas':
         return <Entregas tipo={tipo} />;
+
+        case 'entregasComputador':
+  return <EntregasComputador tipo={tipo} />;
 
       case 'historico':
         return <Historico />;
@@ -180,17 +185,28 @@ function App() {
               </>
             )}
 
-            {/* ===== ITENS DO MÓDULO COMPUTADOR ===== */}
-            {modulo === 'computador' && (
-              <li className="nav-item">
-                <button
-                  className={`nav-link btn btn-link ${paginaAtual === 'computadores' ? 'active text-white' : 'text-secondary'}`}
-                  onClick={() => setPaginaAtual('computadores')}
-                >
-                  💻 Computadores
-                </button>
-              </li>
-            )}
+           {/* ===== ITENS DO MÓDULO COMPUTADOR ===== */}
+              {modulo === 'computador' && (
+                <>
+                  <li className="nav-item">
+                    <button
+                      className={`nav-link btn btn-link ${paginaAtual === 'computadores' ? 'active text-white' : 'text-secondary'}`}
+                      onClick={() => setPaginaAtual('computadores')}
+                    >
+                      💻 Computadores
+                    </button>
+                  </li>
+
+                  <li className="nav-item">
+                    <button
+                      className={`nav-link btn btn-link ${paginaAtual === 'entregasComputador' ? 'active text-white' : 'text-secondary'}`}
+                      onClick={() => setPaginaAtual('entregasComputador')}
+                    >
+                      📦 Entregas
+                    </button>
+                  </li>
+                </>
+              )}
 
             {/* ===== COMPARTILHADOS (os dois módulos) ===== */}
             {tipo === 'ADMIN' && (

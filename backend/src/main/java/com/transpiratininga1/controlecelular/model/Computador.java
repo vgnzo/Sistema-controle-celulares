@@ -1,5 +1,7 @@
 package com.transpiratininga1.controlecelular.model;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -10,6 +12,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "Computador")
@@ -41,9 +44,9 @@ public class Computador {
     private String status;
 
 
-    @Column(name = "data_aquisicao", length = 20, nullable = false)
-    @NotBlank(message = "Data de aquisição obrigatório")
-    private String dataAquisicao;
+ @Column(name = "data_aquisicao", nullable = false)
+@NotNull(message = "Data de aquisição obrigatório")
+private LocalDate dataAquisicao;
 
     @Column(name = "vida_util")
     private Integer vidaUtil; //em meses
@@ -64,10 +67,9 @@ public class Computador {
     private void validarStatus(){
         if(status != null){
             status = status.toLowerCase().trim(); //converte para minúsculo e remove espaços em branco
-            if (!status.matches("em estoque| entregue | manutenção |  devolvido | baixado")) {
-               throw new IllegalArgumentException("Status inválido. Os valores permitidos são: 'Em estoque', 'Entregue', 'Manutenção', 'Devolvido' ou 'Baixado'."
-                
-               );
+if (!status.matches("em estoque|entregue|manutencao|devolvido|baixado")) {    
+throw new IllegalArgumentException("Status inválido. Use: em estoque, entregue, manutencao, devolvido ou baixado");                
+               
             }
         }
     }

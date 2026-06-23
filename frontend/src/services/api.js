@@ -151,4 +151,14 @@ export const vinculoChipService = {
     desvincular: (imei) => api.delete(`/vinculos-chip/celular/${imei}`)
 };
 
+// ✅ Entrega de Computador
+export const entregaComputadorService = {
+    listarTodas: () => api.get('/entregas-computador'),
+    buscarPorId: (id) => api.get(`/entregas-computador/${id}`),
+    cadastrar: (entrega) => api.post('/entregas-computador', entrega),
+    atualizar: (id, entrega) => api.put(`/entregas-computador/${id}`, entrega),
+    deletar: (id) => api.delete(`/entregas-computador/${id}`),
+    listarHistorico: () => api.get('/entregas-computador/historico')
+};
+
 export default api;
