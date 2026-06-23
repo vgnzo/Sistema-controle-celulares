@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { celularService, vinculoChipService } from '../services/api';
+import { computadorService } from '../services/api';
 
-function CelularLista({ onEditar }) {
-    const [celulares, setCelulares] = useState([]);
-    const [chipsPorCelular, setChipsPorCelular] = useState({}); // { imei: chip | null }
+function ComputadorLista({ onEditar }) {
+    const [computadores, setComputadores] = useState([]);
     const [loading, setloading] = useState(true);
     const [erro, setErro] = useState(null);
 
@@ -11,51 +10,36 @@ function CelularLista({ onEditar }) {
     const isAdmin = !!onEditar;
 
    useEffect(() => {
-        carregarCelulares();
+        carregarComputadores();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const carregarCelulares = async () => {
+    const carregarComputadores = async () => {
         try {
             setloading(true);
-            const response = await celularService.listarTodos();
-            setCelulares(response.data);
+            const response = await computadorService.listarTodos();
+            setComputadores(response.data);
             setErro(null);
-            carregarChipsDosCelulares(response.data); // busca o chip de cada um
         } catch (error) {
-            setErro('Erro ao carregar celulares');
+            setErro('Erro ao carregar computadores');
             console.error(error);
         } finally {
             setloading(false);
         }
     };
 
-    // 🔗 Busca o chip atual de cada celular pra mostrar na coluna
-    const carregarChipsDosCelulares = async (lista) => {
-        const mapa = {};
-        await Promise.all(lista.map(async (cel) => {
-            try {
-                const r = await vinculoChipService.chipAtualDoCelular(cel.imei);
-                mapa[cel.imei] = (r.data && typeof r.data === 'object' && r.data.chip) ? r.data.chip : null;
-            } catch {
-                mapa[cel.imei] = null;
-            }
-        }));
-        setChipsPorCelular(mapa);
-    };
-
     // 🔒 Só ADMIN pode mudar status
-    const handleMudarStatus = async (celular, novoStatus) => {
+    const handleMudarStatus = async (computador, novoStatus) => {
 
-        if (!isAdmin) return; // bloqueia USER
+        if (!isAdmin) return; // 🛑 bloqueia USER
 
-        if (window.confirm(`Alterar status de "${celular.modelo}" para "${novoStatus}"?`)) {
+        if (window.confirm(`Alterar status de "${computador.modelo}" para "${novoStatus}"?`)) {
             try {
-                await celularService.atualizar(celular.imei, {
-                    ...celular,
+                await computadorService.atualizar(computador.numeroPatrimonio, {
+                    ...computador,
                     status: novoStatus
                 });
-                carregarCelulares();
+                carregarComputadores();
             } catch (error) {
                 alert(error.response?.data?.mensagem || 'Erro ao atualizar status');
             }
@@ -68,7 +52,7 @@ function CelularLista({ onEditar }) {
     return (
         <div className="card">
             <div className="card-header">
-                <h5 className="mb-0">📋 Lista de Celulares</h5>
+                <h5 className="mb-0">💻 Lista de Computadores</h5>
             </div>
 
             <div className="card-body">
@@ -76,15 +60,16 @@ function CelularLista({ onEditar }) {
                     <table className="table table-striped table-hover">
                         <thead className="table-dark">
                             <tr>
-                                <th>IMEI</th>
+                                <th>Patrimônio</th>
+                                <th>Marca</th>
                                 <th>Modelo</th>
                                 <th>Status</th>
+                                <th>Proprietário</th>
                                 <th>Fornecedor</th>
-                                <th>🔗 Chip</th>
+                                <th>MAC Address</th>
                                 <th>Data Aquisição</th>
-                                <th>Vida Útil</th>
 
-                                {/*  Só ADMIN vê coluna Ações */}
+                                {/* 🔥 Só ADMIN vê coluna Ações */}
                                 {isAdmin && (
                                     <th className="text-center">Ações</th>
                                 )}
@@ -92,45 +77,35 @@ function CelularLista({ onEditar }) {
                         </thead>
 
                         <tbody>
-                            {celulares.length === 0 ? (
+                            {computadores.length === 0 ? (
                                 <tr>
-                                    <td colSpan={isAdmin ? "8" : "7"} className="text-center text-muted">
-                                        Nenhum celular cadastrado
+                                    <td colSpan={isAdmin ? "9" : "8"} className="text-center text-muted">
+                                        Nenhum computador cadastrado
                                     </td>
                                 </tr>
                             ) : (
-                                celulares.map((celular) => (
-                                    <tr key={celular.imei}>
-                                        <td>{celular.imei}</td>
-                                        <td>{celular.modelo}</td>
+                                computadores.map((computador) => (
+                                    <tr key={computador.numeroPatrimonio}>
+                                        <td>{computador.numeroPatrimonio}</td>
+                                        <td>{computador.marca || '-'}</td>
+                                        <td>{computador.modelo}</td>
 
                                         <td>
                                             <span className={`badge ${
-                                                celular.status === 'em estoque' ? 'bg-success' :
-                                                celular.status === 'entregue' ? 'bg-primary' :
-                                                celular.status === 'manutencao' ? 'bg-warning text-dark' :
-                                                celular.status === 'baixado' ? 'bg-danger' :
+                                                computador.status === 'em estoque' ? 'bg-success' :
+                                                computador.status === 'entregue' ? 'bg-primary' :
+                                                computador.status === 'manutencao' ? 'bg-warning text-dark' :
+                                                computador.status === 'baixado' ? 'bg-danger' :
                                                 'bg-secondary'
                                             }`}>
-                                                {celular.status}
+                                                {computador.status}
                                             </span>
                                         </td>
 
-                                        <td>{celular.fornecedor || '-'}</td>
-
-                                        {/* 🔗 Chip vinculado a este celular */}
-                                        <td>
-                                            {chipsPorCelular[celular.imei] ? (
-                                                <span className="badge bg-primary">
-                                                    {chipsPorCelular[celular.imei].iccid}
-                                                </span>
-                                            ) : (
-                                                <span className="text-muted">— sem chip</span>
-                                            )}
-                                        </td>
-
-                                        <td>{new Date(celular.dataAquisicao).toLocaleDateString('pt-BR')}</td>
-                                        <td>{celular.vidaUtil} meses</td>
+                                        <td>{computador.proprietario || '-'}</td>
+                                        <td>{computador.fornecedor || '-'}</td>
+                                        <td>{computador.macAddress || '-'}</td>
+                                        <td>{new Date(computador.dataAquisicao).toLocaleDateString('pt-BR')}</td>
 
                                         {/* 🔥 AÇÕES APENAS PARA ADMIN */}
                                         {isAdmin && (
@@ -138,7 +113,7 @@ function CelularLista({ onEditar }) {
 
                                                 {/* ✏️ Editar */}
                                                 <button
-                                                    onClick={() => onEditar(celular)}
+                                                    onClick={() => onEditar(computador)}
                                                     className="btn btn-sm btn-warning me-2"
                                                 >
                                                     ✏️ Editar
@@ -146,27 +121,27 @@ function CelularLista({ onEditar }) {
 
                                                 {/* 📦 Estoque */}
                                                 <button
-                                                    onClick={() => handleMudarStatus(celular, 'em estoque')}
+                                                    onClick={() => handleMudarStatus(computador, 'em estoque')}
                                                     className="btn btn-sm btn-success me-2"
-                                                    disabled={celular.status === 'em estoque'}
+                                                    disabled={computador.status === 'em estoque'}
                                                 >
                                                     📦 Estoque
                                                 </button>
 
                                                 {/* 🔧 Manutenção */}
                                                 <button
-                                                    onClick={() => handleMudarStatus(celular, 'manutencao')}
+                                                    onClick={() => handleMudarStatus(computador, 'manutencao')}
                                                     className="btn btn-sm btn-warning me-2"
-                                                    disabled={celular.status === 'manutencao'}
+                                                    disabled={computador.status === 'manutencao'}
                                                 >
                                                     🔧 Manutenção
                                                 </button>
 
                                                 {/* 🗑️ Baixar */}
                                                 <button
-                                                    onClick={() => handleMudarStatus(celular, 'baixado')}
+                                                    onClick={() => handleMudarStatus(computador, 'baixado')}
                                                     className="btn btn-sm btn-danger"
-                                                    disabled={celular.status === 'baixado'}
+                                                    disabled={computador.status === 'baixado'}
                                                 >
                                                     🗑️ Baixar
                                                 </button>
@@ -185,4 +160,4 @@ function CelularLista({ onEditar }) {
     );
 }
 
-export default CelularLista;
+export default ComputadorLista;
