@@ -209,18 +209,7 @@ function App() {
                   </button>
                 </li>
 
-                <li className="nav-item">
-                  <button
-                    className={`nav-link btn btn-link ${paginaAtual === 'historico-computador' ? 'active text-white' : 'text-secondary'}`}
-                    onClick={() => setPaginaAtual('historico-computador')}
-                  >
-                    🕐 Histórico
-                  </button>
-                </li>
-              </>
-            )}
-
-            {/* ===== COMPARTILHADOS (os dois módulos) ===== */}
+               {/* ===== COMPARTILHADOS (os dois módulos) ===== */}
             {tipo === 'ADMIN' && (
               <li className="nav-item">
                 <button
@@ -230,6 +219,18 @@ function App() {
                   👥 Colaboradores
                 </button>
               </li>
+            )}
+
+
+                <li className="nav-item">
+                  <button
+                    className={`nav-link btn btn-link ${paginaAtual === 'historico-computador' ? 'active text-white' : 'text-secondary'}`}
+                    onClick={() => setPaginaAtual('historico-computador')}
+                  >
+                    🕐 Histórico
+                  </button>
+                </li>
+              </>
             )}
 
             {tipo === 'ADMIN' && (
