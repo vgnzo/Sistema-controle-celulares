@@ -132,6 +132,16 @@ export const chipService = {
     deletar: (iccid) => api.delete(`/chips/${iccid}`)
 };
 
+// ✅ Computador
+export const computadorService = {
+    listarTodos: () => api.get('/computadores'),
+    buscarPorPatrimonio: (patrimonio) => api.get(`/computadores/${patrimonio}`),
+    cadastrar: (computador) => api.post('/computadores', computador),
+    atualizar: (patrimonio, computador) => api.put(`/computadores/${patrimonio}`, computador),
+    deletar: (patrimonio) => api.delete(`/computadores/${patrimonio}`),
+    buscarPorStatus: (status) => api.get(`/computadores/status/${status}`)
+};
+
 // ✅ Vínculo Chip ↔ Celular
 export const vinculoChipService = {
     chipAtualDoCelular: (imei) => api.get(`/vinculos-chip/celular/${imei}/atual`),

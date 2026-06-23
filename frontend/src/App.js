@@ -9,6 +9,7 @@ import GerenciarUsuarios from './pages/GerenciarUsuarios';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Chips from './pages/Chips';
+import Computadores from './pages/Computadores';
 
 function App() {
 
@@ -58,6 +59,8 @@ function App() {
         case 'chips':
         return <Chips tipo={tipo} />;
 
+      case 'computadores':
+        return <Computadores tipo={tipo} />;
 
       case 'colaboradores':
         if (tipo !== 'ADMIN') return <h3>Acesso negado</h3>;
@@ -89,7 +92,7 @@ function App() {
         <div className="container-fluid">
 
           <span className="navbar-brand mb-0 h1">
-            🏢 Sistema de Controle de Celulares
+            🏢 Sistema de Controle de Ativos
           </span>
 
           <ul className="navbar-nav d-flex flex-row gap-3">
@@ -111,7 +114,16 @@ function App() {
                 📱 Celulares
               </button>
             </li>
-            
+
+            <li className="nav-item">
+              <button
+                className={`nav-link btn btn-link ${paginaAtual === 'computadores' ? 'active text-white' : 'text-secondary'}`}
+                onClick={() => setPaginaAtual('computadores')}
+              >
+                💻 Computadores
+              </button>
+            </li>
+
             <li className="nav-item">
               <button
                 className={`nav-link btn btn-link ${paginaAtual === 'chips' ? 'active text-white' : 'text-secondary'}`}
@@ -121,7 +133,7 @@ function App() {
               </button>
             </li>
 
-        
+
 
             {tipo === 'ADMIN' && (
               <li className="nav-item">

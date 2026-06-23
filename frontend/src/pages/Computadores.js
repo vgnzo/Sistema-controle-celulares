@@ -1,62 +1,62 @@
 import React, { useState } from 'react';
-import CelularLista from '../components/CelularLista';
-import CelularForm from '../components/CelularForm';
+import ComputadorLista from '../components/ComputadorLista';
+import ComputadorForm from '../components/ComputadorForm';
 
-function Celulares({ tipo }) { // ✅ recebe tipo
+function Computadores({ tipo }) { // ✅ recebe tipo
     const [atualizarLista, setAtualizarLista] = useState(0);
-    const [celularEdicao, setCelularEdicao] = useState(null);
+    const [computadorEdicao, setComputadorEdicao] = useState(null);
     const [mostrarForm, setMostrarForm] = useState(false);
 
     const handleSucesso = () => {
         setAtualizarLista(atualizarLista + 1);
-        setCelularEdicao(null);
+        setComputadorEdicao(null);
         setMostrarForm(false);
     };
 
-    const handleEditar = (celular) => {
+    const handleEditar = (computador) => {
         if (tipo !== 'ADMIN') return; // ✅ bloqueia USER
-        setCelularEdicao(celular);
+        setComputadorEdicao(computador);
         setMostrarForm(true);
     };
 
     const handleCancelar = () => {
-        setCelularEdicao(null);
-        setMostrarForm(false); //  aqui estava errado (estava true)
+        setComputadorEdicao(null);
+        setMostrarForm(false);
     };
 
     const handleNovo = () => {
         if (tipo !== 'ADMIN') return; // ✅ bloqueia USER
-        setCelularEdicao(null);
+        setComputadorEdicao(null);
         setMostrarForm(true);
     };
 
     return (
         <div>
             <div className="d-flex justify-content-between align-items-center mb-4">
-                <h2>📱 Gerenciamento de Celulares</h2>
+                <h2>💻 Gerenciamento de Computadores</h2>
 
                 {/* ✅ Só ADMIN vê botão */}
                 {tipo === 'ADMIN' && (
-                    <button 
+                    <button
                         onClick={handleNovo}
                         className="btn btn-success btn-lg"
                     >
-                        ➕ Novo Celular
+                        ➕ Novo Computador
                     </button>
                 )}
             </div>
 
             {/* ✅ Só ADMIN pode abrir formulário */}
             {mostrarForm && tipo === 'ADMIN' && (
-                <CelularForm 
+                <ComputadorForm
                     onSucesso={handleSucesso}
-                    celularEdicao={celularEdicao}
+                    computadorEdicao={computadorEdicao}
                     onCancelar={handleCancelar}
                 />
             )}
 
             {/* Lista sempre aparece (USER pode visualizar) */}
-            <CelularLista 
+            <ComputadorLista
                 key={atualizarLista}
                 onEditar={tipo === 'ADMIN' ? handleEditar : null} // ✅ USER não edita
             />
@@ -64,4 +64,4 @@ function Celulares({ tipo }) { // ✅ recebe tipo
     );
 }
 
-export default Celulares;
+export default Computadores;
