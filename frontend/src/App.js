@@ -10,9 +10,9 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Chips from './pages/Chips';
 import Computadores from './pages/Computadores';
-import SelecaoModulo from './pages/SelecaoModulo';
 import EntregasComputador from './pages/EntregasComputador';
-
+import HistoricoComputador from './pages/HistoricoComputador';
+import SelecaoModulo from './pages/SelecaoModulo';
 
 function App() {
 
@@ -21,20 +21,20 @@ function App() {
   const [username, setUsername] = useState('');
   const [tipo, setTipo] = useState('');
 
-  // 🔥 qual sistema (módulo) está selecionado: '' (nenhum), 'celular' ou 'computador'
+  // qual sistema (módulo) está selecionado: '' (nenhum), 'celular' ou 'computador'
   const [modulo, setModulo] = useState('');
 
   useEffect(() => {
-  const token = localStorage.getItem('accessToken');
-  const user = localStorage.getItem('username');
-  const tipoStorage = localStorage.getItem('tipo');
+    const token = localStorage.getItem('accessToken');
+    const user = localStorage.getItem('username');
+    const tipoStorage = localStorage.getItem('tipo');
 
-  if (token && user) {
-    setLogado(true);
-    setUsername(user);
-    setTipo(tipoStorage);
-  }
-}, []);
+    if (token && user) {
+      setLogado(true);
+      setUsername(user);
+      setTipo(tipoStorage);
+    }
+  }, []);
 
   const handleLogin = () => {
     const user = localStorage.getItem('username');
@@ -45,22 +45,22 @@ function App() {
   };
 
   const handleLogout = () => {
-  localStorage.removeItem('accessToken');
-  localStorage.removeItem('refreshToken');
-  localStorage.removeItem('username');
-  localStorage.removeItem('tipo');
-  setLogado(false);
-  setModulo('');
-  setPaginaAtual('dashboard');
-};
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('username');
+    localStorage.removeItem('tipo');
+    setLogado(false);
+    setModulo('');
+    setPaginaAtual('dashboard');
+  };
 
-  // 🔥 escolhe o módulo e entra no dashboard dele
+  // escolhe o módulo e entra no dashboard dele
   const handleSelecionarModulo = (mod) => {
     setModulo(mod);
     setPaginaAtual('dashboard');
   };
 
-  // 🔥 volta pra tela de seleção (trocar de sistema)
+  // volta pra tela de seleção (trocar de sistema)
   const handleTrocarModulo = () => {
     setModulo('');
     setPaginaAtual('dashboard');
@@ -70,7 +70,7 @@ function App() {
     switch (paginaAtual) {
 
       case 'dashboard':
-        return <Dashboard />;
+        return <Dashboard modulo={modulo} />;
 
       case 'celulares':
         return <Celulares tipo={tipo} />;
@@ -80,6 +80,12 @@ function App() {
 
       case 'computadores':
         return <Computadores tipo={tipo} />;
+
+      case 'entregas-computador':
+        return <EntregasComputador tipo={tipo} />;
+
+      case 'historico-computador':
+        return <HistoricoComputador />;
 
       case 'colaboradores':
         if (tipo !== 'ADMIN') return <h3>Acesso negado</h3>;
@@ -92,14 +98,11 @@ function App() {
       case 'entregas':
         return <Entregas tipo={tipo} />;
 
-        case 'entregasComputador':
-  return <EntregasComputador tipo={tipo} />;
-
       case 'historico':
         return <Historico />;
 
       default:
-        return <Dashboard />;
+        return <Dashboard modulo={modulo} />;
     }
   };
 
@@ -185,28 +188,37 @@ function App() {
               </>
             )}
 
-           {/* ===== ITENS DO MÓDULO COMPUTADOR ===== */}
-              {modulo === 'computador' && (
-                <>
-                  <li className="nav-item">
-                    <button
-                      className={`nav-link btn btn-link ${paginaAtual === 'computadores' ? 'active text-white' : 'text-secondary'}`}
-                      onClick={() => setPaginaAtual('computadores')}
-                    >
-                      💻 Computadores
-                    </button>
-                  </li>
+            {/* ===== ITENS DO MÓDULO COMPUTADOR ===== */}
+            {modulo === 'computador' && (
+              <>
+                <li className="nav-item">
+                  <button
+                    className={`nav-link btn btn-link ${paginaAtual === 'computadores' ? 'active text-white' : 'text-secondary'}`}
+                    onClick={() => setPaginaAtual('computadores')}
+                  >
+                    💻 Computadores
+                  </button>
+                </li>
 
-                  <li className="nav-item">
-                    <button
-                      className={`nav-link btn btn-link ${paginaAtual === 'entregasComputador' ? 'active text-white' : 'text-secondary'}`}
-                      onClick={() => setPaginaAtual('entregasComputador')}
-                    >
-                      📦 Entregas
-                    </button>
-                  </li>
-                </>
-              )}
+                <li className="nav-item">
+                  <button
+                    className={`nav-link btn btn-link ${paginaAtual === 'entregas-computador' ? 'active text-white' : 'text-secondary'}`}
+                    onClick={() => setPaginaAtual('entregas-computador')}
+                  >
+                    📦 Entregas
+                  </button>
+                </li>
+
+                <li className="nav-item">
+                  <button
+                    className={`nav-link btn btn-link ${paginaAtual === 'historico-computador' ? 'active text-white' : 'text-secondary'}`}
+                    onClick={() => setPaginaAtual('historico-computador')}
+                  >
+                    🕐 Histórico
+                  </button>
+                </li>
+              </>
+            )}
 
             {/* ===== COMPARTILHADOS (os dois módulos) ===== */}
             {tipo === 'ADMIN' && (
