@@ -49,9 +49,11 @@ function Hoteis({ tipo }) {
                     onSucesso={handleSucesso}
                     hotelEdicao={hotelEdicao}
                     onCancelar={handleCancelar}
+                    isAdmin={isAdmin}  
                 />
             )}
 
+            
             {/* onEditar só passa pro admin — user não vê botões de editar/excluir */}
             <HotelLista
                 onEditar={isAdmin ? handleEditar : null}

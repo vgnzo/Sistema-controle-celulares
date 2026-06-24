@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { hotelService, colaboradorService } from '../services/api';
 import { toast } from 'react-toastify';
 
-function HotelForm({ onSucesso, hotelEdicao, onCancelar }) {
+function HotelForm({ onSucesso, hotelEdicao, onCancelar, isAdmin }) {
     const [colaboradores, setColaboradores] = useState([]);
+    const [colaboradorTexto, setColaboradorTexto] = useState('');
 
     const [formData, setFormData] = useState(
         hotelEdicao
@@ -23,25 +24,40 @@ function HotelForm({ onSucesso, hotelEdicao, onCancelar }) {
               }
     );
 
-    // carrega a lista de colaboradores pro select
     useEffect(() => {
-        colaboradorService
-            .listarTodos()
-            .then((r) => setColaboradores(r.data))
-            .catch(() => setColaboradores([]));
-    }, []);
+        if (isAdmin) {
+            colaboradorService
+                .listarTodos()
+                .then((r) => setColaboradores(r.data))
+                .catch(() => setColaboradores([]));
+        }
+    }, [isAdmin]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
+    const extrairRegistro = (texto) => {
+        const match = texto.match(/\(([^)]+)\)/);
+        return match ? match[1].trim() : null;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // monta o objeto no formato que o backend espera (colaborador aninhado)
+        let registroFinal = formData.registro;
+
+        if (!isAdmin) {
+            registroFinal = extrairRegistro(colaboradorTexto);
+            if (!registroFinal) {
+                toast.error('❌ Formato inválido. Use: Seu Nome (registro)');
+                return;
+            }
+        }
+
         const dadosParaEnviar = {
-            colaborador: { registro: formData.registro },
+            colaborador: { registro: registroFinal },
             dataEntrada: formData.dataEntrada,
             dataSaida: formData.dataSaida,
             motivo: formData.motivo,
@@ -54,10 +70,9 @@ function HotelForm({ onSucesso, hotelEdicao, onCancelar }) {
                 toast.success('✅ Reserva atualizada com sucesso!');
             } else {
                 await hotelService.cadastrar(dadosParaEnviar);
-                toast.success('✅ Reserva cadastrada com sucesso!');
+                toast.success('✅ Solicitação enviada! Aguarde aprovação.');
             }
 
-            // limpa o formulário
             setFormData({
                 registro: '',
                 dataEntrada: '',
@@ -65,7 +80,7 @@ function HotelForm({ onSucesso, hotelEdicao, onCancelar }) {
                 motivo: '',
                 valor: ''
             });
-
+            setColaboradorTexto('');
             onSucesso();
         } catch (error) {
             toast.error(error.response?.data?.mensagem || error.response?.data || '❌ Erro ao salvar reserva');
@@ -82,21 +97,40 @@ function HotelForm({ onSucesso, hotelEdicao, onCancelar }) {
                     <div className="row">
                         <div className="col-md-6 mb-3">
                             <label className="form-label">Colaborador *</label>
-                            <select
-                                name="registro"
-                                className="form-select"
-                                value={formData.registro}
-                                onChange={handleChange}
-                                required
-                                disabled={!!hotelEdicao}
-                            >
-                                <option value="">Selecione um colaborador</option>
-                                {colaboradores.map((c) => (
-                                    <option key={c.registro} value={c.registro}>
-                                        {c.nome} ({c.registro})
-                                    </option>
-                                ))}
-                            </select>
+
+                            {/* ADMIN vê o select, USER digita */}
+                            {isAdmin ? (
+                                <select
+                                    name="registro"
+                                    className="form-select"
+                                    value={formData.registro}
+                                    onChange={handleChange}
+                                    required
+                                    disabled={!!hotelEdicao}
+                                >
+                                    <option value="">Selecione um colaborador</option>
+                                    {colaboradores.map((c) => (
+                                        <option key={c.registro} value={c.registro}>
+                                            {c.nome} ({c.registro})
+                                        </option>
+                                    ))}
+                                </select>
+                            ) : (
+                                <>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={colaboradorTexto}
+                                        onChange={(e) => setColaboradorTexto(e.target.value)}
+                                        placeholder="Ex: João Silva (01)"
+                                        required
+                                        disabled={!!hotelEdicao}
+                                    />
+                                    <small className="text-muted">
+                                        Digite seu nome e seu registro entre parênteses
+                                    </small>
+                                </>
+                            )}
                         </div>
 
                         <div className="col-md-6 mb-3">
@@ -155,7 +189,7 @@ function HotelForm({ onSucesso, hotelEdicao, onCancelar }) {
 
                     <div className="d-flex gap-2">
                         <button type="submit" className="btn btn-primary">
-                            {hotelEdicao ? '💾 Atualizar' : '✅ Cadastrar'}
+                            {hotelEdicao ? '💾 Atualizar' : '✅ Enviar Solicitação'}
                         </button>
 
                         {hotelEdicao && (

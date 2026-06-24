@@ -49,8 +49,12 @@ function Passagens({ tipo }) {
                     onSucesso={handleSucesso}
                     passagemEdicao={passagemEdicao}
                     onCancelar={handleCancelar}
+                    isAdmin={isAdmin}  
                 />
             )}
+
+
+            
 
             {/* onEditar só passa pro admin — user não vê botões de editar/excluir */}
             <PassagemLista
