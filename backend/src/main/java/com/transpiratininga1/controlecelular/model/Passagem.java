@@ -1,0 +1,57 @@
+package com.transpiratininga1.controlecelular.model;
+
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import lombok.*;
+import java.time.LocalDate;
+import java.math.BigDecimal;
+
+
+@Entity
+@Table(name = "passagem")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+
+
+public class Passagem {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+
+    //qual colaborador vai viajar
+    @ManyToOne
+    @JoinColumn(name = "registro", nullable = false)
+    private Colaborador colaborador;
+
+    @NotBlank(message = "Destino obrigatório")
+    @Column(name = "Destino", nullable = false, length = 100)
+    private String destino;
+
+
+
+    @Column(name = "local_embarque", length = 100)
+    private String localEmbarque;
+    
+    
+    @NotNull(message = "Data de ida é obrigatória")
+    @Column(name = "data_ida", nullable = false)
+    private LocalDate dataIda;
+
+
+        
+      @Column(name = "data_volta")
+    private LocalDate dataVolta;
+
+    @Column(name = "Motivo", length = 255)
+    private String motivo;
+
+
+    @Column(name = "valor", precision =10, scale= 2)
+    private BigDecimal valor;
+
+
+}

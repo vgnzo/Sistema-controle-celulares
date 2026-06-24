@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { celularService, computadorService } from '../services/api';
+import { celularService, computadorService, passagemService, hotelService } from '../services/api';
 
 function SelecaoModulo({ onSelecionar, username, onLogout }) {
     const [qtdCelulares, setQtdCelulares] = useState(null);
     const [qtdComputadores, setQtdComputadores] = useState(null);
+    const [qtdViagem, setQtdViagem] = useState(null);
 
     useEffect(() => {
         // busca a contagem de cada módulo (se falhar, só não mostra o número)
@@ -14,9 +15,17 @@ function SelecaoModulo({ onSelecionar, username, onLogout }) {
         computadorService.listarTodos()
             .then(r => setQtdComputadores(r.data.length))
             .catch(() => setQtdComputadores(null));
+
+        // viagem = passagens + hotéis somados
+        Promise.all([
+            passagemService.listarTodas().catch(() => ({ data: [] })),
+            hotelService.listarTodas().catch(() => ({ data: [] }))
+        ])
+            .then(([passagens, hoteis]) => setQtdViagem(passagens.data.length + hoteis.data.length))
+            .catch(() => setQtdViagem(null));
     }, []);
 
-    // estilos reutilizados nos dois cards
+    // estilos reutilizados nos cards
     const cardBase = {
         width: '300px',
         cursor: 'pointer',
@@ -118,6 +127,39 @@ function SelecaoModulo({ onSelecionar, username, onLogout }) {
                             )}
                         </div>
                         <button className="btn btn-success btn-lg w-100">Acessar →</button>
+                    </div>
+                </div>
+
+                {/* Card Viagem */}
+                <div
+                    style={cardBase}
+                    onClick={() => onSelecionar('viagem')}
+                    onMouseEnter={(e) => onEnter(e, 'rgba(255,193,7,0.35)')}
+                    onMouseLeave={onLeave}
+                >
+                    <div style={{ height: '6px', background: 'linear-gradient(90deg, #ffc107, #ffe69c)' }}></div>
+                    <div className="card-body text-center py-5 px-4">
+                        <div
+                            className="d-inline-flex align-items-center justify-content-center mb-3"
+                            style={{
+                                width: '90px', height: '90px', borderRadius: '50%',
+                                background: 'rgba(255,193,7,0.15)', fontSize: '3rem'
+                            }}
+                        >
+                            ✈️
+                        </div>
+                        <h3 className="text-white mb-2">Viagem</h3>
+                        <p className="text-secondary mb-3">Gerenciar passagens e hotéis</p>
+                        <div className="mb-4">
+                            {qtdViagem !== null ? (
+                                <span className="badge bg-warning text-dark fs-6 px-3 py-2">
+                                    {qtdViagem} {qtdViagem === 1 ? 'registro' : 'registros'}
+                                </span>
+                            ) : (
+                                <span className="badge bg-secondary px-3 py-2">—</span>
+                            )}
+                        </div>
+                        <button className="btn btn-warning btn-lg w-100">Acessar →</button>
                     </div>
                 </div>
 

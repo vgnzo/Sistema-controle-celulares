@@ -161,4 +161,25 @@ export const entregaComputadorService = {
     listarHistorico: () => api.get('/entregas-computador/historico')
 };
 
+
+// ✅ Passagem
+export const passagemService = {
+    listarTodas: () => api.get('/passagens'),
+    buscarPorId: (id) => api.get(`/passagens/${id}`),
+    buscarPorColaborador: (registro) => api.get(`/passagens/colaborador/${registro}`),
+    cadastrar: (passagem) => api.post('/passagens', passagem),
+    atualizar: (id, passagem) => api.put(`/passagens/${id}`, passagem),
+    deletar: (id) => api.delete(`/passagens/${id}`)
+};
+
+// ✅ Hotel
+export const hotelService = {
+    listarTodas: () => api.get('/hoteis'),
+    buscarPorId: (id) => api.get(`/hoteis/${id}`),
+    buscarPorColaborador: (registro) => api.get(`/hoteis/colaborador/${registro}`),
+    cadastrar: (hotel) => api.post('/hoteis', hotel),
+    atualizar: (id, hotel) => api.put(`/hoteis/${id}`, hotel),
+    deletar: (id) => api.delete(`/hoteis/${id}`)
+};
+
 export default api;

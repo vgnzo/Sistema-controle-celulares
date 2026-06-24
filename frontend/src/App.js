@@ -13,6 +13,8 @@ import Computadores from './pages/Computadores';
 import EntregasComputador from './pages/EntregasComputador';
 import HistoricoComputador from './pages/HistoricoComputador';
 import SelecaoModulo from './pages/SelecaoModulo';
+import Passagens from './pages/Passagens';
+import Hoteis from './pages/Hoteis';
 
 function App() {
 
@@ -21,7 +23,7 @@ function App() {
   const [username, setUsername] = useState('');
   const [tipo, setTipo] = useState('');
 
-  // qual sistema (módulo) está selecionado: '' (nenhum), 'celular' ou 'computador'
+  // qual sistema (módulo) está selecionado: '' (nenhum), 'celular', 'computador' ou 'viagem'
   const [modulo, setModulo] = useState('');
 
   useEffect(() => {
@@ -87,6 +89,12 @@ function App() {
       case 'historico-computador':
         return <HistoricoComputador />;
 
+      case 'passagens':
+        return <Passagens tipo={tipo} />;
+
+      case 'hoteis':
+        return <Hoteis tipo={tipo} />;
+
       case 'colaboradores':
         if (tipo !== 'ADMIN') return <h3>Acesso negado</h3>;
         return <Colaboradores />;
@@ -125,6 +133,12 @@ function App() {
     );
   }
 
+  // título da navbar conforme o módulo
+  const tituloModulo =
+    modulo === 'celular' ? '📱 Sistema de Celulares' :
+    modulo === 'computador' ? '💻 Sistema de Computadores' :
+    '✈️ Sistema de Viagem';
+
   // 3) Logado + módulo escolhido → o sistema daquele módulo
   return (
     <div>
@@ -133,7 +147,7 @@ function App() {
         <div className="container-fluid">
 
           <span className="navbar-brand mb-0 h1">
-            {modulo === 'celular' ? '📱 Sistema de Celulares' : '💻 Sistema de Computadores'}
+            {tituloModulo}
           </span>
 
           <ul className="navbar-nav d-flex flex-row gap-3">
@@ -209,19 +223,6 @@ function App() {
                   </button>
                 </li>
 
-               {/* ===== COMPARTILHADOS (os dois módulos) ===== */}
-            {tipo === 'ADMIN' && (
-              <li className="nav-item">
-                <button
-                  className={`nav-link btn btn-link ${paginaAtual === 'colaboradores' ? 'active text-white' : 'text-secondary'}`}
-                  onClick={() => setPaginaAtual('colaboradores')}
-                >
-                  👥 Colaboradores
-                </button>
-              </li>
-            )}
-
-
                 <li className="nav-item">
                   <button
                     className={`nav-link btn btn-link ${paginaAtual === 'historico-computador' ? 'active text-white' : 'text-secondary'}`}
@@ -231,6 +232,41 @@ function App() {
                   </button>
                 </li>
               </>
+            )}
+
+            {/* ===== ITENS DO MÓDULO VIAGEM ===== */}
+            {modulo === 'viagem' && (
+              <>
+                <li className="nav-item">
+                  <button
+                    className={`nav-link btn btn-link ${paginaAtual === 'passagens' ? 'active text-white' : 'text-secondary'}`}
+                    onClick={() => setPaginaAtual('passagens')}
+                  >
+                    ✈️ Passagens
+                  </button>
+                </li>
+
+                <li className="nav-item">
+                  <button
+                    className={`nav-link btn btn-link ${paginaAtual === 'hoteis' ? 'active text-white' : 'text-secondary'}`}
+                    onClick={() => setPaginaAtual('hoteis')}
+                  >
+                    🏨 Hotéis
+                  </button>
+                </li>
+              </>
+            )}
+
+            {/* ===== COMPARTILHADOS (todos os módulos) ===== */}
+            {tipo === 'ADMIN' && (
+              <li className="nav-item">
+                <button
+                  className={`nav-link btn btn-link ${paginaAtual === 'colaboradores' ? 'active text-white' : 'text-secondary'}`}
+                  onClick={() => setPaginaAtual('colaboradores')}
+                >
+                  👥 Colaboradores
+                </button>
+              </li>
             )}
 
             {tipo === 'ADMIN' && (
