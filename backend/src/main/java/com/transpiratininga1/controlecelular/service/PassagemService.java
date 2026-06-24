@@ -62,6 +62,7 @@ public class PassagemService {
         existente.setColaborador(passagemAtualizada.getColaborador());
         existente.setDestino(passagemAtualizada.getDestino());
         existente.setLocalEmbarque(passagemAtualizada.getLocalEmbarque());
+        existente.setLocalEmbarqueVolta(passagemAtualizada.getLocalEmbarqueVolta());
         existente.setDataIda(passagemAtualizada.getDataIda());
         existente.setDataVolta(passagemAtualizada.getDataVolta());
         existente.setMotivo(passagemAtualizada.getMotivo());

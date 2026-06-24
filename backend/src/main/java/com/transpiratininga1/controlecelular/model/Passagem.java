@@ -39,6 +39,9 @@ public class Passagem {
 
     @Column(name = "local_embarque", length = 100)
     private String localEmbarque;
+
+    @Column(name = "local_embarque_volta", length = 100)
+    private String localEmbarqueVolta;
     
 @Column(name = "data_ida")
     private LocalDate dataIda;

@@ -15,8 +15,9 @@ import HistoricoComputador from './pages/HistoricoComputador';
 import SelecaoModulo from './pages/SelecaoModulo';
 import Passagens from './pages/Passagens';
 import Hoteis from './pages/Hoteis';
-import Aprovacoes from './pages/Aprovacoes'; 
+import Aprovacoes from './pages/Aprovacoes';
 import HistoricoViagem from './pages/HistoricoViagem';
+
 function App() {
 
   const [paginaAtual, setPaginaAtual] = useState('dashboard');
@@ -65,6 +66,15 @@ function App() {
     setPaginaAtual('dashboard');
   };
 
+  // troca de página e fecha o menu hambúrguer (no celular)
+  const irPara = (pagina) => {
+    setPaginaAtual(pagina);
+    const navbar = document.getElementById('menuPrincipal');
+    if (navbar && navbar.classList.contains('show')) {
+      navbar.classList.remove('show');
+    }
+  };
+
   const renderizarPagina = () => {
     switch (paginaAtual) {
 
@@ -92,10 +102,12 @@ function App() {
       case 'hoteis':
         return <Hoteis tipo={tipo} />;
 
-      // ✅ nova página de aprovações
       case 'aprovacoes':
         if (tipo !== 'ADMIN') return <h3>Acesso negado</h3>;
         return <Aprovacoes />;
+
+      case 'historico-viagem':
+        return <HistoricoViagem />;
 
       case 'colaboradores':
         if (tipo !== 'ADMIN') return <h3>Acesso negado</h3>;
@@ -110,9 +122,6 @@ function App() {
 
       case 'historico':
         return <Historico />;
-
-        case 'historico-viagem':
-    return <HistoricoViagem />;
 
       default:
         return <Dashboard modulo={modulo} />;
@@ -141,6 +150,10 @@ function App() {
     modulo === 'computador' ? '💻 Sistema de Computadores' :
     '✈️ Sistema de Viagem';
 
+  // classe helper pros botões do menu
+  const navBtn = (pagina) =>
+    `nav-link btn btn-link text-start ${paginaAtual === pagina ? 'active text-white' : 'text-secondary'}`;
+
   return (
     <div>
 
@@ -151,176 +164,144 @@ function App() {
             {tituloModulo}
           </span>
 
-          <ul className="navbar-nav d-flex flex-row gap-3">
+          {/* Botão hambúrguer (aparece só no celular) */}
+          <button
+            className="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#menuPrincipal"
+            aria-controls="menuPrincipal"
+            aria-expanded="false"
+            aria-label="Abrir menu"
+          >
+            <span className="navbar-toggler-icon"></span>
+          </button>
 
-            <li className="nav-item">
+          {/* Conteúdo que colapsa no celular */}
+          <div className="collapse navbar-collapse" id="menuPrincipal">
+
+            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+
+              <li className="nav-item">
+                <button className={navBtn('dashboard')} onClick={() => irPara('dashboard')}>
+                  📊 Dashboard
+                </button>
+              </li>
+
+              {/* ===== MÓDULO CELULAR ===== */}
+              {modulo === 'celular' && (
+                <>
+                  <li className="nav-item">
+                    <button className={navBtn('celulares')} onClick={() => irPara('celulares')}>
+                      📱 Celulares
+                    </button>
+                  </li>
+                  <li className="nav-item">
+                    <button className={navBtn('chips')} onClick={() => irPara('chips')}>
+                      📶 Chips
+                    </button>
+                  </li>
+                  <li className="nav-item">
+                    <button className={navBtn('entregas')} onClick={() => irPara('entregas')}>
+                      📦 Entregas
+                    </button>
+                  </li>
+                  <li className="nav-item">
+                    <button className={navBtn('historico')} onClick={() => irPara('historico')}>
+                      🕐 Histórico
+                    </button>
+                  </li>
+                </>
+              )}
+
+              {/* ===== MÓDULO COMPUTADOR ===== */}
+              {modulo === 'computador' && (
+                <>
+                  <li className="nav-item">
+                    <button className={navBtn('computadores')} onClick={() => irPara('computadores')}>
+                      💻 Computadores
+                    </button>
+                  </li>
+                  <li className="nav-item">
+                    <button className={navBtn('entregas-computador')} onClick={() => irPara('entregas-computador')}>
+                      📦 Entregas
+                    </button>
+                  </li>
+                  <li className="nav-item">
+                    <button className={navBtn('historico-computador')} onClick={() => irPara('historico-computador')}>
+                      🕐 Histórico
+                    </button>
+                  </li>
+                </>
+              )}
+
+              {/* ===== MÓDULO VIAGEM ===== */}
+              {modulo === 'viagem' && (
+                <>
+                  <li className="nav-item">
+                    <button className={navBtn('passagens')} onClick={() => irPara('passagens')}>
+                      ✈️ Passagens
+                    </button>
+                  </li>
+                  <li className="nav-item">
+                    <button className={navBtn('hoteis')} onClick={() => irPara('hoteis')}>
+                      🏨 Hotéis
+                    </button>
+                  </li>
+                  {tipo === 'ADMIN' && (
+                    <li className="nav-item">
+                      <button className={navBtn('aprovacoes')} onClick={() => irPara('aprovacoes')}>
+                        ✅ Aprovações
+                      </button>
+                    </li>
+                  )}
+                  <li className="nav-item">
+                    <button className={navBtn('historico-viagem')} onClick={() => irPara('historico-viagem')}>
+                      🕐 Histórico
+                    </button>
+                  </li>
+                </>
+              )}
+
+              {/* ===== COMPARTILHADOS ===== */}
+              {tipo === 'ADMIN' && (
+                <li className="nav-item">
+                  <button className={navBtn('colaboradores')} onClick={() => irPara('colaboradores')}>
+                    👥 Colaboradores
+                  </button>
+                </li>
+              )}
+
+              {tipo === 'ADMIN' && (
+                <li className="nav-item">
+                  <button className={navBtn('usuarios')} onClick={() => irPara('usuarios')}>
+                    👑 Usuários
+                  </button>
+                </li>
+              )}
+
+            </ul>
+
+            {/* Ações da direita (trocar sistema, user, sair) */}
+            <div className="d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center gap-2">
               <button
-                className={`nav-link btn btn-link ${paginaAtual === 'dashboard' ? 'active text-white' : 'text-secondary'}`}
-                onClick={() => setPaginaAtual('dashboard')}
+                className="btn btn-outline-warning btn-sm"
+                onClick={handleTrocarModulo}
               >
-                📊 Dashboard
+                🔄 Trocar Sistema
               </button>
-            </li>
+              <span className="text-white small text-center">
+                👤 {username} ({tipo})
+              </span>
+              <button
+                className="btn btn-outline-light btn-sm"
+                onClick={handleLogout}
+              >
+                🚪 Sair
+              </button>
+            </div>
 
-            {/* ===== MÓDULO CELULAR ===== */}
-            {modulo === 'celular' && (
-              <>
-                <li className="nav-item">
-                  <button
-                    className={`nav-link btn btn-link ${paginaAtual === 'celulares' ? 'active text-white' : 'text-secondary'}`}
-                    onClick={() => setPaginaAtual('celulares')}
-                  >
-                    📱 Celulares
-                  </button>
-                </li>
-
-                <li className="nav-item">
-                  <button
-                    className={`nav-link btn btn-link ${paginaAtual === 'chips' ? 'active text-white' : 'text-secondary'}`}
-                    onClick={() => setPaginaAtual('chips')}
-                  >
-                    📶 Chips
-                  </button>
-                </li>
-
-                <li className="nav-item">
-                  <button
-                    className={`nav-link btn btn-link ${paginaAtual === 'entregas' ? 'active text-white' : 'text-secondary'}`}
-                    onClick={() => setPaginaAtual('entregas')}
-                  >
-                    📦 Entregas
-                  </button>
-                </li>
-
-                <li className="nav-item">
-                  <button
-                    className={`nav-link btn btn-link ${paginaAtual === 'historico' ? 'active text-white' : 'text-secondary'}`}
-                    onClick={() => setPaginaAtual('historico')}
-                  >
-                    🕐 Histórico
-                  </button>
-                </li>
-              </>
-            )}
-
-            {/* ===== MÓDULO COMPUTADOR ===== */}
-            {modulo === 'computador' && (
-              <>
-                <li className="nav-item">
-                  <button
-                    className={`nav-link btn btn-link ${paginaAtual === 'computadores' ? 'active text-white' : 'text-secondary'}`}
-                    onClick={() => setPaginaAtual('computadores')}
-                  >
-                    💻 Computadores
-                  </button>
-                </li>
-
-                <li className="nav-item">
-                  <button
-                    className={`nav-link btn btn-link ${paginaAtual === 'entregas-computador' ? 'active text-white' : 'text-secondary'}`}
-                    onClick={() => setPaginaAtual('entregas-computador')}
-                  >
-                    📦 Entregas
-                  </button>
-                </li>
-
-                <li className="nav-item">
-                  <button
-                    className={`nav-link btn btn-link ${paginaAtual === 'historico-computador' ? 'active text-white' : 'text-secondary'}`}
-                    onClick={() => setPaginaAtual('historico-computador')}
-                  >
-                    🕐 Histórico
-                  </button>
-                </li>
-              </>
-            )}
-
-          {/* ===== MÓDULO VIAGEM ===== */}
-{modulo === 'viagem' && (
-  <>
-    <li className="nav-item">
-      <button
-        className={`nav-link btn btn-link ${paginaAtual === 'passagens' ? 'active text-white' : 'text-secondary'}`}
-        onClick={() => setPaginaAtual('passagens')}
-      >
-        ✈️ Passagens
-      </button>
-    </li>
-
-    <li className="nav-item">
-      <button
-        className={`nav-link btn btn-link ${paginaAtual === 'hoteis' ? 'active text-white' : 'text-secondary'}`}
-        onClick={() => setPaginaAtual('hoteis')}
-      >
-        🏨 Hotéis
-      </button>
-    </li>
-
-    {tipo === 'ADMIN' && (
-      <li className="nav-item">
-        <button
-          className={`nav-link btn btn-link ${paginaAtual === 'aprovacoes' ? 'active text-white' : 'text-secondary'}`}
-          onClick={() => setPaginaAtual('aprovacoes')}
-        >
-          ✅ Aprovações
-        </button>
-      </li>
-    )}
-
-    <li className="nav-item">
-      <button
-        className={`nav-link btn btn-link ${paginaAtual === 'historico-viagem' ? 'active text-white' : 'text-secondary'}`}
-        onClick={() => setPaginaAtual('historico-viagem')}
-      >
-        🕐 Histórico
-      </button>
-    </li>
-  </>
-)}
-
-            {/* ===== COMPARTILHADOS ===== */}
-            {tipo === 'ADMIN' && (
-              <li className="nav-item">
-                <button
-                  className={`nav-link btn btn-link ${paginaAtual === 'colaboradores' ? 'active text-white' : 'text-secondary'}`}
-                  onClick={() => setPaginaAtual('colaboradores')}
-                >
-                  👥 Colaboradores
-                </button>
-              </li>
-            )}
-
-            {tipo === 'ADMIN' && (
-              <li className="nav-item">
-                <button
-                  className={`nav-link btn btn-link ${paginaAtual === 'usuarios' ? 'active text-white' : 'text-secondary'}`}
-                  onClick={() => setPaginaAtual('usuarios')}
-                >
-                  👑 Usuários
-                </button>
-              </li>
-            )}
-
-          </ul>
-
-          <div className="d-flex align-items-center">
-            <button
-              className="btn btn-outline-warning btn-sm me-3"
-              onClick={handleTrocarModulo}
-            >
-              🔄 Trocar Sistema
-            </button>
-            <span className="text-white me-3">
-              👤 {username} ({tipo})
-            </span>
-            <button
-              className="btn btn-outline-light btn-sm"
-              onClick={handleLogout}
-            >
-              🚪 Sair
-            </button>
           </div>
-
         </div>
       </nav>
 

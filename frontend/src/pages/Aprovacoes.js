@@ -15,6 +15,7 @@ function Aprovacoes() {
     // campos extras preenchidos pelo admin na aprovação
     const [dadosAprovacao, setDadosAprovacao] = useState({
         localEmbarque: '',
+        localEmbarqueVolta: '',
         dataIda: '',
         dataVolta: '',
         valor: '',
@@ -45,8 +46,7 @@ function Aprovacoes() {
     const abrirModalAprovar = (tipo, item) => {
         setTipoModal(tipo === 'passagem' ? 'aprovar-passagem' : 'aprovar-hotel');
         setItemSelecionado(item);
-        setDadosAprovacao({ localEmbarque: '', dataIda: '', dataVolta: '', valor: '', dataEntrada: '', dataSaida: '' });
-        setModalAberto(true);
+setDadosAprovacao({ localEmbarque: '', localEmbarqueVolta: '', dataIda: '', dataVolta: '', valor: '', dataEntrada: '', dataSaida: '' });        setModalAberto(true);
     };
 
     const abrirModalRejeitar = (tipo, id) => {
@@ -65,6 +65,7 @@ function Aprovacoes() {
                     destino: itemSelecionado.destino,
                     motivo: itemSelecionado.motivo,
                     localEmbarque: dadosAprovacao.localEmbarque,
+                     localEmbarqueVolta: dadosAprovacao.localEmbarqueVolta,
                     dataIda: dadosAprovacao.dataIda || null,
                     dataVolta: dadosAprovacao.dataVolta || null,
                     valor: dadosAprovacao.valor ? Number(dadosAprovacao.valor) : null,
@@ -209,13 +210,19 @@ function Aprovacoes() {
 
                             <div className="modal-body">
                                 {/* MODAL APROVAR PASSAGEM */}
-                                {tipoModal === 'aprovar-passagem' && (
+                               {tipoModal === 'aprovar-passagem' && (
                                     <>
                                         <div className="mb-3">
-                                            <label className="form-label">Local de Embarque</label>
+                                            <label className="form-label">Local de Embarque (Ida)</label>
                                             <input type="text" className="form-control" placeholder="Ex: Aeroporto de Guarulhos"
                                                 value={dadosAprovacao.localEmbarque}
                                                 onChange={e => setDadosAprovacao({ ...dadosAprovacao, localEmbarque: e.target.value })} />
+                                        </div>
+                                        <div className="mb-3">
+                                            <label className="form-label">Local de Embarque (Volta)</label>
+                                            <input type="text" className="form-control" placeholder="Ex: Aeroporto de Congonhas"
+                                                value={dadosAprovacao.localEmbarqueVolta}
+                                                onChange={e => setDadosAprovacao({ ...dadosAprovacao, localEmbarqueVolta: e.target.value })} />
                                         </div>
                                         <div className="row">
                                             <div className="col-md-6 mb-3">
@@ -232,17 +239,11 @@ function Aprovacoes() {
                                                 <small className="text-muted">Deixe vazio se for só ida</small>
                                             </div>
                                         </div>
-                                        <div className="mb-3">
-                                            <label className="form-label">Valor (R$)</label>
-                                            <input type="number" step="0.01" className="form-control" placeholder="Ex: 1250.50"
-                                                value={dadosAprovacao.valor}
-                                                onChange={e => setDadosAprovacao({ ...dadosAprovacao, valor: e.target.value })} />
-                                        </div>
                                     </>
                                 )}
 
                                 {/* MODAL APROVAR HOTEL */}
-                                {tipoModal === 'aprovar-hotel' && (
+                               {tipoModal === 'aprovar-hotel' && (
                                     <>
                                         <div className="row">
                                             <div className="col-md-6 mb-3">
@@ -257,12 +258,6 @@ function Aprovacoes() {
                                                     value={dadosAprovacao.dataSaida}
                                                     onChange={e => setDadosAprovacao({ ...dadosAprovacao, dataSaida: e.target.value })} />
                                             </div>
-                                        </div>
-                                        <div className="mb-3">
-                                            <label className="form-label">Valor (R$)</label>
-                                            <input type="number" step="0.01" className="form-control" placeholder="Ex: 850.00"
-                                                value={dadosAprovacao.valor}
-                                                onChange={e => setDadosAprovacao({ ...dadosAprovacao, valor: e.target.value })} />
                                         </div>
                                     </>
                                 )}
