@@ -7,10 +7,20 @@ function Aprovacoes() {
     const [hoteis, setHoteis] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // controla o modal de rejeição
     const [modalAberto, setModalAberto] = useState(false);
-    const [itemRejeitar, setItemRejeitar] = useState(null); // { tipo: 'passagem'|'hotel', id }
+    const [tipoModal, setTipoModal] = useState(null); // 'aprovar-passagem' | 'aprovar-hotel' | 'rejeitar'
+    const [itemSelecionado, setItemSelecionado] = useState(null);
     const [observacao, setObservacao] = useState('');
+
+    // campos extras preenchidos pelo admin na aprovação
+    const [dadosAprovacao, setDadosAprovacao] = useState({
+        localEmbarque: '',
+        dataIda: '',
+        dataVolta: '',
+        valor: '',
+        dataEntrada: '',
+        dataSaida: '',
+    });
 
     useEffect(() => {
         carregarPendentes();
@@ -32,45 +42,63 @@ function Aprovacoes() {
         }
     };
 
-    const handleAprovarPassagem = async (id) => {
-        try {
-            await passagemService.aprovar(id);
-            toast.success('✅ Passagem aprovada!');
-            carregarPendentes();
-        } catch (error) {
-            toast.error(error.response?.data || '❌ Erro ao aprovar');
-        }
+    const abrirModalAprovar = (tipo, item) => {
+        setTipoModal(tipo === 'passagem' ? 'aprovar-passagem' : 'aprovar-hotel');
+        setItemSelecionado(item);
+        setDadosAprovacao({ localEmbarque: '', dataIda: '', dataVolta: '', valor: '', dataEntrada: '', dataSaida: '' });
+        setModalAberto(true);
     };
 
-    const handleAprovarHotel = async (id) => {
-        try {
-            await hotelService.aprovar(id);
-            toast.success('✅ Reserva aprovada!');
-            carregarPendentes();
-        } catch (error) {
-            toast.error(error.response?.data || '❌ Erro ao aprovar');
-        }
-    };
-
-    // abre o modal e guarda qual item vai rejeitar
     const abrirModalRejeitar = (tipo, id) => {
-        setItemRejeitar({ tipo, id });
+        setTipoModal('rejeitar');
+        setItemSelecionado({ tipo, id });
         setObservacao('');
         setModalAberto(true);
     };
 
-    const handleConfirmarRejeicao = async () => {
-        if (!itemRejeitar) return;
+    const handleConfirmarAprovacao = async () => {
         try {
-            if (itemRejeitar.tipo === 'passagem') {
-                await passagemService.rejeitar(itemRejeitar.id, observacao);
-                toast.success('❌ Passagem rejeitada');
+            if (tipoModal === 'aprovar-passagem') {
+                // atualiza os dados extras antes de aprovar
+                await passagemService.atualizar(itemSelecionado.id, {
+                    colaborador: { registro: itemSelecionado.colaborador?.registro },
+                    destino: itemSelecionado.destino,
+                    motivo: itemSelecionado.motivo,
+                    localEmbarque: dadosAprovacao.localEmbarque,
+                    dataIda: dadosAprovacao.dataIda || null,
+                    dataVolta: dadosAprovacao.dataVolta || null,
+                    valor: dadosAprovacao.valor ? Number(dadosAprovacao.valor) : null,
+                });
+                await passagemService.aprovar(itemSelecionado.id);
+                toast.success('✅ Passagem aprovada!');
             } else {
-                await hotelService.rejeitar(itemRejeitar.id, observacao);
-                toast.success('❌ Reserva rejeitada');
+                await hotelService.atualizar(itemSelecionado.id, {
+                    colaborador: { registro: itemSelecionado.colaborador?.registro },
+                    motivo: itemSelecionado.motivo,
+                    dataEntrada: dadosAprovacao.dataEntrada || null,
+                    dataSaida: dadosAprovacao.dataSaida || null,
+                    valor: dadosAprovacao.valor ? Number(dadosAprovacao.valor) : null,
+                });
+                await hotelService.aprovar(itemSelecionado.id);
+                toast.success('✅ Reserva aprovada!');
             }
             setModalAberto(false);
-            setItemRejeitar(null);
+            carregarPendentes();
+        } catch (error) {
+            toast.error(error.response?.data || '❌ Erro ao aprovar');
+        }
+    };
+
+    const handleConfirmarRejeicao = async () => {
+        try {
+            if (itemSelecionado.tipo === 'passagem') {
+                await passagemService.rejeitar(itemSelecionado.id, observacao);
+                toast.success('Passagem rejeitada');
+            } else {
+                await hotelService.rejeitar(itemSelecionado.id, observacao);
+                toast.success('Reserva rejeitada');
+            }
+            setModalAberto(false);
             carregarPendentes();
         } catch (error) {
             toast.error(error.response?.data || '❌ Erro ao rejeitar');
@@ -80,11 +108,6 @@ function Aprovacoes() {
     const formatarData = (data) => {
         if (!data) return '-';
         return new Date(data + 'T00:00:00').toLocaleDateString('pt-BR');
-    };
-
-    const formatarValor = (valor) => {
-        if (valor === null || valor === undefined) return '-';
-        return Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     };
 
     if (loading) return <div>Carregando...</div>;
@@ -103,19 +126,14 @@ function Aprovacoes() {
             </div>
 
             {totalPendentes === 0 && (
-                <div className="alert alert-success">
-                    ✅ Nenhuma solicitação pendente no momento!
-                </div>
+                <div className="alert alert-success">✅ Nenhuma solicitação pendente!</div>
             )}
 
-            {/* ===== PASSAGENS PENDENTES ===== */}
+            {/* PASSAGENS */}
             {passagens.length > 0 && (
                 <div className="card mb-4">
                     <div className="card-header">
-                        <h5 className="mb-0">
-                            ✈️ Passagens Pendentes
-                            <span className="badge bg-warning text-dark ms-2">{passagens.length}</span>
-                        </h5>
+                        <h5 className="mb-0">✈️ Passagens Pendentes <span className="badge bg-warning text-dark ms-2">{passagens.length}</span></h5>
                     </div>
                     <div className="card-body">
                         <div className="table-responsive">
@@ -124,11 +142,7 @@ function Aprovacoes() {
                                     <tr>
                                         <th>Colaborador</th>
                                         <th>Destino</th>
-                                        <th>Embarque</th>
-                                        <th>Ida</th>
-                                        <th>Volta</th>
                                         <th>Motivo</th>
-                                        <th>Valor</th>
                                         <th className="text-center">Ações</th>
                                     </tr>
                                 </thead>
@@ -137,24 +151,10 @@ function Aprovacoes() {
                                         <tr key={p.id}>
                                             <td>{p.colaborador?.nome || '-'}</td>
                                             <td>{p.destino}</td>
-                                            <td>{p.localEmbarque || '-'}</td>
-                                            <td>{formatarData(p.dataIda)}</td>
-                                            <td>{p.dataVolta ? formatarData(p.dataVolta) : '🔂 Só ida'}</td>
                                             <td>{p.motivo || '-'}</td>
-                                            <td>{formatarValor(p.valor)}</td>
                                             <td className="text-center text-nowrap">
-                                                <button
-                                                    onClick={() => handleAprovarPassagem(p.id)}
-                                                    className="btn btn-sm btn-success me-2"
-                                                >
-                                                    ✅ Aprovar
-                                                </button>
-                                                <button
-                                                    onClick={() => abrirModalRejeitar('passagem', p.id)}
-                                                    className="btn btn-sm btn-danger"
-                                                >
-                                                    ❌ Rejeitar
-                                                </button>
+                                                <button onClick={() => abrirModalAprovar('passagem', p)} className="btn btn-sm btn-success me-2">✅ Aprovar</button>
+                                                <button onClick={() => abrirModalRejeitar('passagem', p.id)} className="btn btn-sm btn-danger">❌ Rejeitar</button>
                                             </td>
                                         </tr>
                                     ))}
@@ -165,14 +165,11 @@ function Aprovacoes() {
                 </div>
             )}
 
-            {/* ===== HOTÉIS PENDENTES ===== */}
+            {/* HOTÉIS */}
             {hoteis.length > 0 && (
                 <div className="card mb-4">
                     <div className="card-header">
-                        <h5 className="mb-0">
-                            🏨 Reservas de Hotel Pendentes
-                            <span className="badge bg-warning text-dark ms-2">{hoteis.length}</span>
-                        </h5>
+                        <h5 className="mb-0">🏨 Reservas Pendentes <span className="badge bg-warning text-dark ms-2">{hoteis.length}</span></h5>
                     </div>
                     <div className="card-body">
                         <div className="table-responsive">
@@ -180,10 +177,7 @@ function Aprovacoes() {
                                 <thead className="table-dark">
                                     <tr>
                                         <th>Colaborador</th>
-                                        <th>Entrada</th>
-                                        <th>Saída</th>
                                         <th>Motivo</th>
-                                        <th>Valor</th>
                                         <th className="text-center">Ações</th>
                                     </tr>
                                 </thead>
@@ -191,23 +185,10 @@ function Aprovacoes() {
                                     {hoteis.map((h) => (
                                         <tr key={h.id}>
                                             <td>{h.colaborador?.nome || '-'}</td>
-                                            <td>{formatarData(h.dataEntrada)}</td>
-                                            <td>{formatarData(h.dataSaida)}</td>
                                             <td>{h.motivo || '-'}</td>
-                                            <td>{formatarValor(h.valor)}</td>
                                             <td className="text-center text-nowrap">
-                                                <button
-                                                    onClick={() => handleAprovarHotel(h.id)}
-                                                    className="btn btn-sm btn-success me-2"
-                                                >
-                                                    ✅ Aprovar
-                                                </button>
-                                                <button
-                                                    onClick={() => abrirModalRejeitar('hotel', h.id)}
-                                                    className="btn btn-sm btn-danger"
-                                                >
-                                                    ❌ Rejeitar
-                                                </button>
+                                                <button onClick={() => abrirModalAprovar('hotel', h)} className="btn btn-sm btn-success me-2">✅ Aprovar</button>
+                                                <button onClick={() => abrirModalRejeitar('hotel', h.id)} className="btn btn-sm btn-danger">❌ Rejeitar</button>
                                             </td>
                                         </tr>
                                     ))}
@@ -218,44 +199,98 @@ function Aprovacoes() {
                 </div>
             )}
 
-            {/* ===== MODAL DE REJEIÇÃO ===== */}
+            {/* MODAL */}
             {modalAberto && (
                 <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
                     <div className="modal-dialog">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title">❌ Rejeitar Solicitação</h5>
-                                <button
-                                    className="btn-close"
-                                    onClick={() => setModalAberto(false)}
-                                />
+                                <h5 className="modal-title">
+                                    {tipoModal === 'rejeitar' ? '❌ Rejeitar Solicitação' : '✅ Aprovar Solicitação'}
+                                </h5>
+                                <button className="btn-close" onClick={() => setModalAberto(false)} />
                             </div>
+
                             <div className="modal-body">
-                                <label className="form-label">
-                                    Motivo da rejeição <span className="text-muted">(opcional)</span>
-                                </label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    placeholder="Ex: Orçamento excedido, datas indisponíveis..."
-                                    value={observacao}
-                                    onChange={(e) => setObservacao(e.target.value)}
-                                    autoFocus
-                                />
+                                {/* MODAL APROVAR PASSAGEM */}
+                                {tipoModal === 'aprovar-passagem' && (
+                                    <>
+                                        <div className="mb-3">
+                                            <label className="form-label">Local de Embarque</label>
+                                            <input type="text" className="form-control" placeholder="Ex: Aeroporto de Guarulhos"
+                                                value={dadosAprovacao.localEmbarque}
+                                                onChange={e => setDadosAprovacao({ ...dadosAprovacao, localEmbarque: e.target.value })} />
+                                        </div>
+                                        <div className="row">
+                                            <div className="col-md-6 mb-3">
+                                                <label className="form-label">Data de Ida *</label>
+                                                <input type="date" className="form-control" required
+                                                    value={dadosAprovacao.dataIda}
+                                                    onChange={e => setDadosAprovacao({ ...dadosAprovacao, dataIda: e.target.value })} />
+                                            </div>
+                                            <div className="col-md-6 mb-3">
+                                                <label className="form-label">Data de Volta</label>
+                                                <input type="date" className="form-control"
+                                                    value={dadosAprovacao.dataVolta}
+                                                    onChange={e => setDadosAprovacao({ ...dadosAprovacao, dataVolta: e.target.value })} />
+                                                <small className="text-muted">Deixe vazio se for só ida</small>
+                                            </div>
+                                        </div>
+                                        <div className="mb-3">
+                                            <label className="form-label">Valor (R$)</label>
+                                            <input type="number" step="0.01" className="form-control" placeholder="Ex: 1250.50"
+                                                value={dadosAprovacao.valor}
+                                                onChange={e => setDadosAprovacao({ ...dadosAprovacao, valor: e.target.value })} />
+                                        </div>
+                                    </>
+                                )}
+
+                                {/* MODAL APROVAR HOTEL */}
+                                {tipoModal === 'aprovar-hotel' && (
+                                    <>
+                                        <div className="row">
+                                            <div className="col-md-6 mb-3">
+                                                <label className="form-label">Data de Entrada *</label>
+                                                <input type="date" className="form-control" required
+                                                    value={dadosAprovacao.dataEntrada}
+                                                    onChange={e => setDadosAprovacao({ ...dadosAprovacao, dataEntrada: e.target.value })} />
+                                            </div>
+                                            <div className="col-md-6 mb-3">
+                                                <label className="form-label">Data de Saída *</label>
+                                                <input type="date" className="form-control" required
+                                                    value={dadosAprovacao.dataSaida}
+                                                    onChange={e => setDadosAprovacao({ ...dadosAprovacao, dataSaida: e.target.value })} />
+                                            </div>
+                                        </div>
+                                        <div className="mb-3">
+                                            <label className="form-label">Valor (R$)</label>
+                                            <input type="number" step="0.01" className="form-control" placeholder="Ex: 850.00"
+                                                value={dadosAprovacao.valor}
+                                                onChange={e => setDadosAprovacao({ ...dadosAprovacao, valor: e.target.value })} />
+                                        </div>
+                                    </>
+                                )}
+
+                                {/* MODAL REJEITAR */}
+                                {tipoModal === 'rejeitar' && (
+                                    <>
+                                        <label className="form-label">Motivo da rejeição <span className="text-muted">(opcional)</span></label>
+                                        <input type="text" className="form-control"
+                                            placeholder="Ex: Orçamento excedido..."
+                                            value={observacao}
+                                            onChange={e => setObservacao(e.target.value)}
+                                            autoFocus />
+                                    </>
+                                )}
                             </div>
+
                             <div className="modal-footer">
-                                <button
-                                    className="btn btn-secondary"
-                                    onClick={() => setModalAberto(false)}
-                                >
-                                    Cancelar
-                                </button>
-                                <button
-                                    className="btn btn-danger"
-                                    onClick={handleConfirmarRejeicao}
-                                >
-                                    ❌ Confirmar Rejeição
-                                </button>
+                                <button className="btn btn-secondary" onClick={() => setModalAberto(false)}>Cancelar</button>
+                                {tipoModal === 'rejeitar' ? (
+                                    <button className="btn btn-danger" onClick={handleConfirmarRejeicao}>❌ Confirmar Rejeição</button>
+                                ) : (
+                                    <button className="btn btn-success" onClick={handleConfirmarAprovacao}>✅ Confirmar Aprovação</button>
+                                )}
                             </div>
                         </div>
                     </div>
