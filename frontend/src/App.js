@@ -206,6 +206,13 @@ function App() {
                       📦 Entregas
                     </button>
                   </li>
+                  {tipo === 'ADMIN' && (
+                    <li className="nav-item">
+                      <button className={navBtn('colaboradores')} onClick={() => irPara('colaboradores')}>
+                        👥 Colaboradores
+                      </button>
+                    </li>
+                  )}
                   <li className="nav-item">
                     <button className={navBtn('historico')} onClick={() => irPara('historico')}>
                       🕐 Histórico
@@ -227,6 +234,13 @@ function App() {
                       📦 Entregas
                     </button>
                   </li>
+                  {tipo === 'ADMIN' && (
+                    <li className="nav-item">
+                      <button className={navBtn('colaboradores')} onClick={() => irPara('colaboradores')}>
+                        👥 Colaboradores
+                      </button>
+                    </li>
+                  )}
                   <li className="nav-item">
                     <button className={navBtn('historico-computador')} onClick={() => irPara('historico-computador')}>
                       🕐 Histórico
@@ -234,26 +248,6 @@ function App() {
                   </li>
                 </>
               )}
-
-          
-
-              {/* ===== COMPARTILHADOS ===== */}
-              {tipo === 'ADMIN' && (
-                <li className="nav-item">
-                  <button className={navBtn('colaboradores')} onClick={() => irPara('colaboradores')}>
-                    👥 Colaboradores
-                  </button>
-                </li>
-              )}
-
-              {tipo === 'ADMIN' && (
-                <li className="nav-item">
-                  <button className={navBtn('usuarios')} onClick={() => irPara('usuarios')}>
-                    👑 Usuários
-                  </button>
-                </li>
-              )}
-
 
               {/* ===== MÓDULO VIAGEM ===== */}
               {modulo === 'viagem' && (
@@ -270,15 +264,15 @@ function App() {
                   </li>
                   {tipo === 'ADMIN' && (
                     <li className="nav-item">
-                      <button className={navBtn('colaboradores')} onClick={() => irPara('colaboradores')}>
-                        👥 Colaboradores
+                      <button className={navBtn('aprovacoes')} onClick={() => irPara('aprovacoes')}>
+                        ✅ Aprovações
                       </button>
                     </li>
                   )}
                   {tipo === 'ADMIN' && (
                     <li className="nav-item">
-                      <button className={navBtn('aprovacoes')} onClick={() => irPara('aprovacoes')}>
-                        ✅ Aprovações
+                      <button className={navBtn('colaboradores')} onClick={() => irPara('colaboradores')}>
+                        👥 Colaboradores
                       </button>
                     </li>
                   )}
@@ -289,7 +283,15 @@ function App() {
                   </li>
                 </>
               )}
-              
+
+              {/* ===== USUÁRIOS (sempre por último, em todos os mundos) ===== */}
+              {tipo === 'ADMIN' && (
+                <li className="nav-item">
+                  <button className={navBtn('usuarios')} onClick={() => irPara('usuarios')}>
+                    👑 Usuários
+                  </button>
+                </li>
+              )}
 
             </ul>
 
