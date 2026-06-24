@@ -235,49 +235,48 @@ function App() {
               </>
             )}
 
-            {/* ===== MÓDULO VIAGEM ===== */}
-            {modulo === 'viagem' && (
-              <>
-                <li className="nav-item">
-                  <button
-                    className={`nav-link btn btn-link ${paginaAtual === 'passagens' ? 'active text-white' : 'text-secondary'}`}
-                    onClick={() => setPaginaAtual('passagens')}
-                  >
-                    ✈️ Passagens
-                  </button>
-                </li>
+          {/* ===== MÓDULO VIAGEM ===== */}
+{modulo === 'viagem' && (
+  <>
+    <li className="nav-item">
+      <button
+        className={`nav-link btn btn-link ${paginaAtual === 'passagens' ? 'active text-white' : 'text-secondary'}`}
+        onClick={() => setPaginaAtual('passagens')}
+      >
+        ✈️ Passagens
+      </button>
+    </li>
 
-                              <li className="nav-item">
-                  <button
-                      className={`nav-link btn btn-link ${paginaAtual === 'historico-viagem' ? 'active text-white' : 'text-secondary'}`}
-                      onClick={() => setPaginaAtual('historico-viagem')}
-                  >
-                      🕐 Histórico
-                  </button>
-              </li>
+    <li className="nav-item">
+      <button
+        className={`nav-link btn btn-link ${paginaAtual === 'hoteis' ? 'active text-white' : 'text-secondary'}`}
+        onClick={() => setPaginaAtual('hoteis')}
+      >
+        🏨 Hotéis
+      </button>
+    </li>
 
-                <li className="nav-item">
-                  <button
-                    className={`nav-link btn btn-link ${paginaAtual === 'hoteis' ? 'active text-white' : 'text-secondary'}`}
-                    onClick={() => setPaginaAtual('hoteis')}
-                  >
-                    🏨 Hotéis
-                  </button>
-                </li>
+    {tipo === 'ADMIN' && (
+      <li className="nav-item">
+        <button
+          className={`nav-link btn btn-link ${paginaAtual === 'aprovacoes' ? 'active text-white' : 'text-secondary'}`}
+          onClick={() => setPaginaAtual('aprovacoes')}
+        >
+          ✅ Aprovações
+        </button>
+      </li>
+    )}
 
-                {/* ✅ Aprovações — só admin vê, só aparece no módulo viagem */}
-                {tipo === 'ADMIN' && (
-                  <li className="nav-item">
-                    <button
-                      className={`nav-link btn btn-link ${paginaAtual === 'aprovacoes' ? 'active text-white' : 'text-secondary'}`}
-                      onClick={() => setPaginaAtual('aprovacoes')}
-                    >
-                      ✅ Aprovações
-                    </button>
-                  </li>
-                )}
-              </>
-            )}
+    <li className="nav-item">
+      <button
+        className={`nav-link btn btn-link ${paginaAtual === 'historico-viagem' ? 'active text-white' : 'text-secondary'}`}
+        onClick={() => setPaginaAtual('historico-viagem')}
+      >
+        🕐 Histórico
+      </button>
+    </li>
+  </>
+)}
 
             {/* ===== COMPARTILHADOS ===== */}
             {tipo === 'ADMIN' && (

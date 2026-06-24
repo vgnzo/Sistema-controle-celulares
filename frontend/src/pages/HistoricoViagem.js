@@ -42,10 +42,6 @@ function HistoricoViagem() {
         return new Date(data + 'T00:00:00').toLocaleDateString('pt-BR');
     };
 
-    const formatarValor = (valor) => {
-        if (valor === null || valor === undefined) return '-';
-        return Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-    };
 
     const badgeStatus = (status) => {
         switch (status) {
@@ -92,7 +88,6 @@ function HistoricoViagem() {
                 'Data Ida': formatarData(p.dataIda),
                 'Data Volta': p.dataVolta ? formatarData(p.dataVolta) : 'Só ida',
                 'Motivo': p.motivo || '-',
-                'Valor': formatarValor(p.valor),
                 'Status': p.status,
                 'Observação': p.observacao || '-'
             }));
@@ -206,7 +201,6 @@ function HistoricoViagem() {
                                     <th>Ida</th>
                                     <th>Volta</th>
                                     <th>Motivo</th>
-                                    <th>Valor</th>
                                     <th>Status</th>
                                     <th>Observação</th>
                                 </tr>
@@ -220,7 +214,6 @@ function HistoricoViagem() {
                                         <td>{formatarData(p.dataIda)}</td>
                                         <td>{p.dataVolta ? formatarData(p.dataVolta) : '🔂 Só ida'}</td>
                                         <td>{p.motivo || '-'}</td>
-                                        <td>{formatarValor(p.valor)}</td>
                                         <td>{badgeStatus(p.status)}</td>
                                         <td>{p.observacao || '-'}</td>
                                     </tr>
@@ -235,7 +228,6 @@ function HistoricoViagem() {
                                     <th>Entrada</th>
                                     <th>Saída</th>
                                     <th>Motivo</th>
-                                    <th>Valor</th>
                                     <th>Status</th>
                                     <th>Observação</th>
                                 </tr>
