@@ -9,26 +9,22 @@ function Hoteis({ tipo }) {
     const [hotelEdicao, setHotelEdicao] = useState(null);
     const [recarregar, setRecarregar] = useState(0);
 
-    // chamado quando cadastra/edita com sucesso
     const handleSucesso = () => {
         setMostrarForm(false);
         setHotelEdicao(null);
-        setRecarregar((r) => r + 1); // força a lista a recarregar
+        setRecarregar((r) => r + 1);
     };
 
-    // abre o form pra editar uma reserva
     const handleEditar = (hotel) => {
         setHotelEdicao(hotel);
         setMostrarForm(true);
     };
 
-    // cancela a edição
     const handleCancelar = () => {
         setHotelEdicao(null);
         setMostrarForm(false);
     };
 
-    // abre o form pra cadastrar nova
     const handleNova = () => {
         setHotelEdicao(null);
         setMostrarForm(true);
@@ -39,16 +35,16 @@ function Hoteis({ tipo }) {
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h2>🏨 Reservas de Hotel</h2>
 
-                {/* Só ADMIN vê o botão de cadastrar */}
-                {isAdmin && !mostrarForm && (
+                {/* ✅ qualquer usuário pode solicitar */}
+                {!mostrarForm && (
                     <button className="btn btn-primary" onClick={handleNova}>
                         ➕ Nova Reserva
                     </button>
                 )}
             </div>
 
-            {/* Form aparece só quando ADMIN clica em Nova/Editar */}
-            {isAdmin && mostrarForm && (
+            {/* ✅ form disponível pra todos, mas edição só admin */}
+            {mostrarForm && (
                 <HotelForm
                     onSucesso={handleSucesso}
                     hotelEdicao={hotelEdicao}
@@ -56,7 +52,7 @@ function Hoteis({ tipo }) {
                 />
             )}
 
-            {/* Lista: passa onEditar só se for ADMIN */}
+            {/* onEditar só passa pro admin — user não vê botões de editar/excluir */}
             <HotelLista
                 onEditar={isAdmin ? handleEditar : null}
                 recarregar={recarregar}
