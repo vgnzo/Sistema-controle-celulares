@@ -97,7 +97,6 @@ function HistoricoViagem() {
                 'Entrada': formatarData(h.dataEntrada),
                 'Saída': formatarData(h.dataSaida),
                 'Motivo': h.motivo || '-',
-                'Valor': formatarValor(h.valor),
                 'Status': h.status,
                 'Observação': h.observacao || '-'
             }));
@@ -239,7 +238,6 @@ function HistoricoViagem() {
                                         <td>{formatarData(h.dataEntrada)}</td>
                                         <td>{formatarData(h.dataSaida)}</td>
                                         <td>{h.motivo || '-'}</td>
-                                        <td>{formatarValor(h.valor)}</td>
                                         <td>{badgeStatus(h.status)}</td>
                                         <td>{h.observacao || '-'}</td>
                                     </tr>
