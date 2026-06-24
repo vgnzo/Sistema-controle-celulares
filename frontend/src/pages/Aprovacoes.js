@@ -105,10 +105,6 @@ function Aprovacoes() {
         }
     };
 
-    const formatarData = (data) => {
-        if (!data) return '-';
-        return new Date(data + 'T00:00:00').toLocaleDateString('pt-BR');
-    };
 
     if (loading) return <div>Carregando...</div>;
 
