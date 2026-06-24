@@ -5,13 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 
-
 @Repository
 public interface PassagemRepository extends JpaRepository<Passagem, Long> {
 
-    //busca todas as passagens de um colaborador especifico
-    List<Passagem> findByColaborador_Registro (String registro);
-
-    //busca passagens por destino
+    List<Passagem> findByColaborador_Registro(String registro);
     List<Passagem> findByDestino(String destino);
+    List<Passagem> findByStatus(Passagem.Status status);
+    List<Passagem> findByColaborador_RegistroAndStatus(String registro, Passagem.Status status); // ✅ linha nova
 }

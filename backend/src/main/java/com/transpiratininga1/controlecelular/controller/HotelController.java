@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/hoteis")
@@ -16,13 +17,11 @@ public class HotelController {
     @Autowired
     private HotelService hotelService;
 
-    // GET - listar todas
     @GetMapping
     public ResponseEntity<List<Hotel>> listarTodas() {
         return ResponseEntity.ok(hotelService.listarTodas());
     }
 
-    // GET - buscar por id
     @GetMapping("/{id}")
     public ResponseEntity<Hotel> buscarPorId(@PathVariable Long id) {
         return hotelService.buscarPorId(id)
@@ -30,13 +29,17 @@ public class HotelController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // GET - buscar por colaborador
+    // ✅ NOVO
+    @GetMapping("/pendentes")
+    public ResponseEntity<List<Hotel>> listarPendentes() {
+        return ResponseEntity.ok(hotelService.listarPendentes());
+    }
+
     @GetMapping("/colaborador/{registro}")
     public ResponseEntity<List<Hotel>> buscarPorColaborador(@PathVariable String registro) {
         return ResponseEntity.ok(hotelService.buscarPorColaborador(registro));
     }
 
-    // POST - cadastrar
     @PostMapping
     public ResponseEntity<?> cadastrar(@Valid @RequestBody Hotel hotel) {
         try {
@@ -47,7 +50,6 @@ public class HotelController {
         }
     }
 
-    // PUT - atualizar
     @PutMapping("/{id}")
     public ResponseEntity<?> atualizar(@PathVariable Long id, @Valid @RequestBody Hotel hotel) {
         try {
@@ -58,7 +60,29 @@ public class HotelController {
         }
     }
 
-    // DELETE - deletar
+    // ✅ NOVO
+    @PatchMapping("/{id}/aprovar")
+    public ResponseEntity<?> aprovar(@PathVariable Long id) {
+        try {
+            Hotel aprovado = hotelService.aprovar(id);
+            return ResponseEntity.ok(aprovado);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // ✅ NOVO
+    @PatchMapping("/{id}/rejeitar")
+    public ResponseEntity<?> rejeitar(@PathVariable Long id, @RequestBody Map<String, String> body) {
+        try {
+            String observacao = body.getOrDefault("observacao", "");
+            Hotel rejeitado = hotelService.rejeitar(id, observacao);
+            return ResponseEntity.ok(rejeitado);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletar(@PathVariable Long id) {
         try {

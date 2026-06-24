@@ -17,6 +17,10 @@ import java.math.BigDecimal;
 
 public class Passagem {
 
+  public enum Status {
+    PENDENTE, APROVADO, REJEITADO
+  }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -54,4 +58,12 @@ public class Passagem {
     private BigDecimal valor;
 
 
+    // novo campo — nasce sempre como PENDENTE
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private Status status = Status.PENDENTE;
+
+    // observação do admin ao rejeitar
+    @Column(name = "observacao", length = 255)
+    private String observacao;
 }

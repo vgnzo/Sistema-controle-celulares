@@ -13,6 +13,10 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class Hotel {
 
+    public enum Status {
+        PENDENTE, APROVADO, REJEITADO
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,4 +39,13 @@ public class Hotel {
 
     @Column(name = "valor", precision = 10, scale = 2)
     private BigDecimal valor;
+
+
+     @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private Status status = Status.PENDENTE;
+
+    // observação do admin ao rejeitar
+    @Column(name = "observacao", length = 255)
+    private String observacao;
 }

@@ -10,57 +10,55 @@ import java.util.Optional;
 @Service
 public class PassagemService {
 
-    @Autowired 
+    @Autowired
     private PassagemRepository passagemRepository;
 
-
-    //listar todas as passagens
-    public List<Passagem> listarTodas(){
+    public List<Passagem> listarTodas() {
         return passagemRepository.findAll();
     }
 
-
-    public Optional<Passagem> buscarPorId(Long id){
+    public Optional<Passagem> buscarPorId(Long id) {
         return passagemRepository.findById(id);
     }
 
-    //buscar por colaborador 
-    public List<Passagem> buscarPorColaborador(String registro){
+    public List<Passagem> buscarPorColaborador(String registro) {
         return passagemRepository.findByColaborador_Registro(registro);
     }
 
+    // ✅ NOVO — retorna só as pendentes (pra aba de aprovações do admin)
+    public List<Passagem> listarPendentes() {
+        return passagemRepository.findByStatus(Passagem.Status.PENDENTE);
+    }
 
-
-    //cadastrar
-    public Passagem cadastrar(Passagem passagem){
-
-        //valida que veio um colaborador
-        if(passagem.getColaborador() == null || passagem.getColaborador().getRegistro() == null){
-           throw new IllegalArgumentException("Colaborador é obrigatório");
+    // ✅ NOVO — retorna as do colaborador logado (pra tela do user)
+    public List<Passagem> buscarPorColaboradorEStatus(String registro, Passagem.Status status) {
+        if (status != null) {
+            return passagemRepository.findByColaborador_RegistroAndStatus(registro, status);
         }
+        return passagemRepository.findByColaborador_Registro(registro);
+    }
 
-        // valida que a data de volta não é antes da ida (se tiver volta)
+    public Passagem cadastrar(Passagem passagem) {
+        if (passagem.getColaborador() == null || passagem.getColaborador().getRegistro() == null) {
+            throw new IllegalArgumentException("Colaborador é obrigatório");
+        }
         if (passagem.getDataVolta() != null && passagem.getDataVolta().isBefore(passagem.getDataIda())) {
             throw new IllegalArgumentException("Data de volta não pode ser antes da data de ida");
         }
-
+        // garante que sempre começa PENDENTE, independente do que veio no body
+        passagem.setStatus(Passagem.Status.PENDENTE);
+        passagem.setObservacao(null);
         return passagemRepository.save(passagem);
     }
 
-    //atualizar
+    public Passagem atualizar(Long id, Passagem passagemAtualizada) {
+        Passagem existente = passagemRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Passagem não encontrada"));
 
-public Passagem atualizar(Long id, Passagem passagemAtualizada) {
-    Passagem existente = passagemRepository.findById(id)
-    .orElseThrow(() -> new IllegalArgumentException("Passagem não encontrada"));
-
-
-
-        //valida data
         if (passagemAtualizada.getDataVolta() != null && passagemAtualizada.getDataVolta().isBefore(passagemAtualizada.getDataIda())) {
-             throw new IllegalArgumentException("Data de volta não pode ser antes da data de ida");
+            throw new IllegalArgumentException("Data de volta não pode ser antes da data de ida");
         }
 
-        // copia os campos
         existente.setColaborador(passagemAtualizada.getColaborador());
         existente.setDestino(passagemAtualizada.getDestino());
         existente.setLocalEmbarque(passagemAtualizada.getLocalEmbarque());
@@ -70,14 +68,39 @@ public Passagem atualizar(Long id, Passagem passagemAtualizada) {
         existente.setValor(passagemAtualizada.getValor());
 
         return passagemRepository.save(existente);
+    }
+
+    // ✅ NOVO — admin aprova
+    public Passagem aprovar(Long id) {
+        Passagem passagem = passagemRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Passagem não encontrada"));
+
+        if (passagem.getStatus() != Passagem.Status.PENDENTE) {
+            throw new IllegalArgumentException("Somente solicitações pendentes podem ser aprovadas");
         }
 
-        //deletar 
-        public void deletar(Long id) {
+        passagem.setStatus(Passagem.Status.APROVADO);
+        passagem.setObservacao(null);
+        return passagemRepository.save(passagem);
+    }
+
+    // ✅ NOVO — admin rejeita com observação
+    public Passagem rejeitar(Long id, String observacao) {
+        Passagem passagem = passagemRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Passagem não encontrada"));
+
+        if (passagem.getStatus() != Passagem.Status.PENDENTE) {
+            throw new IllegalArgumentException("Somente solicitações pendentes podem ser rejeitadas");
+        }
+
+        passagem.setStatus(Passagem.Status.REJEITADO);
+        passagem.setObservacao(observacao);
+        return passagemRepository.save(passagem);
+    }
+
+    public void deletar(Long id) {
         Passagem passagem = passagemRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Passagem não encontrada"));
         passagemRepository.delete(passagem);
     }
 }
-
-

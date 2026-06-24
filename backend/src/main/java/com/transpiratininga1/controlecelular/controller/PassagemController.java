@@ -8,51 +8,52 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/passagens")
-
 public class PassagemController {
 
     @Autowired
     private PassagemService passagemService;
 
-
-
-    //Get - listar todos 
     @GetMapping
     public ResponseEntity<List<Passagem>> listarTodas() {
         return ResponseEntity.ok(passagemService.listarTodas());
     }
 
-
-    //get - buscar por id
     @GetMapping("/{id}")
-    public ResponseEntity<Passagem> buscarPorId(@PathVariable Long id){
+    public ResponseEntity<Passagem> buscarPorId(@PathVariable Long id) {
         return passagemService.buscarPorId(id)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    //Post cadastrar
+    // ✅ NOVO — admin busca os pendentes
+    @GetMapping("/pendentes")
+    public ResponseEntity<List<Passagem>> listarPendentes() {
+        return ResponseEntity.ok(passagemService.listarPendentes());
+    }
+
+    // ✅ NOVO — user vê as próprias (passa registro na URL)
+    @GetMapping("/colaborador/{registro}")
+    public ResponseEntity<List<Passagem>> buscarPorColaborador(@PathVariable String registro) {
+        return ResponseEntity.ok(passagemService.buscarPorColaborador(registro));
+    }
 
     @PostMapping
     public ResponseEntity<?> cadastrar(@Valid @RequestBody Passagem passagem) {
         try {
             Passagem nova = passagemService.cadastrar(passagem);
             return ResponseEntity.status(HttpStatus.CREATED).body(nova);
-            } catch (IllegalArgumentException e) {
-                return ResponseEntity.badRequest().body(e.getMessage());
-                
-
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-
-    //Put - atualizar
     @PutMapping("/{id}")
-    public ResponseEntity<?> atualizar(@PathVariable Long id, @Valid @RequestBody Passagem passagem ){
-try {
+    public ResponseEntity<?> atualizar(@PathVariable Long id, @Valid @RequestBody Passagem passagem) {
+        try {
             Passagem atualizada = passagemService.atualizar(id, passagem);
             return ResponseEntity.ok(atualizada);
         } catch (IllegalArgumentException e) {
@@ -60,7 +61,29 @@ try {
         }
     }
 
-    // DELETE - deletar
+    // ✅ NOVO — admin aprova
+    @PatchMapping("/{id}/aprovar")
+    public ResponseEntity<?> aprovar(@PathVariable Long id) {
+        try {
+            Passagem aprovada = passagemService.aprovar(id);
+            return ResponseEntity.ok(aprovada);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // ✅ NOVO — admin rejeita (body: { "observacao": "motivo aqui" })
+    @PatchMapping("/{id}/rejeitar")
+    public ResponseEntity<?> rejeitar(@PathVariable Long id, @RequestBody Map<String, String> body) {
+        try {
+            String observacao = body.getOrDefault("observacao", "");
+            Passagem rejeitada = passagemService.rejeitar(id, observacao);
+            return ResponseEntity.ok(rejeitada);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletar(@PathVariable Long id) {
         try {
