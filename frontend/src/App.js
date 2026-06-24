@@ -235,33 +235,7 @@ function App() {
                 </>
               )}
 
-              {/* ===== MÓDULO VIAGEM ===== */}
-              {modulo === 'viagem' && (
-                <>
-                  <li className="nav-item">
-                    <button className={navBtn('passagens')} onClick={() => irPara('passagens')}>
-                      ✈️ Passagens
-                    </button>
-                  </li>
-                  <li className="nav-item">
-                    <button className={navBtn('hoteis')} onClick={() => irPara('hoteis')}>
-                      🏨 Hotéis
-                    </button>
-                  </li>
-                  {tipo === 'ADMIN' && (
-                    <li className="nav-item">
-                      <button className={navBtn('aprovacoes')} onClick={() => irPara('aprovacoes')}>
-                        ✅ Aprovações
-                      </button>
-                    </li>
-                  )}
-                  <li className="nav-item">
-                    <button className={navBtn('historico-viagem')} onClick={() => irPara('historico-viagem')}>
-                      🕐 Histórico
-                    </button>
-                  </li>
-                </>
-              )}
+          
 
               {/* ===== COMPARTILHADOS ===== */}
               {tipo === 'ADMIN' && (
@@ -279,6 +253,43 @@ function App() {
                   </button>
                 </li>
               )}
+
+
+              {/* ===== MÓDULO VIAGEM ===== */}
+              {modulo === 'viagem' && (
+                <>
+                  <li className="nav-item">
+                    <button className={navBtn('passagens')} onClick={() => irPara('passagens')}>
+                      ✈️ Passagens
+                    </button>
+                  </li>
+                  <li className="nav-item">
+                    <button className={navBtn('hoteis')} onClick={() => irPara('hoteis')}>
+                      🏨 Hotéis
+                    </button>
+                  </li>
+                  {tipo === 'ADMIN' && (
+                    <li className="nav-item">
+                      <button className={navBtn('colaboradores')} onClick={() => irPara('colaboradores')}>
+                        👥 Colaboradores
+                      </button>
+                    </li>
+                  )}
+                  {tipo === 'ADMIN' && (
+                    <li className="nav-item">
+                      <button className={navBtn('aprovacoes')} onClick={() => irPara('aprovacoes')}>
+                        ✅ Aprovações
+                      </button>
+                    </li>
+                  )}
+                  <li className="nav-item">
+                    <button className={navBtn('historico-viagem')} onClick={() => irPara('historico-viagem')}>
+                      🕐 Histórico
+                    </button>
+                  </li>
+                </>
+              )}
+              
 
             </ul>
 
