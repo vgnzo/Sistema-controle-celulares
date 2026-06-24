@@ -21,10 +21,17 @@ public class Hotel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // qual colaborador vai se hospedar
+// qual colaborador vai se hospedar (opcional)
     @ManyToOne
-    @JoinColumn(name = "registro", nullable = false)
+    @JoinColumn(name = "registro")
     private Colaborador colaborador;
+
+    // nome e registro digitados pelo solicitante (texto livre)
+    @Column(name = "solicitante_nome", length = 150)
+    private String solicitanteNome;
+
+    @Column(name = "solicitante_registro", length = 50)
+    private String solicitanteRegistro;
 
    @Column(name = "data_entrada")
     private LocalDate dataEntrada;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   celularService, colaboradorService, entregaService, chipService,
-  computadorService, entregaComputadorService
+  computadorService, entregaComputadorService, passagemService, hotelService
 } from '../services/api';
 
 function Dashboard({ modulo }) {
@@ -11,6 +11,8 @@ function Dashboard({ modulo }) {
   const [chips, setChips] = useState([]);
   const [computadores, setComputadores] = useState([]);
   const [entregasComputador, setEntregasComputador] = useState([]);
+  const [passagens, setPassagens] = useState([]);
+  const [hoteis, setHoteis] = useState([]);
   const [loading, setLoading] = useState(true);
   const [agora, setAgora] = useState(new Date());
 
@@ -30,16 +32,20 @@ function Dashboard({ modulo }) {
   const carregarDados = async () => {
     try {
       setLoading(true);
-      // colaboradores é comum aos dois módulos
+      // colaboradores é comum aos módulos
       const promessas = [colaboradorService.listarTodos()];
 
       if (moduloAtual === 'celular') {
         promessas.push(celularService.listarTodos());   // [1]
         promessas.push(entregaService.listarTodas());    // [2]
         promessas.push(chipService.listarTodos());       // [3]
-      } else {
+      } else if (moduloAtual === 'computador') {
         promessas.push(computadorService.listarTodos());          // [1]
         promessas.push(entregaComputadorService.listarTodas());   // [2]
+      } else {
+        // viagem
+        promessas.push(passagemService.listarTodas());   // [1]
+        promessas.push(hotelService.listarTodas());       // [2]
       }
 
       const res = await Promise.all(promessas);
@@ -50,9 +56,12 @@ function Dashboard({ modulo }) {
         setCelulares(res[1].data);
         setEntregas(res[2].data);
         setChips(res[3].data);
-      } else {
+      } else if (moduloAtual === 'computador') {
         setComputadores(res[1].data);
         setEntregasComputador(res[2].data);
+      } else {
+        setPassagens(res[1].data);
+        setHoteis(res[2].data);
       }
     } catch (error) {
       console.error('Erro ao carregar dashboard', error);
@@ -107,6 +116,25 @@ function Dashboard({ modulo }) {
   const entregasPcAtrasadas = entregasComputador.filter(e => e.status === 'atrasado').length;
   const entregasPcDevolvidas = entregasComputador.filter(e => e.status === 'devolvido').length;
 
+  // ===== métricas do módulo VIAGEM =====
+  const totalPassagens = passagens.length;
+  const passagensPendentes = passagens.filter(p => p.status === 'PENDENTE').length;
+  const passagensAprovadas = passagens.filter(p => p.status === 'APROVADO').length;
+  const passagensRejeitadas = passagens.filter(p => p.status === 'REJEITADO').length;
+
+  const totalHoteis = hoteis.length;
+  const hoteisPendentes = hoteis.filter(h => h.status === 'PENDENTE').length;
+  const hoteisAprovados = hoteis.filter(h => h.status === 'APROVADO').length;
+  const hoteisRejeitados = hoteis.filter(h => h.status === 'REJEITADO').length;
+
+  const totalPendentesViagem = passagensPendentes + hoteisPendentes;
+
+  // título do dashboard conforme módulo
+  const tituloDash =
+    moduloAtual === 'celular' ? '— Celulares' :
+    moduloAtual === 'computador' ? '— Computadores' :
+    '— Viagem';
+
   return (
     <div>
 
@@ -114,7 +142,7 @@ function Dashboard({ modulo }) {
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h2 className="mb-0">
-            📊 Dashboard {moduloAtual === 'celular' ? '— Celulares' : '— Computadores'}
+            📊 Dashboard {tituloDash}
           </h2>
           <p className="text-muted mb-0">
             {getSaudacao()}, <strong>{username}</strong>! 👋
@@ -276,7 +304,66 @@ function Dashboard({ modulo }) {
         </>
       )}
 
-      {/* ====================== COLABORADORES (comum aos dois) ====================== */}
+      {/* ====================== MÓDULO VIAGEM ====================== */}
+      {moduloAtual === 'viagem' && (
+        <>
+          {tipo === 'ADMIN' && totalPendentesViagem > 0 && (
+            <div className="alert alert-warning">
+              ⏳ Você tem <strong>{totalPendentesViagem}</strong> solicitação(ões) pendente(s) de aprovação! Verifique a aba de Aprovações.
+            </div>
+          )}
+
+          <h5 className="text-muted mb-3">✈️ Passagens</h5>
+          <div className="row g-3 mb-4">
+            <div className="col-6 col-md-3">
+              <div className="card text-center border-0 shadow-sm"><div className="card-body">
+                <h2 className="fw-bold text-primary">{totalPassagens}</h2><p className="text-muted mb-0">Total</p>
+              </div></div>
+            </div>
+            <div className="col-6 col-md-3">
+              <div className="card text-center border-0 shadow-sm"><div className="card-body">
+                <h2 className="fw-bold text-warning">{passagensPendentes}</h2><p className="text-muted mb-0">Pendentes</p>
+              </div></div>
+            </div>
+            <div className="col-6 col-md-3">
+              <div className="card text-center border-0 shadow-sm"><div className="card-body">
+                <h2 className="fw-bold text-success">{passagensAprovadas}</h2><p className="text-muted mb-0">Aprovadas</p>
+              </div></div>
+            </div>
+            <div className="col-6 col-md-3">
+              <div className="card text-center border-0 shadow-sm"><div className="card-body">
+                <h2 className="fw-bold text-danger">{passagensRejeitadas}</h2><p className="text-muted mb-0">Rejeitadas</p>
+              </div></div>
+            </div>
+          </div>
+
+          <h5 className="text-muted mb-3">🏨 Hotéis</h5>
+          <div className="row g-3 mb-4">
+            <div className="col-6 col-md-3">
+              <div className="card text-center border-0 shadow-sm"><div className="card-body">
+                <h2 className="fw-bold text-primary">{totalHoteis}</h2><p className="text-muted mb-0">Total</p>
+              </div></div>
+            </div>
+            <div className="col-6 col-md-3">
+              <div className="card text-center border-0 shadow-sm"><div className="card-body">
+                <h2 className="fw-bold text-warning">{hoteisPendentes}</h2><p className="text-muted mb-0">Pendentes</p>
+              </div></div>
+            </div>
+            <div className="col-6 col-md-3">
+              <div className="card text-center border-0 shadow-sm"><div className="card-body">
+                <h2 className="fw-bold text-success">{hoteisAprovados}</h2><p className="text-muted mb-0">Aprovados</p>
+              </div></div>
+            </div>
+            <div className="col-6 col-md-3">
+              <div className="card text-center border-0 shadow-sm"><div className="card-body">
+                <h2 className="fw-bold text-danger">{hoteisRejeitados}</h2><p className="text-muted mb-0">Rejeitados</p>
+              </div></div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* ====================== COLABORADORES (comum a todos) ====================== */}
       <h5 className="text-muted mb-3">👥 Colaboradores</h5>
       <div className="row g-3 mb-4">
         <div className="col-6 col-md-4">

@@ -27,10 +27,19 @@ public class Passagem {
 
 
     //qual colaborador vai viajar
+    //qual colaborador vai viajar (opcional - admin pode vincular)
     @ManyToOne
-    @JoinColumn(name = "registro", nullable = false)
+    @JoinColumn(name = "registro")
     private Colaborador colaborador;
 
+    // nome e registro digitados pelo solicitante (texto livre)
+    @Column(name = "solicitante_nome", length = 150)
+    private String solicitanteNome;
+
+    @Column(name = "solicitante_registro", length = 50)
+    private String solicitanteRegistro;
+
+    
     @NotBlank(message = "Destino obrigatório")
     @Column(name = "Destino", nullable = false, length = 100)
     private String destino;

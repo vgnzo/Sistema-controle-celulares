@@ -39,10 +39,13 @@ public class PassagemService {
     }
 
     public Passagem cadastrar(Passagem passagem) {
-        if (passagem.getColaborador() == null || passagem.getColaborador().getRegistro() == null) {
-            throw new IllegalArgumentException("Colaborador é obrigatório");
+        // colaborador é opcional agora; se vier vazio, zera pra não dar erro de vínculo
+        if (passagem.getColaborador() == null || passagem.getColaborador().getRegistro() == null
+                || passagem.getColaborador().getRegistro().isBlank()) {
+            passagem.setColaborador(null);
         }
-        if (passagem.getDataVolta() != null && passagem.getDataVolta().isBefore(passagem.getDataIda())) {
+        if (passagem.getDataVolta() != null && passagem.getDataIda() != null
+                && passagem.getDataVolta().isBefore(passagem.getDataIda())) {
             throw new IllegalArgumentException("Data de volta não pode ser antes da data de ida");
         }
         // garante que sempre começa PENDENTE, independente do que veio no body
@@ -60,6 +63,8 @@ public class PassagemService {
         }
 
         existente.setColaborador(passagemAtualizada.getColaborador());
+        existente.setSolicitanteNome(passagemAtualizada.getSolicitanteNome());
+        existente.setSolicitanteRegistro(passagemAtualizada.getSolicitanteRegistro());
         existente.setDestino(passagemAtualizada.getDestino());
         existente.setLocalEmbarque(passagemAtualizada.getLocalEmbarque());
         existente.setLocalEmbarqueVolta(passagemAtualizada.getLocalEmbarqueVolta());

@@ -31,10 +31,13 @@ public class HotelService {
     }
 
     public Hotel cadastrar(Hotel hotel) {
-        if (hotel.getColaborador() == null || hotel.getColaborador().getRegistro() == null) {
-            throw new IllegalArgumentException("Colaborador é obrigatório");
+        // colaborador é opcional agora; se vier vazio, zera pra não dar erro de vínculo
+        if (hotel.getColaborador() == null || hotel.getColaborador().getRegistro() == null
+                || hotel.getColaborador().getRegistro().isBlank()) {
+            hotel.setColaborador(null);
         }
-        if (hotel.getDataSaida() != null && hotel.getDataSaida().isBefore(hotel.getDataEntrada())) {
+        if (hotel.getDataSaida() != null && hotel.getDataEntrada() != null
+                && hotel.getDataSaida().isBefore(hotel.getDataEntrada())) {
             throw new IllegalArgumentException("Data de saída não pode ser antes da data de entrada");
         }
         // garante que sempre começa PENDENTE
@@ -51,7 +54,10 @@ public class HotelService {
             throw new IllegalArgumentException("Data de saída não pode ser antes da data de entrada");
         }
 
-        existente.setColaborador(hotelAtualizado.getColaborador());
+
+       existente.setColaborador(hotelAtualizado.getColaborador());
+        existente.setSolicitanteNome(hotelAtualizado.getSolicitanteNome());
+        existente.setSolicitanteRegistro(hotelAtualizado.getSolicitanteRegistro());
         existente.setDataEntrada(hotelAtualizado.getDataEntrada());
         existente.setDataSaida(hotelAtualizado.getDataSaida());
         existente.setMotivo(hotelAtualizado.getMotivo());
