@@ -40,9 +40,7 @@ public class Passagem {
     @Column(name = "local_embarque", length = 100)
     private String localEmbarque;
     
-    
-    @NotNull(message = "Data de ida é obrigatória")
-    @Column(name = "data_ida", nullable = false)
+@Column(name = "data_ida")
     private LocalDate dataIda;
 
 

@@ -26,12 +26,10 @@ public class Hotel {
     @JoinColumn(name = "registro", nullable = false)
     private Colaborador colaborador;
 
-    @NotNull(message = "Data de entrada é obrigatória")
-    @Column(name = "data_entrada", nullable = false)
+   @Column(name = "data_entrada")
     private LocalDate dataEntrada;
 
-    @NotNull(message = "Data de saída é obrigatória")
-    @Column(name = "data_saida", nullable = false)
+    @Column(name = "data_saida")
     private LocalDate dataSaida;
 
     @Column(name = "motivo", length = 255)
