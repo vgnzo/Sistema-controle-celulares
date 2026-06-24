@@ -15,8 +15,8 @@ import HistoricoComputador from './pages/HistoricoComputador';
 import SelecaoModulo from './pages/SelecaoModulo';
 import Passagens from './pages/Passagens';
 import Hoteis from './pages/Hoteis';
-import Aprovacoes from './pages/Aprovacoes'; // ✅ novo
-
+import Aprovacoes from './pages/Aprovacoes'; 
+import HistoricoViagem from './pages/HistoricoViagem';
 function App() {
 
   const [paginaAtual, setPaginaAtual] = useState('dashboard');
@@ -110,6 +110,9 @@ function App() {
 
       case 'historico':
         return <Historico />;
+
+        case 'historico-viagem':
+    return <HistoricoViagem />;
 
       default:
         return <Dashboard modulo={modulo} />;
@@ -243,6 +246,15 @@ function App() {
                     ✈️ Passagens
                   </button>
                 </li>
+
+                              <li className="nav-item">
+                  <button
+                      className={`nav-link btn btn-link ${paginaAtual === 'historico-viagem' ? 'active text-white' : 'text-secondary'}`}
+                      onClick={() => setPaginaAtual('historico-viagem')}
+                  >
+                      🕐 Histórico
+                  </button>
+              </li>
 
                 <li className="nav-item">
                   <button
