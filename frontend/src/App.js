@@ -15,6 +15,7 @@ import HistoricoComputador from './pages/HistoricoComputador';
 import SelecaoModulo from './pages/SelecaoModulo';
 import Passagens from './pages/Passagens';
 import Hoteis from './pages/Hoteis';
+import Aprovacoes from './pages/Aprovacoes'; // ✅ novo
 
 function App() {
 
@@ -22,8 +23,6 @@ function App() {
   const [logado, setLogado] = useState(false);
   const [username, setUsername] = useState('');
   const [tipo, setTipo] = useState('');
-
-  // qual sistema (módulo) está selecionado: '' (nenhum), 'celular', 'computador' ou 'viagem'
   const [modulo, setModulo] = useState('');
 
   useEffect(() => {
@@ -56,13 +55,11 @@ function App() {
     setPaginaAtual('dashboard');
   };
 
-  // escolhe o módulo e entra no dashboard dele
   const handleSelecionarModulo = (mod) => {
     setModulo(mod);
     setPaginaAtual('dashboard');
   };
 
-  // volta pra tela de seleção (trocar de sistema)
   const handleTrocarModulo = () => {
     setModulo('');
     setPaginaAtual('dashboard');
@@ -95,6 +92,11 @@ function App() {
       case 'hoteis':
         return <Hoteis tipo={tipo} />;
 
+      // ✅ nova página de aprovações
+      case 'aprovacoes':
+        if (tipo !== 'ADMIN') return <h3>Acesso negado</h3>;
+        return <Aprovacoes />;
+
       case 'colaboradores':
         if (tipo !== 'ADMIN') return <h3>Acesso negado</h3>;
         return <Colaboradores />;
@@ -114,12 +116,10 @@ function App() {
     }
   };
 
-  // 1) Não logado → tela de login
   if (!logado) {
     return <Login onLogin={handleLogin} />;
   }
 
-  // 2) Logado mas sem módulo escolhido → tela de seleção
   if (!modulo) {
     return (
       <>
@@ -133,13 +133,11 @@ function App() {
     );
   }
 
-  // título da navbar conforme o módulo
   const tituloModulo =
     modulo === 'celular' ? '📱 Sistema de Celulares' :
     modulo === 'computador' ? '💻 Sistema de Computadores' :
     '✈️ Sistema de Viagem';
 
-  // 3) Logado + módulo escolhido → o sistema daquele módulo
   return (
     <div>
 
@@ -161,7 +159,7 @@ function App() {
               </button>
             </li>
 
-            {/* ===== ITENS DO MÓDULO CELULAR ===== */}
+            {/* ===== MÓDULO CELULAR ===== */}
             {modulo === 'celular' && (
               <>
                 <li className="nav-item">
@@ -202,7 +200,7 @@ function App() {
               </>
             )}
 
-            {/* ===== ITENS DO MÓDULO COMPUTADOR ===== */}
+            {/* ===== MÓDULO COMPUTADOR ===== */}
             {modulo === 'computador' && (
               <>
                 <li className="nav-item">
@@ -234,7 +232,7 @@ function App() {
               </>
             )}
 
-            {/* ===== ITENS DO MÓDULO VIAGEM ===== */}
+            {/* ===== MÓDULO VIAGEM ===== */}
             {modulo === 'viagem' && (
               <>
                 <li className="nav-item">
@@ -254,10 +252,22 @@ function App() {
                     🏨 Hotéis
                   </button>
                 </li>
+
+                {/* ✅ Aprovações — só admin vê, só aparece no módulo viagem */}
+                {tipo === 'ADMIN' && (
+                  <li className="nav-item">
+                    <button
+                      className={`nav-link btn btn-link ${paginaAtual === 'aprovacoes' ? 'active text-white' : 'text-secondary'}`}
+                      onClick={() => setPaginaAtual('aprovacoes')}
+                    >
+                      ✅ Aprovações
+                    </button>
+                  </li>
+                )}
               </>
             )}
 
-            {/* ===== COMPARTILHADOS (todos os módulos) ===== */}
+            {/* ===== COMPARTILHADOS ===== */}
             {tipo === 'ADMIN' && (
               <li className="nav-item">
                 <button

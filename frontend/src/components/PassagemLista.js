@@ -7,7 +7,6 @@ function PassagemLista({ onEditar, recarregar }) {
     const [loading, setLoading] = useState(true);
     const [erro, setErro] = useState(null);
 
-    // detecta se é ADMIN baseado na prop onEditar (igual ComputadorLista)
     const isAdmin = !!onEditar;
 
     useEffect(() => {
@@ -31,7 +30,6 @@ function PassagemLista({ onEditar, recarregar }) {
 
     const handleDeletar = async (passagem) => {
         if (!isAdmin) return;
-
         if (window.confirm(`Excluir a passagem de "${passagem.colaborador?.nome}" para "${passagem.destino}"?`)) {
             try {
                 await passagemService.deletar(passagem.id);
@@ -43,16 +41,26 @@ function PassagemLista({ onEditar, recarregar }) {
         }
     };
 
-    // formata valor pra R$ (ex: 1250.5 -> R$ 1.250,50)
     const formatarValor = (valor) => {
         if (valor === null || valor === undefined) return '-';
         return Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     };
 
-    // formata data (ex: 2026-07-10 -> 10/07/2026)
     const formatarData = (data) => {
         if (!data) return '-';
         return new Date(data + 'T00:00:00').toLocaleDateString('pt-BR');
+    };
+
+    // ✅ badge colorido conforme o status
+    const badgeStatus = (status) => {
+        switch (status) {
+            case 'APROVADO':
+                return <span className="badge bg-success">✅ Aprovado</span>;
+            case 'REJEITADO':
+                return <span className="badge bg-danger">❌ Rejeitado</span>;
+            default:
+                return <span className="badge bg-warning text-dark">⏳ Pendente</span>;
+        }
     };
 
     if (loading) return <div>Carregando...</div>;
@@ -76,6 +84,7 @@ function PassagemLista({ onEditar, recarregar }) {
                                 <th>Volta</th>
                                 <th>Motivo</th>
                                 <th>Valor</th>
+                                <th>Status</th> {/* ✅ nova coluna */}
                                 {isAdmin && <th className="text-center">Ações</th>}
                             </tr>
                         </thead>
@@ -83,7 +92,7 @@ function PassagemLista({ onEditar, recarregar }) {
                         <tbody>
                             {passagens.length === 0 ? (
                                 <tr>
-                                    <td colSpan={isAdmin ? '8' : '7'} className="text-center text-muted">
+                                    <td colSpan={isAdmin ? '9' : '8'} className="text-center text-muted">
                                         Nenhuma passagem cadastrada
                                     </td>
                                 </tr>
@@ -97,6 +106,7 @@ function PassagemLista({ onEditar, recarregar }) {
                                         <td>{passagem.dataVolta ? formatarData(passagem.dataVolta) : '🔂 Só ida'}</td>
                                         <td>{passagem.motivo || '-'}</td>
                                         <td>{formatarValor(passagem.valor)}</td>
+                                        <td>{badgeStatus(passagem.status)}</td> {/* ✅ */}
 
                                         {isAdmin && (
                                             <td className="text-center text-nowrap">
@@ -106,7 +116,6 @@ function PassagemLista({ onEditar, recarregar }) {
                                                 >
                                                     ✏️ Editar
                                                 </button>
-
                                                 <button
                                                     onClick={() => handleDeletar(passagem)}
                                                     className="btn btn-sm btn-danger"

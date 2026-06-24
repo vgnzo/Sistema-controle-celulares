@@ -7,7 +7,6 @@ function HotelLista({ onEditar, recarregar }) {
     const [loading, setLoading] = useState(true);
     const [erro, setErro] = useState(null);
 
-    // detecta se é ADMIN baseado na prop onEditar (igual ComputadorLista)
     const isAdmin = !!onEditar;
 
     useEffect(() => {
@@ -31,7 +30,6 @@ function HotelLista({ onEditar, recarregar }) {
 
     const handleDeletar = async (hotel) => {
         if (!isAdmin) return;
-
         if (window.confirm(`Excluir a reserva de "${hotel.colaborador?.nome}"?`)) {
             try {
                 await hotelService.deletar(hotel.id);
@@ -43,25 +41,34 @@ function HotelLista({ onEditar, recarregar }) {
         }
     };
 
-    // formata valor pra R$ (ex: 850 -> R$ 850,00)
     const formatarValor = (valor) => {
         if (valor === null || valor === undefined) return '-';
         return Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     };
 
-    // formata data (ex: 2026-07-10 -> 10/07/2026)
     const formatarData = (data) => {
         if (!data) return '-';
         return new Date(data + 'T00:00:00').toLocaleDateString('pt-BR');
     };
 
-    // calcula quantas diárias (noites) entre entrada e saída
     const calcularDiarias = (entrada, saida) => {
         if (!entrada || !saida) return '-';
         const d1 = new Date(entrada + 'T00:00:00');
         const d2 = new Date(saida + 'T00:00:00');
         const diff = Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
         return diff > 0 ? `${diff} ${diff === 1 ? 'noite' : 'noites'}` : '-';
+    };
+
+    // ✅ badge colorido conforme o status
+    const badgeStatus = (status) => {
+        switch (status) {
+            case 'APROVADO':
+                return <span className="badge bg-success">✅ Aprovado</span>;
+            case 'REJEITADO':
+                return <span className="badge bg-danger">❌ Rejeitado</span>;
+            default:
+                return <span className="badge bg-warning text-dark">⏳ Pendente</span>;
+        }
     };
 
     if (loading) return <div>Carregando...</div>;
@@ -84,6 +91,7 @@ function HotelLista({ onEditar, recarregar }) {
                                 <th>Diárias</th>
                                 <th>Motivo</th>
                                 <th>Valor</th>
+                                <th>Status</th> {/* ✅ nova coluna */}
                                 {isAdmin && <th className="text-center">Ações</th>}
                             </tr>
                         </thead>
@@ -91,7 +99,7 @@ function HotelLista({ onEditar, recarregar }) {
                         <tbody>
                             {hoteis.length === 0 ? (
                                 <tr>
-                                    <td colSpan={isAdmin ? '7' : '6'} className="text-center text-muted">
+                                    <td colSpan={isAdmin ? '8' : '7'} className="text-center text-muted">
                                         Nenhuma reserva cadastrada
                                     </td>
                                 </tr>
@@ -104,6 +112,7 @@ function HotelLista({ onEditar, recarregar }) {
                                         <td>{calcularDiarias(hotel.dataEntrada, hotel.dataSaida)}</td>
                                         <td>{hotel.motivo || '-'}</td>
                                         <td>{formatarValor(hotel.valor)}</td>
+                                        <td>{badgeStatus(hotel.status)}</td> {/* ✅ */}
 
                                         {isAdmin && (
                                             <td className="text-center text-nowrap">
@@ -113,7 +122,6 @@ function HotelLista({ onEditar, recarregar }) {
                                                 >
                                                     ✏️ Editar
                                                 </button>
-
                                                 <button
                                                     onClick={() => handleDeletar(hotel)}
                                                     className="btn btn-sm btn-danger"
