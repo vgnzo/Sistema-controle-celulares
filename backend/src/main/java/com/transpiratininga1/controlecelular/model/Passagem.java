@@ -50,6 +50,8 @@ public class Passagem {
     @Column(name = "Destino", nullable = false, length = 100)
     private String destino;
 
+    @Column(name = "companhia_aerea", length = 100)
+    private String companhiaAerea;
 
 
     @Column(name = "local_embarque", length = 100)

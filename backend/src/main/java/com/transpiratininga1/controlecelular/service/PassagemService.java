@@ -73,6 +73,7 @@ public class PassagemService {
         existente.setDestino(passagemAtualizada.getDestino());
         existente.setLocalEmbarque(passagemAtualizada.getLocalEmbarque());
         existente.setLocalEmbarqueVolta(passagemAtualizada.getLocalEmbarqueVolta());
+        existente.setCompanhiaAerea(passagemAtualizada.getCompanhiaAerea());
         existente.setDataIda(passagemAtualizada.getDataIda());
         existente.setDataVolta(passagemAtualizada.getDataVolta());
         existente.setMotivo(passagemAtualizada.getMotivo());

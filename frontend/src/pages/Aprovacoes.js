@@ -13,14 +13,16 @@ function Aprovacoes() {
     const [observacao, setObservacao] = useState('');
 
     // campos extras preenchidos pelo admin na aprovação
-    const [dadosAprovacao, setDadosAprovacao] = useState({
+ const [dadosAprovacao, setDadosAprovacao] = useState({
         localEmbarque: '',
         localEmbarqueVolta: '',
+        companhiaAerea: '',
         dataIda: '',
         dataVolta: '',
         valor: '',
         dataEntrada: '',
         dataSaida: '',
+        nomeHotel: '',
     });
 
     useEffect(() => {
@@ -46,8 +48,7 @@ function Aprovacoes() {
     const abrirModalAprovar = (tipo, item) => {
         setTipoModal(tipo === 'passagem' ? 'aprovar-passagem' : 'aprovar-hotel');
         setItemSelecionado(item);
-setDadosAprovacao({ localEmbarque: '', localEmbarqueVolta: '', dataIda: '', dataVolta: '', valor: '', dataEntrada: '', dataSaida: '' });        setModalAberto(true);
-    };
+setDadosAprovacao({ localEmbarque: '', localEmbarqueVolta: '', companhiaAerea: '', dataIda: '', dataVolta: '', valor: '', dataEntrada: '', dataSaida: '', nomeHotel: '' });    };
 
     const abrirModalRejeitar = (tipo, id) => {
         setTipoModal('rejeitar');
@@ -67,6 +68,7 @@ setDadosAprovacao({ localEmbarque: '', localEmbarqueVolta: '', dataIda: '', data
                     motivo: itemSelecionado.motivo,
                     localEmbarque: dadosAprovacao.localEmbarque,
                     localEmbarqueVolta: dadosAprovacao.localEmbarqueVolta,
+                    companhiaAerea: dadosAprovacao.companhiaAerea,
                     dataIda: dadosAprovacao.dataIda || null,
                     dataVolta: dadosAprovacao.dataVolta || null,
                     valor: dadosAprovacao.valor ? Number(dadosAprovacao.valor) : null,
@@ -78,6 +80,7 @@ setDadosAprovacao({ localEmbarque: '', localEmbarqueVolta: '', dataIda: '', data
                     solicitanteNome: itemSelecionado.solicitanteNome,
                     solicitanteRegistro: itemSelecionado.solicitanteRegistro,
                     motivo: itemSelecionado.motivo,
+                    nomeHotel: dadosAprovacao.nomeHotel,
                     dataEntrada: dadosAprovacao.dataEntrada || null,
                     dataSaida: dadosAprovacao.dataSaida || null,
                     valor: dadosAprovacao.valor ? Number(dadosAprovacao.valor) : null,
@@ -224,6 +227,22 @@ setDadosAprovacao({ localEmbarque: '', localEmbarqueVolta: '', dataIda: '', data
                                                 value={dadosAprovacao.localEmbarque}
                                                 onChange={e => setDadosAprovacao({ ...dadosAprovacao, localEmbarque: e.target.value })} />
                                         </div>
+
+                                        <div className="mb-3">
+                                            <label className="form-label">Companhia Aérea</label>
+                                            <input type="text" className="form-control" list="companhias-aereas"
+                                                placeholder="Digite ou escolha"
+                                                value={dadosAprovacao.companhiaAerea}
+                                                onChange={e => setDadosAprovacao({ ...dadosAprovacao, companhiaAerea: e.target.value })} />
+                                            <datalist id="companhias-aereas">
+                                                <option value="Gol" />
+                                                <option value="Latam" />
+                                                <option value="Azul" />
+                                                <option value="Voepass" />
+                                                <option value="Ita Transportes Aéreos" />
+                                            </datalist>
+                                        </div>
+
                                         <div className="mb-3">
                                             <label className="form-label">Local de Embarque (Volta)</label>
                                             <input type="text" className="form-control" placeholder="Ex: Aeroporto de Congonhas"
@@ -258,6 +277,14 @@ setDadosAprovacao({ localEmbarque: '', localEmbarqueVolta: '', dataIda: '', data
                                                     value={dadosAprovacao.dataEntrada}
                                                     onChange={e => setDadosAprovacao({ ...dadosAprovacao, dataEntrada: e.target.value })} />
                                             </div>
+                                                <div className="mb-3">
+                                            <label className="form-label">Nome do Hotel</label>
+                                            <input type="text" className="form-control"
+                                                placeholder="Ex: Hotel Ibis Centro"
+                                                value={dadosAprovacao.nomeHotel}
+                                                onChange={e => setDadosAprovacao({ ...dadosAprovacao, nomeHotel: e.target.value })} />
+                                        </div>
+                                            
                                             <div className="col-md-6 mb-3">
                                                 <label className="form-label">Data de Saída *</label>
                                                 <input type="date" className="form-control" required

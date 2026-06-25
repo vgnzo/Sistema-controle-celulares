@@ -42,7 +42,6 @@ function HistoricoViagem() {
         return new Date(data + 'T00:00:00').toLocaleDateString('pt-BR');
     };
 
-
     const badgeStatus = (status) => {
         switch (status) {
             case 'APROVADO':
@@ -59,7 +58,7 @@ function HistoricoViagem() {
         if (filtroStatus !== 'todos' && item.status !== filtroStatus) return false;
         if (busca) {
             const termo = busca.toLowerCase();
-            return item.colaborador?.nome?.toLowerCase().includes(termo);
+            return item.solicitanteNome?.toLowerCase().includes(termo);
         }
         return true;
     });
@@ -82,9 +81,12 @@ function HistoricoViagem() {
         let dados;
         if (aba === 'passagens') {
             dados = dadosFiltrados.map(p => ({
-                'Colaborador': p.colaborador?.nome || '-',
+                'Solicitante': p.solicitanteNome || '-',
+                'Registro': p.solicitanteRegistro || '-',
                 'Destino': p.destino || '-',
-                'Embarque': p.localEmbarque || '-',
+                'Companhia': p.companhiaAerea || '-',
+                'Embarque Ida': p.localEmbarque || '-',
+                'Embarque Volta': p.localEmbarqueVolta || '-',
                 'Data Ida': formatarData(p.dataIda),
                 'Data Volta': p.dataVolta ? formatarData(p.dataVolta) : 'Só ida',
                 'Motivo': p.motivo || '-',
@@ -93,7 +95,9 @@ function HistoricoViagem() {
             }));
         } else {
             dados = dadosFiltrados.map(h => ({
-                'Colaborador': h.colaborador?.nome || '-',
+                'Solicitante': h.solicitanteNome || '-',
+                'Registro': h.solicitanteRegistro || '-',
+                'Hotel': h.nomeHotel || '-',
                 'Entrada': formatarData(h.dataEntrada),
                 'Saída': formatarData(h.dataSaida),
                 'Motivo': h.motivo || '-',
@@ -153,11 +157,11 @@ function HistoricoViagem() {
                             </select>
                         </div>
                         <div className="col-md-5">
-                            <label className="form-label">Buscar por colaborador</label>
+                            <label className="form-label">Buscar por solicitante</label>
                             <input
                                 type="text"
                                 className="form-control"
-                                placeholder="Digite o nome do colaborador..."
+                                placeholder="Digite o nome do solicitante..."
                                 value={busca}
                                 onChange={e => setBusca(e.target.value)}
                             />
@@ -191,59 +195,73 @@ function HistoricoViagem() {
                             <p>Nenhum registro encontrado</p>
                         </div>
                     ) : aba === 'passagens' ? (
-                        <table className="table table-hover mb-0">
-                            <thead className="table-dark">
-                                <tr>
-                                    <th>Colaborador</th>
-                                    <th>Destino</th>
-                                    <th>Embarque</th>
-                                    <th>Ida</th>
-                                    <th>Volta</th>
-                                    <th>Motivo</th>
-                                    <th>Status</th>
-                                    <th>Observação</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {itensPagina.map((p) => (
-                                    <tr key={p.id} className="align-middle">
-                                        <td>{p.colaborador?.nome || '-'}</td>
-                                        <td>{p.destino}</td>
-                                        <td>{p.localEmbarque || '-'}</td>
-                                        <td>{formatarData(p.dataIda)}</td>
-                                        <td>{p.dataVolta ? formatarData(p.dataVolta) : '🔂 Só ida'}</td>
-                                        <td>{p.motivo || '-'}</td>
-                                        <td>{badgeStatus(p.status)}</td>
-                                        <td>{p.observacao || '-'}</td>
+                        <div className="table-responsive">
+                            <table className="table table-hover mb-0">
+                                <thead className="table-dark">
+                                    <tr>
+                                        <th>Solicitante</th>
+                                        <th>Registro</th>
+                                        <th>Destino</th>
+                                        <th>Companhia</th>
+                                        <th>Embarque Ida</th>
+                                        <th>Embarque Volta</th>
+                                        <th>Ida</th>
+                                        <th>Volta</th>
+                                        <th>Motivo</th>
+                                        <th>Status</th>
+                                        <th>Observação</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {itensPagina.map((p) => (
+                                        <tr key={p.id} className="align-middle">
+                                            <td>{p.solicitanteNome || '-'}</td>
+                                            <td>{p.solicitanteRegistro || '-'}</td>
+                                            <td>{p.destino}</td>
+                                            <td>{p.companhiaAerea || '-'}</td>
+                                            <td>{p.localEmbarque || '-'}</td>
+                                            <td>{p.localEmbarqueVolta || '-'}</td>
+                                            <td>{formatarData(p.dataIda)}</td>
+                                            <td>{p.dataVolta ? formatarData(p.dataVolta) : '🔂 Só ida'}</td>
+                                            <td>{p.motivo || '-'}</td>
+                                            <td>{badgeStatus(p.status)}</td>
+                                            <td>{p.observacao || '-'}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     ) : (
-                        <table className="table table-hover mb-0">
-                            <thead className="table-dark">
-                                <tr>
-                                    <th>Colaborador</th>
-                                    <th>Entrada</th>
-                                    <th>Saída</th>
-                                    <th>Motivo</th>
-                                    <th>Status</th>
-                                    <th>Observação</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {itensPagina.map((h) => (
-                                    <tr key={h.id} className="align-middle">
-                                        <td>{h.colaborador?.nome || '-'}</td>
-                                        <td>{formatarData(h.dataEntrada)}</td>
-                                        <td>{formatarData(h.dataSaida)}</td>
-                                        <td>{h.motivo || '-'}</td>
-                                        <td>{badgeStatus(h.status)}</td>
-                                        <td>{h.observacao || '-'}</td>
+                        <div className="table-responsive">
+                            <table className="table table-hover mb-0">
+                                <thead className="table-dark">
+                                    <tr>
+                                        <th>Solicitante</th>
+                                        <th>Registro</th>
+                                        <th>Hotel</th>
+                                        <th>Entrada</th>
+                                        <th>Saída</th>
+                                        <th>Motivo</th>
+                                        <th>Status</th>
+                                        <th>Observação</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {itensPagina.map((h) => (
+                                        <tr key={h.id} className="align-middle">
+                                            <td>{h.solicitanteNome || '-'}</td>
+                                            <td>{h.solicitanteRegistro || '-'}</td>
+                                            <td>{h.nomeHotel || '-'}</td>
+                                            <td>{formatarData(h.dataEntrada)}</td>
+                                            <td>{formatarData(h.dataSaida)}</td>
+                                            <td>{h.motivo || '-'}</td>
+                                            <td>{badgeStatus(h.status)}</td>
+                                            <td>{h.observacao || '-'}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     )}
                 </div>
 

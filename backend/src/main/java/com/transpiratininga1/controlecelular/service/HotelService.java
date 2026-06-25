@@ -60,6 +60,7 @@ public class HotelService {
         existente.setSolicitanteRegistro(hotelAtualizado.getSolicitanteRegistro());
         existente.setDataEntrada(hotelAtualizado.getDataEntrada());
         existente.setDataSaida(hotelAtualizado.getDataSaida());
+      existente.setNomeHotel(hotelAtualizado.getNomeHotel());  
         existente.setMotivo(hotelAtualizado.getMotivo());
         existente.setValor(hotelAtualizado.getValor());
 

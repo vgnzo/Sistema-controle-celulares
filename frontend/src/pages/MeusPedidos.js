@@ -85,6 +85,7 @@ function MeusPedidos() {
                                         {/* detalhes só aparecem se foi aprovado e preenchido */}
                                         {p.status === 'APROVADO' && (
                                             <div className="mt-3 pt-3 border-top">
+                                                <p className="mb-1"><strong>✈️ Companhia:</strong> {p.companhiaAerea || '-'}</p>
                                                 <p className="mb-1"><strong>📅 Ida:</strong> {formatarData(p.dataIda)}</p>
                                                 <p className="mb-1"><strong>📅 Volta:</strong> {p.dataVolta ? formatarData(p.dataVolta) : 'Só ida'}</p>
                                                 <p className="mb-1"><strong>🛫 Embarque (Ida):</strong> {p.localEmbarque || '-'}</p>
@@ -124,8 +125,9 @@ function MeusPedidos() {
                                         </p>
                                         {h.motivo && <p className="mb-2"><strong>Motivo:</strong> {h.motivo}</p>}
 
-                                        {h.status === 'APROVADO' && (
+                                       {h.status === 'APROVADO' && (
                                             <div className="mt-3 pt-3 border-top">
+                                                <p className="mb-1"><strong>🏨 Hotel:</strong> {h.nomeHotel || '-'}</p>
                                                 <p className="mb-1"><strong>📅 Entrada:</strong> {formatarData(h.dataEntrada)}</p>
                                                 <p className="mb-0"><strong>📅 Saída:</strong> {formatarData(h.dataSaida)}</p>
                                             </div>

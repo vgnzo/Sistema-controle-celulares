@@ -41,6 +41,9 @@ public class Hotel {
    @Column(name = "data_entrada")
     private LocalDate dataEntrada;
 
+    @Column(name = "nome_hotel", length = 150)
+    private String nomeHotel;
+
     @Column(name = "data_saida")
     private LocalDate dataSaida;
 
