@@ -8,12 +8,11 @@ function Aprovacoes() {
     const [loading, setLoading] = useState(true);
 
     const [modalAberto, setModalAberto] = useState(false);
-    const [tipoModal, setTipoModal] = useState(null); // 'aprovar-passagem' | 'aprovar-hotel' | 'rejeitar'
+    const [tipoModal, setTipoModal] = useState(null);
     const [itemSelecionado, setItemSelecionado] = useState(null);
     const [observacao, setObservacao] = useState('');
 
-    // campos extras preenchidos pelo admin na aprovação
- const [dadosAprovacao, setDadosAprovacao] = useState({
+    const [dadosAprovacao, setDadosAprovacao] = useState({
         localEmbarque: '',
         localEmbarqueVolta: '',
         companhiaAerea: '',
@@ -48,8 +47,19 @@ function Aprovacoes() {
     const abrirModalAprovar = (tipo, item) => {
         setTipoModal(tipo === 'passagem' ? 'aprovar-passagem' : 'aprovar-hotel');
         setItemSelecionado(item);
-setDadosAprovacao({ localEmbarque: '', localEmbarqueVolta: '', companhiaAerea: '', dataIda: '', dataVolta: '', valor: '', dataEntrada: '', dataSaida: '', nomeHotel: '' });    };
-        setModalAberto(true);
+        setDadosAprovacao({
+            localEmbarque: '',
+            localEmbarqueVolta: '',
+            companhiaAerea: '',
+            dataIda: '',
+            dataVolta: '',
+            valor: '',
+            dataEntrada: '',
+            dataSaida: '',
+            nomeHotel: ''
+        });
+        setModalAberto(true); // ✅ dentro da função agora
+    };
 
     const abrirModalRejeitar = (tipo, id) => {
         setTipoModal('rejeitar');
@@ -61,8 +71,7 @@ setDadosAprovacao({ localEmbarque: '', localEmbarqueVolta: '', companhiaAerea: '
     const handleConfirmarAprovacao = async () => {
         try {
             if (tipoModal === 'aprovar-passagem') {
-                // atualiza os dados extras antes de aprovar
-               await passagemService.atualizar(itemSelecionado.id, {
+                await passagemService.atualizar(itemSelecionado.id, {
                     solicitanteNome: itemSelecionado.solicitanteNome,
                     solicitanteRegistro: itemSelecionado.solicitanteRegistro,
                     destino: itemSelecionado.destino,
@@ -112,7 +121,6 @@ setDadosAprovacao({ localEmbarque: '', localEmbarqueVolta: '', companhiaAerea: '
         }
     };
 
-
     if (loading) return <div>Carregando...</div>;
 
     const totalPendentes = passagens.length + hoteis.length;
@@ -142,7 +150,7 @@ setDadosAprovacao({ localEmbarque: '', localEmbarqueVolta: '', companhiaAerea: '
                         <div className="table-responsive">
                             <table className="table table-striped table-hover">
                                 <thead className="table-dark">
-                                   <tr>
+                                    <tr>
                                         <th>Solicitante</th>
                                         <th>Registro</th>
                                         <th>Destino</th>
@@ -152,7 +160,7 @@ setDadosAprovacao({ localEmbarque: '', localEmbarqueVolta: '', companhiaAerea: '
                                 </thead>
                                 <tbody>
                                     {passagens.map((p) => (
-                                       <tr key={p.id}>
+                                        <tr key={p.id}>
                                             <td>{p.solicitanteNome || '-'}</td>
                                             <td>{p.solicitanteRegistro || '-'}</td>
                                             <td>{p.destino}</td>
@@ -189,7 +197,7 @@ setDadosAprovacao({ localEmbarque: '', localEmbarqueVolta: '', companhiaAerea: '
                                 </thead>
                                 <tbody>
                                     {hoteis.map((h) => (
-                                     <tr key={h.id}>
+                                        <tr key={h.id}>
                                             <td>{h.solicitanteNome || '-'}</td>
                                             <td>{h.solicitanteRegistro || '-'}</td>
                                             <td>{h.motivo || '-'}</td>
@@ -219,8 +227,8 @@ setDadosAprovacao({ localEmbarque: '', localEmbarqueVolta: '', companhiaAerea: '
                             </div>
 
                             <div className="modal-body">
-                                {/* MODAL APROVAR PASSAGEM */}
-                               {tipoModal === 'aprovar-passagem' && (
+                                {/* APROVAR PASSAGEM */}
+                                {tipoModal === 'aprovar-passagem' && (
                                     <>
                                         <div className="mb-3">
                                             <label className="form-label">Local de Embarque (Ida)</label>
@@ -228,7 +236,6 @@ setDadosAprovacao({ localEmbarque: '', localEmbarqueVolta: '', companhiaAerea: '
                                                 value={dadosAprovacao.localEmbarque}
                                                 onChange={e => setDadosAprovacao({ ...dadosAprovacao, localEmbarque: e.target.value })} />
                                         </div>
-
                                         <div className="mb-3">
                                             <label className="form-label">Companhia Aérea</label>
                                             <input type="text" className="form-control" list="companhias-aereas"
@@ -243,7 +250,6 @@ setDadosAprovacao({ localEmbarque: '', localEmbarqueVolta: '', companhiaAerea: '
                                                 <option value="Ita Transportes Aéreos" />
                                             </datalist>
                                         </div>
-
                                         <div className="mb-3">
                                             <label className="form-label">Local de Embarque (Volta)</label>
                                             <input type="text" className="form-control" placeholder="Ex: Aeroporto de Congonhas"
@@ -268,9 +274,16 @@ setDadosAprovacao({ localEmbarque: '', localEmbarqueVolta: '', companhiaAerea: '
                                     </>
                                 )}
 
-                                {/* MODAL APROVAR HOTEL */}
-                               {tipoModal === 'aprovar-hotel' && (
+                                {/* APROVAR HOTEL */}
+                                {tipoModal === 'aprovar-hotel' && (
                                     <>
+                                        <div className="mb-3">
+                                            <label className="form-label">Nome do Hotel</label>
+                                            <input type="text" className="form-control"
+                                                placeholder="Ex: Hotel Ibis Centro"
+                                                value={dadosAprovacao.nomeHotel}
+                                                onChange={e => setDadosAprovacao({ ...dadosAprovacao, nomeHotel: e.target.value })} />
+                                        </div>
                                         <div className="row">
                                             <div className="col-md-6 mb-3">
                                                 <label className="form-label">Data de Entrada *</label>
@@ -278,14 +291,6 @@ setDadosAprovacao({ localEmbarque: '', localEmbarqueVolta: '', companhiaAerea: '
                                                     value={dadosAprovacao.dataEntrada}
                                                     onChange={e => setDadosAprovacao({ ...dadosAprovacao, dataEntrada: e.target.value })} />
                                             </div>
-                                                <div className="mb-3">
-                                            <label className="form-label">Nome do Hotel</label>
-                                            <input type="text" className="form-control"
-                                                placeholder="Ex: Hotel Ibis Centro"
-                                                value={dadosAprovacao.nomeHotel}
-                                                onChange={e => setDadosAprovacao({ ...dadosAprovacao, nomeHotel: e.target.value })} />
-                                        </div>
-                                            
                                             <div className="col-md-6 mb-3">
                                                 <label className="form-label">Data de Saída *</label>
                                                 <input type="date" className="form-control" required
@@ -296,7 +301,7 @@ setDadosAprovacao({ localEmbarque: '', localEmbarqueVolta: '', companhiaAerea: '
                                     </>
                                 )}
 
-                                {/* MODAL REJEITAR */}
+                                {/* REJEITAR */}
                                 {tipoModal === 'rejeitar' && (
                                     <>
                                         <label className="form-label">Motivo da rejeição <span className="text-muted">(opcional)</span></label>
