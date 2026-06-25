@@ -80,8 +80,7 @@ public class HotelService {
         return hotelRepository.save(hotel);
     }
 
-    // ✅ NOVO
-    public Hotel rejeitar(Long id, String observacao) {
+        public Hotel rejeitar(Long id, String observacao) {
         Hotel hotel = hotelRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Reserva não encontrada"));
 
@@ -98,5 +97,10 @@ public class HotelService {
         Hotel hotel = hotelRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Reserva não encontrada"));
         hotelRepository.delete(hotel);
+    }
+
+    // lista os pedidos criados por um usuário específico
+    public List<Hotel> listarPorCriador(String username) {
+        return hotelRepository.findByCriadoPor(username);
     }
 }

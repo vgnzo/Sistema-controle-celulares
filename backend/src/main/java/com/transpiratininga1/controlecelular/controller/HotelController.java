@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
+import org.springframework.security.core.Authentication;
 
 @RestController
 @RequestMapping("/api/hoteis")
@@ -29,7 +30,6 @@ public class HotelController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // ✅ NOVO
     @GetMapping("/pendentes")
     public ResponseEntity<List<Hotel>> listarPendentes() {
         return ResponseEntity.ok(hotelService.listarPendentes());
@@ -40,9 +40,19 @@ public class HotelController {
         return ResponseEntity.ok(hotelService.buscarPorColaborador(registro));
     }
 
+    // — user vê os próprios pedidos (filtra pelo usuário logado)
+    @GetMapping("/meus")
+    public ResponseEntity<List<Hotel>> listarMeus(Authentication authentication) {
+        String username = authentication.getName();
+        return ResponseEntity.ok(hotelService.listarPorCriador(username));
+    }
+
     @PostMapping
-    public ResponseEntity<?> cadastrar(@Valid @RequestBody Hotel hotel) {
+    public ResponseEntity<?> cadastrar(@Valid @RequestBody Hotel hotel, Authentication authentication) {
         try {
+            if (authentication != null) {
+                hotel.setCriadoPor(authentication.getName());
+            }
             Hotel novo = hotelService.cadastrar(hotel);
             return ResponseEntity.status(HttpStatus.CREATED).body(novo);
         } catch (IllegalArgumentException e) {
@@ -60,7 +70,6 @@ public class HotelController {
         }
     }
 
-    // ✅ NOVO
     @PatchMapping("/{id}/aprovar")
     public ResponseEntity<?> aprovar(@PathVariable Long id) {
         try {
@@ -71,7 +80,7 @@ public class HotelController {
         }
     }
 
-    // ✅ NOVO
+
     @PatchMapping("/{id}/rejeitar")
     public ResponseEntity<?> rejeitar(@PathVariable Long id, @RequestBody Map<String, String> body) {
         try {

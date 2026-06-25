@@ -60,12 +60,13 @@ setDadosAprovacao({ localEmbarque: '', localEmbarqueVolta: '', dataIda: '', data
         try {
             if (tipoModal === 'aprovar-passagem') {
                 // atualiza os dados extras antes de aprovar
-                await passagemService.atualizar(itemSelecionado.id, {
-                    colaborador: { registro: itemSelecionado.colaborador?.registro },
+               await passagemService.atualizar(itemSelecionado.id, {
+                    solicitanteNome: itemSelecionado.solicitanteNome,
+                    solicitanteRegistro: itemSelecionado.solicitanteRegistro,
                     destino: itemSelecionado.destino,
                     motivo: itemSelecionado.motivo,
                     localEmbarque: dadosAprovacao.localEmbarque,
-                     localEmbarqueVolta: dadosAprovacao.localEmbarqueVolta,
+                    localEmbarqueVolta: dadosAprovacao.localEmbarqueVolta,
                     dataIda: dadosAprovacao.dataIda || null,
                     dataVolta: dadosAprovacao.dataVolta || null,
                     valor: dadosAprovacao.valor ? Number(dadosAprovacao.valor) : null,
@@ -74,7 +75,8 @@ setDadosAprovacao({ localEmbarque: '', localEmbarqueVolta: '', dataIda: '', data
                 toast.success('✅ Passagem aprovada!');
             } else {
                 await hotelService.atualizar(itemSelecionado.id, {
-                    colaborador: { registro: itemSelecionado.colaborador?.registro },
+                    solicitanteNome: itemSelecionado.solicitanteNome,
+                    solicitanteRegistro: itemSelecionado.solicitanteRegistro,
                     motivo: itemSelecionado.motivo,
                     dataEntrada: dadosAprovacao.dataEntrada || null,
                     dataSaida: dadosAprovacao.dataSaida || null,
@@ -136,8 +138,9 @@ setDadosAprovacao({ localEmbarque: '', localEmbarqueVolta: '', dataIda: '', data
                         <div className="table-responsive">
                             <table className="table table-striped table-hover">
                                 <thead className="table-dark">
-                                    <tr>
-                                        <th>Colaborador</th>
+                                   <tr>
+                                        <th>Solicitante</th>
+                                        <th>Registro</th>
                                         <th>Destino</th>
                                         <th>Motivo</th>
                                         <th className="text-center">Ações</th>
@@ -145,8 +148,9 @@ setDadosAprovacao({ localEmbarque: '', localEmbarqueVolta: '', dataIda: '', data
                                 </thead>
                                 <tbody>
                                     {passagens.map((p) => (
-                                        <tr key={p.id}>
-                                            <td>{p.colaborador?.nome || '-'}</td>
+                                       <tr key={p.id}>
+                                            <td>{p.solicitanteNome || '-'}</td>
+                                            <td>{p.solicitanteRegistro || '-'}</td>
                                             <td>{p.destino}</td>
                                             <td>{p.motivo || '-'}</td>
                                             <td className="text-center text-nowrap">
@@ -173,15 +177,17 @@ setDadosAprovacao({ localEmbarque: '', localEmbarqueVolta: '', dataIda: '', data
                             <table className="table table-striped table-hover">
                                 <thead className="table-dark">
                                     <tr>
-                                        <th>Colaborador</th>
+                                        <th>Solicitante</th>
+                                        <th>Registro</th>
                                         <th>Motivo</th>
                                         <th className="text-center">Ações</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {hoteis.map((h) => (
-                                        <tr key={h.id}>
-                                            <td>{h.colaborador?.nome || '-'}</td>
+                                     <tr key={h.id}>
+                                            <td>{h.solicitanteNome || '-'}</td>
+                                            <td>{h.solicitanteRegistro || '-'}</td>
                                             <td>{h.motivo || '-'}</td>
                                             <td className="text-center text-nowrap">
                                                 <button onClick={() => abrirModalAprovar('hotel', h)} className="btn btn-sm btn-success me-2">✅ Aprovar</button>

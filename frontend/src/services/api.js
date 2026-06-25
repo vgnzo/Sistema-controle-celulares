@@ -172,6 +172,7 @@ export const passagemService = {
     rejeitar: (id, observacao) => api.patch(`/passagens/${id}/rejeitar`, { observacao }), // ✅ novo
     cadastrar: (passagem) => api.post('/passagens', passagem),
     atualizar: (id, passagem) => api.put(`/passagens/${id}`, passagem),
+   listarMeus: () => api.get('/passagens/meus'),
     deletar: (id) => api.delete(`/passagens/${id}`)
 };
 
@@ -184,6 +185,7 @@ export const hotelService = {
     aprovar: (id) => api.patch(`/hoteis/${id}/aprovar`),                                 // ✅ novo
     rejeitar: (id, observacao) => api.patch(`/hoteis/${id}/rejeitar`, { observacao }),   // ✅ novo
     cadastrar: (hotel) => api.post('/hoteis', hotel),
+    listarMeus: () => api.get('/hoteis/meus'),
     atualizar: (id, hotel) => api.put(`/hoteis/${id}`, hotel),
     deletar: (id) => api.delete(`/hoteis/${id}`)
 };

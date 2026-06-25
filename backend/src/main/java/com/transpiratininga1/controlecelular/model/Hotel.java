@@ -33,6 +33,11 @@ public class Hotel {
     @Column(name = "solicitante_registro", length = 50)
     private String solicitanteRegistro;
 
+
+    // username de quem criou o pedido (preenchido automaticamente pelo backend)
+    @Column(name = "criado_por", length = 100)
+    private String criadoPor;
+
    @Column(name = "data_entrada")
     private LocalDate dataEntrada;
 

@@ -30,6 +30,11 @@ public class PassagemService {
         return passagemRepository.findByStatus(Passagem.Status.PENDENTE);
     }
 
+    // lista os pedidos criados por um usuário específico
+    public List<Passagem> listarPorCriador(String username) {
+        return passagemRepository.findByCriadoPor(username);
+    }
+
     // ✅ NOVO — retorna as do colaborador logado (pra tela do user)
     public List<Passagem> buscarPorColaboradorEStatus(String registro, Passagem.Status status) {
         if (status != null) {

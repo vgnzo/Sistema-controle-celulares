@@ -29,7 +29,7 @@ function PassagemLista({ onEditar, recarregar }) {
 
     const handleDeletar = async (passagem) => {
         if (!isAdmin) return;
-        if (window.confirm(`Excluir a passagem de "${passagem.colaborador?.nome}" para "${passagem.destino}"?`)) {
+        if (window.confirm(`Excluir a passagem de "${passagem.solicitanteNome}" para "${passagem.destino}"?`)) {
             try {
                 await passagemService.deletar(passagem.id);
                 toast.success('✅ Passagem excluída!');
@@ -61,7 +61,8 @@ function PassagemLista({ onEditar, recarregar }) {
                     <table className="table table-striped table-hover">
                         <thead className="table-dark">
                             <tr>
-                                <th>Colaborador</th>
+                                <th>Solicitante</th>
+                                <th>Registro</th>
                                 <th>Destino</th>
                                 <th>Motivo</th>
                                 <th>Status</th>
@@ -71,14 +72,15 @@ function PassagemLista({ onEditar, recarregar }) {
                         <tbody>
                             {passagens.length === 0 ? (
                                 <tr>
-                                    <td colSpan={isAdmin ? '5' : '4'} className="text-center text-muted">
+                                    <td colSpan={isAdmin ? '6' : '5'} className="text-center text-muted">
                                         Nenhuma passagem cadastrada
                                     </td>
                                 </tr>
                             ) : (
                                 passagens.map((passagem) => (
                                     <tr key={passagem.id}>
-                                        <td>{passagem.colaborador?.nome || '-'}</td>
+                                        <td>{passagem.solicitanteNome || '-'}</td>
+                                        <td>{passagem.solicitanteRegistro || '-'}</td>
                                         <td>{passagem.destino}</td>
                                         <td>{passagem.motivo || '-'}</td>
                                         <td>{badgeStatus(passagem.status)}</td>

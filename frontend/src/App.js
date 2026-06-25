@@ -17,6 +17,7 @@ import Passagens from './pages/Passagens';
 import Hoteis from './pages/Hoteis';
 import Aprovacoes from './pages/Aprovacoes';
 import HistoricoViagem from './pages/HistoricoViagem';
+import MeusPedidos from './pages/MeusPedidos';
 
 function App() {
 
@@ -101,6 +102,9 @@ function App() {
 
       case 'hoteis':
         return <Hoteis tipo={tipo} />;
+
+         case 'meus-pedidos':
+        return <MeusPedidos />;
 
       case 'aprovacoes':
         if (tipo !== 'ADMIN') return <h3>Acesso negado</h3>;
@@ -249,7 +253,7 @@ function App() {
                 </>
               )}
 
-              {/* ===== MÓDULO VIAGEM ===== */}
+           {/* ===== MÓDULO VIAGEM ===== */}
               {modulo === 'viagem' && (
                 <>
                   <li className="nav-item">
@@ -262,6 +266,16 @@ function App() {
                       🏨 Hotéis
                     </button>
                   </li>
+
+                  {/* Meus Pedidos - só pro USER (admin tem Aprovações) */}
+                  {tipo !== 'ADMIN' && (
+                    <li className="nav-item">
+                      <button className={navBtn('meus-pedidos')} onClick={() => irPara('meus-pedidos')}>
+                        📋 Meus Pedidos
+                      </button>
+                    </li>
+                  )}
+
                   {tipo === 'ADMIN' && (
                     <li className="nav-item">
                       <button className={navBtn('aprovacoes')} onClick={() => irPara('aprovacoes')}>

@@ -13,4 +13,5 @@ public interface HotelRepository extends JpaRepository<Hotel, Long>{
      List<Hotel> findByStatus(Hotel.Status status);
     //buscar todas as reservas de um colaborador especifico
     List<Hotel> findByColaborador_Registro(String registro);
+    List<Hotel> findByCriadoPor(String criadoPor);
 }

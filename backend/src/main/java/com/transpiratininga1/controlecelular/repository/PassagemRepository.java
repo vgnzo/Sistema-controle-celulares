@@ -12,4 +12,5 @@ public interface PassagemRepository extends JpaRepository<Passagem, Long> {
     List<Passagem> findByDestino(String destino);
     List<Passagem> findByStatus(Passagem.Status status);
     List<Passagem> findByColaborador_RegistroAndStatus(String registro, Passagem.Status status); // ✅ linha nova
+    List<Passagem> findByCriadoPor(String criadoPor);
 }

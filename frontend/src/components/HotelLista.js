@@ -29,7 +29,7 @@ function HotelLista({ onEditar, recarregar }) {
 
     const handleDeletar = async (hotel) => {
         if (!isAdmin) return;
-        if (window.confirm(`Excluir a reserva de "${hotel.colaborador?.nome}"?`)) {
+        if (window.confirm(`Excluir a reserva de "${hotel.solicitanteNome}"?`)) {
             try {
                 await hotelService.deletar(hotel.id);
                 toast.success('✅ Reserva excluída!');
@@ -61,7 +61,8 @@ function HotelLista({ onEditar, recarregar }) {
                     <table className="table table-striped table-hover">
                         <thead className="table-dark">
                             <tr>
-                                <th>Colaborador</th>
+                                <th>Solicitante</th>
+                                <th>Registro</th>
                                 <th>Motivo</th>
                                 <th>Status</th>
                                 {isAdmin && <th className="text-center">Ações</th>}
@@ -70,14 +71,15 @@ function HotelLista({ onEditar, recarregar }) {
                         <tbody>
                             {hoteis.length === 0 ? (
                                 <tr>
-                                    <td colSpan={isAdmin ? '4' : '3'} className="text-center text-muted">
+                                    <td colSpan={isAdmin ? '5' : '4'} className="text-center text-muted">
                                         Nenhuma reserva cadastrada
                                     </td>
                                 </tr>
                             ) : (
                                 hoteis.map((hotel) => (
                                     <tr key={hotel.id}>
-                                        <td>{hotel.colaborador?.nome || '-'}</td>
+                                        <td>{hotel.solicitanteNome || '-'}</td>
+                                        <td>{hotel.solicitanteRegistro || '-'}</td>
                                         <td>{hotel.motivo || '-'}</td>
                                         <td>{badgeStatus(hotel.status)}</td>
                                         {isAdmin && (

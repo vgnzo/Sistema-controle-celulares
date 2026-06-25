@@ -39,6 +39,12 @@ public class Passagem {
     @Column(name = "solicitante_registro", length = 50)
     private String solicitanteRegistro;
 
+    // username de quem criou o pedido (preenchido automaticamente pelo backend)
+    @Column(name = "criado_por", length = 100)
+    private String criadoPor;
+
+
+
     
     @NotBlank(message = "Destino obrigatório")
     @Column(name = "Destino", nullable = false, length = 100)

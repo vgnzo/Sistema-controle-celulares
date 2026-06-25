@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
+import org.springframework.security.core.Authentication;
 
 @RestController
 @RequestMapping("/api/passagens")
@@ -29,21 +30,25 @@ public class PassagemController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // ✅ NOVO — admin busca os pendentes
+    // — admin busca os pendentes
     @GetMapping("/pendentes")
     public ResponseEntity<List<Passagem>> listarPendentes() {
         return ResponseEntity.ok(passagemService.listarPendentes());
     }
 
-    // ✅ NOVO — user vê as próprias (passa registro na URL)
+    //  — user vê as próprias (passa registro na URL)
     @GetMapping("/colaborador/{registro}")
     public ResponseEntity<List<Passagem>> buscarPorColaborador(@PathVariable String registro) {
         return ResponseEntity.ok(passagemService.buscarPorColaborador(registro));
     }
 
     @PostMapping
-    public ResponseEntity<?> cadastrar(@Valid @RequestBody Passagem passagem) {
+    public ResponseEntity<?> cadastrar(@Valid @RequestBody Passagem passagem, Authentication authentication) {
         try {
+            // pega o username de quem está logado (do token) e guarda no pedido
+            if (authentication != null) {
+                passagem.setCriadoPor(authentication.getName());
+            }
             Passagem nova = passagemService.cadastrar(passagem);
             return ResponseEntity.status(HttpStatus.CREATED).body(nova);
         } catch (IllegalArgumentException e) {
@@ -61,7 +66,7 @@ public class PassagemController {
         }
     }
 
-    // ✅ NOVO — admin aprova
+    // — admin aprova
     @PatchMapping("/{id}/aprovar")
     public ResponseEntity<?> aprovar(@PathVariable Long id) {
         try {
@@ -72,7 +77,7 @@ public class PassagemController {
         }
     }
 
-    // ✅ NOVO — admin rejeita (body: { "observacao": "motivo aqui" })
+    //  — admin rejeita (body: { "observacao": "motivo aqui" })
     @PatchMapping("/{id}/rejeitar")
     public ResponseEntity<?> rejeitar(@PathVariable Long id, @RequestBody Map<String, String> body) {
         try {
@@ -82,6 +87,13 @@ public class PassagemController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    //user ve os proprios pedidos feitos
+      @GetMapping("/meus")
+    public ResponseEntity<List<Passagem>> listarMeus(Authentication authentication) {
+        String username = authentication.getName();
+        return ResponseEntity.ok(passagemService.listarPorCriador(username));
     }
 
     @DeleteMapping("/{id}")
