@@ -49,6 +49,7 @@ function Aprovacoes() {
         setTipoModal(tipo === 'passagem' ? 'aprovar-passagem' : 'aprovar-hotel');
         setItemSelecionado(item);
 setDadosAprovacao({ localEmbarque: '', localEmbarqueVolta: '', companhiaAerea: '', dataIda: '', dataVolta: '', valor: '', dataEntrada: '', dataSaida: '', nomeHotel: '' });    };
+        setModalAberto(true);
 
     const abrirModalRejeitar = (tipo, id) => {
         setTipoModal('rejeitar');
